@@ -1,0 +1,945 @@
+<title>Entraînement SSIAP 1</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: application d'examen plein écran — accueil / passage question par question / résultats.
+   Identité "poste de sécurité" : signalétique condensée + mono technique pour les données. */
+:root{
+  --bg:#f4f2ee;            /* papier neutre légèrement chaud */
+  --surface:#ffffff;
+  --surface-2:#eceae4;
+  --ink:#1b1d22;           /* encre */
+  --ink-soft:#56585f;
+  --line:#d9d5cc;
+  --accent:#c62a1f;        /* rouge signalétique incendie */
+  --accent-ink:#ffffff;
+  --ok:#1f7a4d;            /* vert sécurité */
+  --ok-soft:#e3f1e8;
+  --bad:#b4231a;
+  --bad-soft:#f7e3e1;
+  --warn:#b26a00;
+  --flag:#c98a00;
+  --shadow:0 1px 2px rgba(20,20,25,.06),0 8px 24px rgba(20,20,25,.07);
+  --font-display:"Barlow Condensed","Arial Narrow",sans-serif;
+  --font-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#15161a; --surface:#1e2026; --surface-2:#262933; --ink:#eceae4; --ink-soft:#a2a4ad;
+  --line:#33363f; --accent:#ff5a4d; --accent-ink:#1b1013; --ok:#4bd08a; --ok-soft:#12301f;
+  --bad:#ff6b5f; --bad-soft:#331513; --warn:#e3a33a; --flag:#e0ab2e;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.45); color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#15161a; --surface:#1e2026; --surface-2:#262933; --ink:#eceae4; --ink-soft:#a2a4ad;
+  --line:#33363f; --accent:#ff5a4d; --accent-ink:#1b1013; --ok:#4bd08a; --ok-soft:#12301f;
+  --bad:#ff6b5f; --bad-soft:#331513; --warn:#e3a33a; --flag:#e0ab2e;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.45); color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);line-height:1.5;
+  -webkit-font-smoothing:antialiased;font-size:15px}
+.wrap{max-width:860px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0}
+h1,h2,h3{font-family:var(--font-display);font-weight:600;line-height:1.05;text-wrap:balance;margin:0}
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+button{font-family:inherit;font-size:inherit;cursor:pointer}
+button:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* ---- top bar ---- */
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);
+  border-bottom:1px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);
+  z-index:21;background:var(--surface)}
+.topbar .wrap{display:flex;align-items:center;gap:12px;min-height:58px;padding-block:8px}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.badge{flex:none;width:34px;height:34px;border-radius:7px;background:var(--accent);color:var(--accent-ink);
+  display:grid;place-items:center;font-family:var(--font-display);font-weight:700;font-size:19px;letter-spacing:.5px}
+.brand b{font-family:var(--font-display);font-weight:600;font-size:21px;letter-spacing:.3px;white-space:nowrap}
+.brand span{color:var(--ink-soft);font-size:12px;text-transform:uppercase;letter-spacing:.14em;white-space:nowrap}
+.spacer{flex:1}
+.iconbtn{background:var(--surface-2);border:1px solid var(--line);color:var(--ink);border-radius:8px;
+  width:38px;height:38px;display:grid;place-items:center;font-size:16px}
+.timer{font-family:var(--font-mono);font-weight:500;font-size:16px;background:var(--surface-2);
+  border:1px solid var(--line);border-radius:8px;padding:7px 12px;letter-spacing:.5px}
+.timer.low{color:var(--accent-ink);background:var(--accent);border-color:var(--accent)}
+
+/* ---- panels ---- */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
+section.screen{padding-block:22px 48px}
+
+/* ---- home ---- */
+.hero{padding:26px 22px 24px}
+.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.16em;color:var(--accent);font-weight:600}
+.hero h1{font-size:clamp(34px,8vw,52px);margin:6px 0 10px}
+.hero p{color:var(--ink-soft);max-width:60ch;margin:0}
+.statline{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.chip{font-family:var(--font-mono);font-size:12px;background:var(--surface-2);border:1px solid var(--line);
+  border-radius:999px;padding:5px 11px;color:var(--ink-soft)}
+.chip b{color:var(--ink);font-weight:600}
+
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}
+.mode{display:flex;flex-direction:column;gap:6px;padding:18px;text-align:left;background:var(--surface);
+  border:1px solid var(--line);border-radius:14px;transition:border-color .15s,transform .05s}
+.mode:hover{border-color:var(--accent)}
+.mode:active{transform:translateY(1px)}
+.mode.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.mode.primary .mt,.mode.primary .md{color:var(--accent-ink)}
+.mode .mk{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.8}
+.mode .mt{font-family:var(--font-display);font-size:24px;font-weight:600}
+.mode .md{color:var(--ink-soft);font-size:13px}
+@media(max-width:560px){.modes{grid-template-columns:1fr}}
+
+.block{margin-top:22px}
+.block h2{font-size:15px;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-soft);
+  font-family:var(--font-body);font-weight:700;margin-bottom:10px}
+.themes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.theme{display:flex;align-items:center;gap:12px;padding:13px 14px;background:var(--surface);
+  border:1px solid var(--line);border-radius:11px;text-align:left}
+.theme:hover{border-color:var(--accent)}
+.theme .tn{flex:none;width:30px;height:30px;border-radius:7px;background:var(--surface-2);display:grid;
+  place-items:center;font-family:var(--font-display);font-weight:700;color:var(--accent)}
+.theme .tx{min-width:0}
+.theme .tx b{display:block;font-weight:600;font-size:14px}
+.theme .tx small{color:var(--ink-soft);font-family:var(--font-mono);font-size:11px}
+@media(max-width:560px){.themes{grid-template-columns:1fr}}
+
+.history{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+.hrow{display:flex;align-items:center;gap:10px;font-size:13px;padding:9px 12px;background:var(--surface-2);
+  border-radius:9px}
+.hrow .hd{color:var(--ink-soft);font-family:var(--font-mono);font-size:12px}
+.hrow .hn{margin-left:auto;font-family:var(--font-mono);font-weight:600}
+.pill{font-family:var(--font-mono);font-size:11px;font-weight:600;padding:2px 9px;border-radius:999px}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.pill.ko{background:var(--bad-soft);color:var(--bad)}
+.muted{color:var(--ink-soft);font-size:13px}
+
+/* ---- exam ---- */
+.exam-head{display:flex;align-items:baseline;gap:10px;margin-bottom:6px}
+.exam-head .qn{font-family:var(--font-display);font-size:30px;font-weight:600}
+.exam-head .qt{font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--accent);border:1px solid var(--line);border-radius:999px;padding:3px 10px}
+.progress{height:6px;border-radius:999px;background:var(--surface-2);overflow:hidden;margin-bottom:18px}
+.progress i{display:block;height:100%;background:var(--accent);transition:width .25s}
+.qcard{padding:22px}
+.qtext{font-size:19px;font-weight:600;line-height:1.35;margin:0 0 4px}
+.multi{font-family:var(--font-mono);font-size:12px;color:var(--warn);margin:0 0 16px}
+.single{font-family:var(--font-mono);font-size:12px;color:var(--ink-soft);margin:0 0 16px}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{display:flex;gap:12px;align-items:flex-start;padding:13px 15px;border:1.5px solid var(--line);
+  border-radius:11px;background:var(--surface);transition:border-color .12s,background .12s;text-align:left;width:100%}
+.opt:hover{border-color:var(--ink-soft)}
+.opt.sel{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 8%,var(--surface))}
+.opt .mark{flex:none;width:24px;height:24px;border:2px solid var(--line);display:grid;place-items:center;
+  font-family:var(--font-mono);font-weight:600;font-size:13px;color:var(--ink-soft);margin-top:1px}
+.opt.radio .mark{border-radius:50%}
+.opt.check .mark{border-radius:6px}
+.opt.sel .mark{border-color:var(--accent);background:var(--accent);color:var(--accent-ink)}
+.opt .otext{min-width:0;padding-top:2px}
+/* review colours */
+.opt.good{border-color:var(--ok);background:var(--ok-soft)}
+.opt.good .mark{border-color:var(--ok);background:var(--ok);color:#fff}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.opt.wrong .mark{border-color:var(--bad);background:var(--bad);color:#fff}
+.opt.miss{border-color:var(--ok);border-style:dashed;background:transparent}
+.opt.miss .mark{border-color:var(--ok);color:var(--ok)}
+
+.explain{margin-top:14px;padding:12px 15px;border-left:3px solid var(--accent);background:var(--surface-2);
+  border-radius:0 9px 9px 0;font-size:14px}
+.explain b{font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--accent);display:block;margin-bottom:3px}
+
+.navrow{display:flex;gap:10px;align-items:center;margin-top:18px}
+.btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;
+  padding:12px 18px;font-weight:600}
+.btn:hover{border-color:var(--ink-soft)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:transparent}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.btn.flag.on{background:var(--flag);border-color:var(--flag);color:#1b1013}
+
+.navgrid{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}
+.navgrid button{width:36px;height:36px;border-radius:8px;border:1px solid var(--line);background:var(--surface);
+  color:var(--ink-soft);font-family:var(--font-mono);font-size:13px;font-weight:600}
+.navgrid button.answered{background:var(--surface-2);color:var(--ink);border-color:var(--ink-soft)}
+.navgrid button.current{border-color:var(--accent);color:var(--accent);border-width:2px}
+.navgrid button.flagged{box-shadow:inset 0 -4px 0 var(--flag)}
+.navgrid button.good{background:var(--ok-soft);color:var(--ok);border-color:var(--ok)}
+.navgrid button.bad{background:var(--bad-soft);color:var(--bad);border-color:var(--bad)}
+
+/* ---- results ---- */
+.result-hero{display:flex;flex-direction:column;align-items:center;text-align:center;padding:34px 22px 28px}
+.scorering{position:relative;width:180px;height:180px;margin-bottom:6px}
+.scorering svg{transform:rotate(-90deg)}
+.scorering .mid{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+  justify-content:center}
+.scorering .big{font-family:var(--font-display);font-size:52px;font-weight:600;line-height:1}
+.scorering .big small{font-size:22px;color:var(--ink-soft)}
+.scorering .sub{font-family:var(--font-mono);font-size:12px;color:var(--ink-soft);letter-spacing:.05em}
+.verdict{font-family:var(--font-display);font-size:30px;font-weight:600;margin-top:4px}
+.verdict.ok{color:var(--ok)}.verdict.ko{color:var(--bad)}
+.rstats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:20px;width:100%;max-width:440px}
+.rstat{background:var(--surface-2);border-radius:11px;padding:13px 8px;text-align:center}
+.rstat b{display:block;font-family:var(--font-mono);font-size:24px;font-weight:600}
+.rstat span{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--ink-soft)}
+.breakdown{margin-top:22px}
+.brow{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.brow:last-child{border-bottom:0}
+.brow .bn{font-size:14px;flex:1;min-width:0}
+.bbar{flex:none;width:120px;height:8px;border-radius:999px;background:var(--surface-2);overflow:hidden}
+.bbar i{display:block;height:100%;background:var(--ok)}
+.brow .bv{font-family:var(--font-mono);font-size:13px;width:54px;text-align:right;color:var(--ink-soft)}
+.footer{margin:30px 0 0;text-align:center;color:var(--ink-soft);font-size:12px;line-height:1.6}
+.footer a{color:var(--accent)}
+hr.sep{border:0;border-top:1px solid var(--line);margin:26px 0}
+.setup{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{background:var(--surface);color:var(--ink-soft);border:0;padding:9px 14px;font-weight:600;font-size:13px}
+.seg button.on{background:var(--accent);color:var(--accent-ink)}
+.togglebox{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--ink-soft);
+  border:1px solid var(--line);border-radius:10px;padding:8px 13px}
+.togglebox input{width:18px;height:18px;accent-color:var(--accent)}
+</style>
+
+<div class="topbar">
+  <div class="wrap">
+    <div class="brand">
+      <div class="badge">S1</div>
+      <div style="display:flex;flex-direction:column;line-height:1.05">
+        <b>SSIAP 1</b><span>Entraînement QCM</span>
+      </div>
+    </div>
+    <div class="spacer"></div>
+    <div id="timer" class="timer" hidden>30:00</div>
+    <button id="themeBtn" class="iconbtn" title="Thème clair / sombre" aria-label="Changer le thème">◐</button>
+  </div>
+</div>
+
+<main class="wrap">
+  <!-- ======= ACCUEIL ======= -->
+  <section id="home" class="screen">
+    <div class="panel hero">
+      <div class="eyebrow">Préparation à l'examen · agent de sécurité incendie</div>
+      <h1>Teste-toi comme le jour J</h1>
+      <p>30 questions tirées au sort à chaque session, notées sur 20, 30 minutes au compteur — le format réel de l'épreuve écrite. Les questions sont calées sur le programme de l'arrêté du 2 mai 2005 et poussées un cran au-dessus de l'examen pour t'endurcir.</p>
+      <div class="statline">
+        <span class="chip"><b id="bankCount">0</b> questions en banque</span>
+        <span class="chip">30 questions / examen</span>
+        <span class="chip">Admis dès <b>12/20</b></span>
+        <span class="chip">Justification sur chaque réponse</span>
+      </div>
+    </div>
+
+    <div class="modes">
+      <button class="mode primary" data-mode="exam">
+        <span class="mk">Mode examen</span>
+        <span class="mt">Examen blanc</span>
+        <span class="md">30 questions · 30 min · chronomètre</span>
+      </button>
+      <button class="mode" data-mode="train">
+        <span class="mk">Mode révision</span>
+        <span class="mt">Entraînement libre</span>
+        <span class="md">Sans chrono · correction immédiate</span>
+      </button>
+    </div>
+
+    <div class="block">
+      <h2>Réviser une partie du programme</h2>
+      <div id="themes" class="themes"></div>
+    </div>
+
+    <div class="block" id="historyBlock" hidden>
+      <h2>Tes dernières sessions</h2>
+      <div id="history" class="history"></div>
+      <button id="clearHist" class="btn ghost" style="margin-top:10px;font-size:13px;padding:8px 14px">Effacer l'historique</button>
+    </div>
+
+    <p class="footer">
+      Banque de questions d'entraînement rédigée d'après le programme SSIAP 1 (arrêté du 2 mai 2005 modifié) et le règlement de sécurité contre l'incendie dans les ERP (arrêté du 25 juin 1980). Outil de révision non officiel : vérifie toujours les valeurs réglementaires sur <a href="https://www.legifrance.gouv.fr" target="_blank" rel="noopener">Légifrance</a>.
+    </p>
+  </section>
+
+  <!-- ======= EXAMEN ======= -->
+  <section id="exam" class="screen" hidden>
+    <div class="exam-head">
+      <span class="qn" id="qNum">1</span>
+      <span class="qt" id="qTheme">—</span>
+      <div class="spacer" style="flex:1"></div>
+      <button id="flagBtn" class="btn flag ghost" style="padding:8px 14px;font-size:13px">⚑ Marquer</button>
+    </div>
+    <div class="progress"><i id="prog" style="width:0%"></i></div>
+    <div class="panel qcard">
+      <p class="qtext" id="qText"></p>
+      <p id="qHint" class="single"></p>
+      <div class="opts" id="opts"></div>
+      <div id="explain" class="explain" hidden></div>
+    </div>
+    <div class="navrow">
+      <button id="prevBtn" class="btn ghost">← Précédent</button>
+      <div class="spacer" style="flex:1"></div>
+      <button id="nextBtn" class="btn primary">Suivant →</button>
+    </div>
+    <div class="navgrid" id="navGrid"></div>
+    <div class="navrow" style="margin-top:18px">
+      <button id="finishBtn" class="btn" style="border-color:var(--accent);color:var(--accent)">Terminer l'examen</button>
+      <div class="spacer" style="flex:1"></div>
+      <button id="quitBtn" class="btn ghost" style="font-size:13px">Abandonner</button>
+    </div>
+  </section>
+
+  <!-- ======= RÉSULTATS ======= -->
+  <section id="result" class="screen" hidden>
+    <div class="panel result-hero">
+      <div class="scorering">
+        <svg width="180" height="180" viewBox="0 0 180 180">
+          <circle cx="90" cy="90" r="78" fill="none" stroke="var(--surface-2)" stroke-width="14"/>
+          <circle id="ring" cx="90" cy="90" r="78" fill="none" stroke="var(--accent)" stroke-width="14"
+            stroke-linecap="round" stroke-dasharray="490" stroke-dashoffset="490"/>
+        </svg>
+        <div class="mid">
+          <div class="big"><span id="note20">0</span><small>/20</small></div>
+          <div class="sub" id="noteCorrect">0 / 30 bonnes</div>
+        </div>
+      </div>
+      <div class="verdict" id="verdict">—</div>
+      <p class="muted" id="verdictSub" style="margin:4px 0 0"></p>
+      <div class="rstats">
+        <div class="rstat"><b id="rGood" style="color:var(--ok)">0</b><span>Justes</span></div>
+        <div class="rstat"><b id="rBad" style="color:var(--bad)">0</b><span>Fautes</span></div>
+        <div class="rstat"><b id="rTime">—</b><span>Durée</span></div>
+      </div>
+    </div>
+
+    <div class="panel qcard breakdown" id="breakdownCard">
+      <h2 style="font-size:16px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">Résultat par thème</h2>
+      <div id="breakdown"></div>
+    </div>
+
+    <div class="navrow" style="margin-top:20px">
+      <button id="reviewBtn" class="btn primary">Revoir mes réponses</button>
+      <div class="spacer" style="flex:1"></div>
+      <button id="replayBtn" class="btn">Nouvel examen</button>
+      <button id="homeBtn" class="btn ghost">Accueil</button>
+    </div>
+  </section>
+</main>
+
+<script>
+/* ============================================================
+   BANQUE DE QUESTIONS — SSIAP 1
+   Champs : q (énoncé), o (options), a (indices corrects),
+            e (justification), t (clé thème)
+   Plusieurs bonnes réponses possibles (a.length > 1).
+   ============================================================ */
+const THEMES = {
+  feu:        {n:"Le feu et ses conséquences", k:"1"},
+  classement: {n:"Classement des bâtiments (ERP / IGH)", k:"2"},
+  construction:{n:"Prévention & construction", k:"3"},
+  tech:       {n:"Installations techniques & SSI", k:"4"},
+  moyens:     {n:"Moyens de secours", k:"5"},
+  role:       {n:"Rôle de l'agent & réglementation", k:"6"}
+};
+
+const BANK = [
+/* ===================== 1. LE FEU ET SES CONSÉQUENCES ===================== */
+{t:"feu",q:"Quels sont les trois éléments indispensables du triangle du feu ?",o:["Le combustible","Le comburant","L'énergie d'activation","La réaction en chaîne"],a:[0,1,2],e:"Le triangle du feu réunit combustible, comburant et énergie d'activation. La réaction en chaîne est le 4e côté qui forme le tétraèdre du feu."},
+{t:"feu",q:"Le comburant le plus répandu dans un incendie est :",o:["L'azote","Le dioxyde de carbone","L'oxygène de l'air","Le méthane"],a:[2],e:"L'air contient environ 21 % d'oxygène, qui est le comburant le plus courant."},
+{t:"feu",q:"En dessous de quel taux d'oxygène environ une combustion vive s'arrête-t-elle ?",o:["21 %","15 %","8 %","0 %"],a:[1],e:"En dessous d'environ 15 % d'oxygène, la combustion vive ne peut plus s'entretenir (d'où le principe d'étouffement)."},
+{t:"feu",q:"La combustion est une réaction :",o:["D'oxydoréduction exothermique","Endothermique","Nucléaire","De réduction sans dégagement de chaleur"],a:[0],e:"La combustion est une oxydation vive et exothermique : elle dégage de la chaleur."},
+{t:"feu",q:"Quels sont les trois modes de propagation de la chaleur dans un incendie ?",o:["La conduction","La convection","Le rayonnement","La sublimation"],a:[0,1,2],e:"Conduction (de proche en proche dans un solide), convection (par déplacement des gaz chauds), rayonnement (ondes thermiques)."},
+{t:"feu",q:"La propagation de la chaleur par déplacement des gaz chauds qui montent s'appelle :",o:["La conduction","La convection","Le rayonnement","La radiation"],a:[1],e:"La convection : les fumées et gaz chauds, plus légers, s'élèvent et propagent la chaleur vers le haut."},
+{t:"feu",q:"La transmission de la chaleur à travers un élément solide (ex : une poutre métallique) s'appelle :",o:["Le rayonnement","La convection","La conduction","La projection"],a:[2],e:"La conduction est la transmission de proche en proche à travers la matière ; les métaux sont de bons conducteurs."},
+{t:"feu",q:"Un feu de bois, de papier ou de tissu appartient à la classe :",o:["Classe A","Classe B","Classe C","Classe F"],a:[0],e:"Classe A : feux secs, matériaux solides formant des braises (bois, papier, carton, tissu)."},
+{t:"feu",q:"Un feu d'essence, de solvant ou de plastique liquéfié appartient à la classe :",o:["Classe A","Classe B","Classe C","Classe D"],a:[1],e:"Classe B : feux gras, liquides ou solides liquéfiables (hydrocarbures, alcools, matières plastiques)."},
+{t:"feu",q:"Un feu de propane ou de butane appartient à la classe :",o:["Classe A","Classe B","Classe C","Classe D"],a:[2],e:"Classe C : feux de gaz (propane, butane, gaz naturel)."},
+{t:"feu",q:"Les feux de métaux (sodium, magnésium, aluminium) sont classés :",o:["Classe B","Classe C","Classe D","Classe F"],a:[2],e:"Classe D : feux de métaux. Ils nécessitent des poudres spéciales ; surtout pas d'eau."},
+{t:"feu",q:"Un feu d'huile de friture dans une cuisine appartient à la classe :",o:["Classe A","Classe B","Classe D","Classe F"],a:[3],e:"Classe F : feux liés aux huiles et graisses de cuisson. L'eau est formellement proscrite."},
+{t:"feu",q:"Quel agent extincteur est le plus adapté à un feu d'origine électrique sous tension ?",o:["Eau en jet plein","Dioxyde de carbone (CO2)","Mousse","Eau + additif"],a:[1],e:"Le CO2 est non conducteur et n'endommage pas le matériel ; il convient aux feux électriques. On coupe d'abord le courant si possible."},
+{t:"feu",q:"La poudre polyvalente ABC est efficace sur quelles classes de feu ?",o:["Classe A","Classe B","Classe C","Classe D"],a:[0,1,2],e:"La poudre ABC agit sur les feux secs (A), gras (B) et de gaz (C) par inhibition de la réaction en chaîne."},
+{t:"feu",q:"Quelles actions permettent d'éteindre un feu en agissant sur le triangle du feu ?",o:["Le refroidissement","L'étouffement","L'inhibition / isolement du combustible","L'augmentation de la ventilation"],a:[0,1,2],e:"On éteint en supprimant un côté du triangle : refroidir (retirer la chaleur), étouffer (retirer le comburant), isoler/inhiber (retirer ou neutraliser le combustible)."},
+{t:"feu",q:"Recouvrir un feu d'une couverture anti-feu agit par :",o:["Refroidissement","Étouffement","Inhibition chimique","Dispersion"],a:[1],e:"Étouffement : on prive le feu de comburant (oxygène) en le recouvrant."},
+{t:"feu",q:"L'eau agit principalement sur un feu par :",o:["Étouffement","Refroidissement","Inhibition","Catalyse"],a:[1],e:"L'eau absorbe une grande quantité de chaleur en se vaporisant : c'est un agent de refroidissement par excellence."},
+{t:"feu",q:"Quelle est la principale cause de décès lors d'un incendie ?",o:["Les brûlures directes","Les fumées et gaz toxiques","L'effondrement des structures","L'électrocution"],a:[1],e:"La grande majorité des victimes (environ 80 %) meurent de l'intoxication par les fumées, bien avant d'être atteintes par les flammes."},
+{t:"feu",q:"Quels sont les dangers des fumées d'incendie ?",o:["L'opacité (perte de visibilité)","La toxicité","La chaleur","La diminution du taux d'oxygène"],a:[0,1,2,3],e:"Les fumées sont à la fois opaques, toxiques, très chaudes, appauvries en oxygène et inflammables."},
+{t:"feu",q:"Quel gaz, inodore et incolore, est le principal responsable des intoxications mortelles en incendie ?",o:["Le dioxyde de carbone (CO2)","Le monoxyde de carbone (CO)","L'azote","La vapeur d'eau"],a:[1],e:"Le monoxyde de carbone (CO), inodore et incolore, se fixe sur l'hémoglobine à la place de l'oxygène : il est mortel à faible concentration."},
+{t:"feu",q:"L'embrasement généralisé éclair d'un local (inflammation simultanée de tous les matériaux) se nomme :",o:["Backdraft","Flashover (embrasement généralisé éclair)","Rollover","Explosion de gaz"],a:[1],e:"Le flashover (EGE) survient lorsque la chaleur a porté tous les combustibles du local à leur température d'inflammation : tout s'embrase d'un coup."},
+{t:"feu",q:"L'explosion de fumées provoquée par un apport brutal d'air frais dans un local sous-ventilé se nomme :",o:["Flashover","Backdraft (explosion de fumées)","Rollover","Déflagration lente"],a:[1],e:"Le backdraft : dans un local clos appauvri en oxygène, l'ouverture d'une porte réintroduit l'air et provoque une explosion des gaz imbrûlés accumulés."},
+{t:"feu",q:"On distingue plusieurs vitesses de combustion. Lesquelles ?",o:["La combustion lente","La combustion vive","La combustion très vive (explosion)","La combustion froide"],a:[0,1,2],e:"La combustion peut être lente (sans flamme, ex. rouille/oxydation), vive (avec flammes) ou très vive (déflagration, explosion)."},
+{t:"feu",q:"Le point éclair d'un liquide inflammable est :",o:["La température minimale à laquelle il émet assez de vapeurs pour s'enflammer en présence d'une flamme","La température d'auto-inflammation sans flamme","Le point d'ébullition du liquide","La température de congélation"],a:[0],e:"Le point éclair est la température la plus basse à laquelle un liquide dégage suffisamment de vapeurs pour qu'un mélange inflammable prenne feu au contact d'une source."},
+{t:"feu",q:"La réaction au feu d'un matériau désigne :",o:["Sa capacité à conserver ses fonctions pendant un incendie","Son comportement en tant qu'aliment du feu (son inflammabilité)","Sa résistance mécanique","Son pouvoir isolant thermique"],a:[1],e:"La réaction au feu caractérise la façon dont un matériau alimente le feu (combustible qu'il représente) ; la résistance au feu, elle, caractérise la tenue d'un élément de construction."},
+{t:"feu",q:"Dans l'ancien classement français de réaction au feu, quel classement correspond à un matériau incombustible ?",o:["M0","M1","M3","M4"],a:[0],e:"M0 = incombustible. L'échelle va de M0 (incombustible) à M4 (facilement inflammable)."},
+{t:"feu",q:"Dans le classement de réaction au feu, quel matériau est le plus inflammable ?",o:["M0","M1","M2","M4"],a:[3],e:"M4 = facilement inflammable. M1 = non inflammable, M2 = difficilement inflammable, M3 = moyennement inflammable."},
+{t:"feu",q:"Dans les Euroclasses de réaction au feu, que désignent les indices « s » et « d » (ex : B-s1,d0) ?",o:["s = dégagement de fumées ; d = gouttelettes/débris enflammés","s = stabilité ; d = durée","s = surface ; d = densité","s = son ; d = distance"],a:[0],e:"« s » (smoke) qualifie l'opacité des fumées (s1 à s3) et « d » (droplets) la chute de gouttelettes ou débris enflammés (d0 à d2)."},
+{t:"feu",q:"La chaleur rayonnée par un foyer peut enflammer un objet situé à distance sans contact. Ce mode de transmission est :",o:["La conduction","La convection","Le rayonnement","La diffusion"],a:[2],e:"Le rayonnement transmet la chaleur par ondes électromagnétiques (infrarouges), sans support matériel ni contact."},
+{t:"feu",q:"Pourquoi ne faut-il jamais éteindre un feu de friture (classe F) avec de l'eau ?",o:["L'eau n'a aucun effet sur l'huile","L'eau provoque une violente projection d'huile enflammée","L'eau rend l'huile plus froide trop vite","L'eau est interdite par la loi uniquement"],a:[1],e:"L'eau, plus dense, passe sous l'huile en ébullition, se vaporise instantanément et projette violemment l'huile enflammée (boule de feu)."},
+{t:"feu",q:"Quelle est la température approximative des fumées en partie haute d'un local en feu, pouvant provoquer le flashover ?",o:["Environ 60 °C","Environ 150 °C","Entre 500 et 600 °C","Environ 30 °C"],a:[2],e:"Le flashover survient lorsque la couche de fumées en plafond atteint environ 500 à 600 °C, portant l'ensemble des combustibles à leur point d'inflammation."},
+{t:"feu",q:"La stratification des fumées désigne :",o:["Le dépôt de suie au sol","L'organisation des fumées en couches, les plus chaudes en partie haute","Le refroidissement des fumées","La dispersion des fumées à l'extérieur"],a:[1],e:"Les fumées chaudes s'accumulent en couches sous le plafond ; la zone basse reste plus respirable, d'où l'intérêt de se baisser pour évacuer."},
+{t:"feu",q:"L'énergie d'activation d'un incendie peut provenir :",o:["D'une flamme ou d'une étincelle","D'un point chaud (soudure, meulage)","D'un échauffement électrique","Du seul contact du combustible et du comburant"],a:[0,1,2],e:"L'énergie d'activation est l'apport de chaleur nécessaire au démarrage : flamme, étincelle, point chaud, échauffement électrique. Le simple contact combustible/comburant ne suffit pas."},
+
+/* ===================== 2. CLASSEMENT DES BÂTIMENTS ===================== */
+{t:"classement",q:"Qu'est-ce qu'un ERP ?",o:["Un établissement recevant du public","Un équipement de régulation de pression","Un établissement réservé au personnel","Un ensemble résidentiel privé"],a:[0],e:"ERP = Établissement Recevant du Public : bâtiment où des personnes extérieures sont admises, librement ou moyennant rétribution."},
+{t:"classement",q:"Le classement d'un ERP se fait en fonction de :",o:["Son type (nature de l'exploitation)","Sa catégorie (effectif du public reçu)","Sa surface uniquement","Son année de construction"],a:[0,1],e:"Un ERP est classé par type (lettre selon l'activité) et par catégorie (chiffre selon l'effectif admis)."},
+{t:"classement",q:"Quel est l'effectif qui caractérise un ERP de 1re catégorie ?",o:["Plus de 1500 personnes","De 701 à 1500 personnes","De 301 à 700 personnes","Au-dessus de 300 personnes"],a:[0],e:"1re catégorie : au-dessus de 1500 personnes (public + éventuellement personnel selon le type)."},
+{t:"classement",q:"Un ERP accueillant 900 personnes relève de quelle catégorie ?",o:["1re catégorie","2e catégorie","3e catégorie","4e catégorie"],a:[1],e:"2e catégorie : de 701 à 1500 personnes. 900 personnes relève donc de la 2e catégorie."},
+{t:"classement",q:"La 3e catégorie correspond à un effectif de :",o:["Plus de 1500 personnes","De 701 à 1500 personnes","De 301 à 700 personnes","300 personnes et moins"],a:[2],e:"3e catégorie : de 301 à 700 personnes."},
+{t:"classement",q:"La 4e catégorie correspond à :",o:["300 personnes et au-dessous (hors 5e catégorie)","De 301 à 700 personnes","De 701 à 1500 personnes","Plus de 1500 personnes"],a:[0],e:"4e catégorie : 300 personnes et au-dessous, à l'exception des établissements de 5e catégorie."},
+{t:"classement",q:"Qu'est-ce qui caractérise un ERP de 5e catégorie ?",o:["L'effectif du public n'atteint pas les seuils d'assujettissement fixés par le règlement","Il reçoit plus de 1500 personnes","Il est toujours en plein air","Il n'a aucune obligation de sécurité"],a:[0],e:"5e catégorie : petits établissements dont l'effectif reste sous les seuils fixés par type. Ils restent soumis à des obligations de sécurité (allégées)."},
+{t:"classement",q:"Comment regroupe-t-on les catégories d'ERP ?",o:["1er groupe : catégories 1 à 4 ; 2e groupe : 5e catégorie","1er groupe : 5e catégorie ; 2e groupe : 1 à 4","Groupe A et groupe B selon le type","Il n'y a pas de groupe"],a:[0],e:"1er groupe = 1re à 4e catégories (règles plus lourdes) ; 2e groupe = 5e catégorie."},
+{t:"classement",q:"À quel type d'ERP correspond un magasin de vente ou un centre commercial ?",o:["Type M","Type N","Type T","Type L"],a:[0],e:"Type M : magasins de vente et centres commerciaux."},
+{t:"classement",q:"À quel type correspond un hôtel (établissement avec locaux à sommeil) ?",o:["Type O","Type N","Type R","Type U"],a:[0],e:"Type O : hôtels et pensions de famille (présence de locaux à sommeil du public)."},
+{t:"classement",q:"À quel type correspond un restaurant ou un débit de boissons ?",o:["Type M","Type N","Type O","Type P"],a:[1],e:"Type N : restaurants et débits de boissons."},
+{t:"classement",q:"À quel type correspond un établissement d'enseignement (école, collège) ?",o:["Type R","Type S","Type U","Type W"],a:[0],e:"Type R : établissements d'éveil, d'enseignement, de formation, colonies de vacances."},
+{t:"classement",q:"À quel type correspond un établissement de soins (hôpital, clinique) ?",o:["Type J","Type U","Type R","Type X"],a:[1],e:"Type U : établissements de soins. (À ne pas confondre avec le type J : structures d'accueil pour personnes âgées ou handicapées.)"},
+{t:"classement",q:"À quel type correspond une salle de spectacle, de conférence ou polyvalente ?",o:["Type L","Type P","Type T","Type Y"],a:[0],e:"Type L : salles d'auditions, de conférences, de réunions, de spectacles ou à usages multiples."},
+{t:"classement",q:"Associez correctement les types d'ERP suivants.",o:["W = administrations, banques, bureaux","X = établissements sportifs couverts","Y = musées","S = gares"],a:[0,1,2],e:"W = bureaux/administrations, X = établissements sportifs couverts, Y = musées. Le type S désigne les bibliothèques et centres de documentation (les gares relèvent du type GA)."},
+{t:"classement",q:"À quel type particulier correspond un parc de stationnement couvert ?",o:["Type PS","Type PA","Type GA","Type SG"],a:[0],e:"Type PS : parcs de stationnement couverts. (PA = plein air, GA = gares, SG = structures gonflables.)"},
+{t:"classement",q:"Un chapiteau, une tente ou une structure itinérante relève du type :",o:["Type CTS","Type PA","Type SG","Type EF"],a:[0],e:"Type CTS : chapiteaux, tentes et structures. (SG = structures gonflables, PA = établissements de plein air.)"},
+{t:"classement",q:"Qu'est-ce qui définit un Immeuble de Grande Hauteur (IGH) à usage d'habitation ?",o:["Plancher bas du dernier niveau à plus de 28 m du sol accessible aux pompiers","Plancher bas du dernier niveau à plus de 50 m","Hauteur totale supérieure à 18 m","Plus de 10 étages"],a:[0],e:"Habitation : IGH dès que le plancher bas du dernier niveau est à plus de 28 m. Pour les autres usages (bureaux, etc.), le seuil est 50 m."},
+{t:"classement",q:"Pour un immeuble de bureaux, à partir de quelle hauteur de plancher bas du dernier niveau parle-t-on d'IGH ?",o:["28 m","50 m","100 m","200 m"],a:[1],e:"Pour tous les usages autres que l'habitation, le seuil IGH est de 50 m (plancher bas du dernier niveau)."},
+{t:"classement",q:"Que désigne la classe GHZ d'un IGH ?",o:["Un immeuble à usage mixte","Un immeuble de bureaux","Un immeuble d'habitation","Un hôpital"],a:[0],e:"GHZ : IGH à usage mixte. (GHA = habitation, GHW = bureaux, GHU = sanitaire, GHO = hôtel, GHR = enseignement.)"},
+{t:"classement",q:"Qu'appelle-t-on un ITGH ?",o:["Un immeuble de très grande hauteur, plancher bas du dernier niveau à plus de 200 m","Un immeuble technique de grande hauteur","Un immeuble touristique","Un immeuble transformé en IGH"],a:[0],e:"ITGH : Immeuble de Très Grande Hauteur, dont le plancher bas du dernier niveau dépasse 200 m."},
+{t:"classement",q:"La classe GHW2 d'un IGH correspond à :",o:["Des bureaux dont le plancher bas est entre 28 et 50 m","Des bureaux dont le plancher bas est à plus de 50 m","Un hôtel","Un dépôt d'archives"],a:[1],e:"GHW1 : bureaux de 28 à 50 m ; GHW2 : bureaux à plus de 50 m. (GHS = dépôt d'archives, GHO = hôtel.)"},
+{t:"classement",q:"Quelle est la hauteur de référence prise en compte pour classer un bâtiment en IGH ?",o:["La hauteur du plancher bas du dernier niveau par rapport au niveau le plus haut accessible aux engins de secours","La hauteur du toit","La hauteur du premier étage","La hauteur sous plafond"],a:[0],e:"On mesure la hauteur du plancher bas du dernier niveau accessible, par rapport au niveau le plus haut utilisable par les engins de secours."},
+{t:"classement",q:"L'effectif du public dans un ERP est déterminé :",o:["Par déclaration libre de l'exploitant","Selon des règles de calcul fixées par type dans le règlement de sécurité","Uniquement par la surface au sol","Par le nombre de salariés"],a:[1],e:"L'effectif se calcule selon des ratios réglementaires propres à chaque type (par m², par place assise, par mètre linéaire, etc.)."},
+{t:"classement",q:"Un code du travail distinct s'applique à certains locaux. Un bâtiment accueillant uniquement des salariés (sans public) est :",o:["Un ERP de 5e catégorie","Un établissement soumis au Code du travail, pas un ERP","Toujours un IGH","Un ERP de type W"],a:[1],e:"Sans accueil de public, le bâtiment relève du Code du travail et non de la réglementation ERP. Le type W (bureaux) concerne les ERP recevant du public."},
+{t:"classement",q:"Le type J d'un ERP désigne :",o:["Les structures d'accueil pour personnes âgées et personnes handicapées","Les salles de jeux","Les jardins publics","Les établissements de justice"],a:[0],e:"Type J : structures d'accueil pour personnes âgées ou personnes handicapées (locaux à sommeil, évacuation différée)."},
+{t:"classement",q:"Une salle de danse ou une salle de jeux relève du type :",o:["Type L","Type P","Type N","Type T"],a:[1],e:"Type P : salles de danse et salles de jeux."},
+{t:"classement",q:"Les établissements flottants recevant du public relèvent du type :",o:["Type EF","Type REF","Type OA","Type GA"],a:[0],e:"Type EF : établissements flottants. (REF = refuges de montagne, OA = hôtels-restaurants d'altitude, GA = gares.)"},
+
+/* ===================== 3. PRÉVENTION & CONSTRUCTION ===================== */
+{t:"construction",q:"La résistance au feu d'un élément de construction caractérise :",o:["Sa capacité à alimenter le feu","Le temps pendant lequel il continue d'assurer son rôle (porteur, séparatif, isolant)","Sa couleur","Son poids"],a:[1],e:"La résistance au feu est la durée pendant laquelle un élément conserve ses fonctions (stabilité, étanchéité, isolation) exposé au feu."},
+{t:"construction",q:"Dans les Euroclasses de résistance au feu, que signifie le critère « R » ?",o:["La résistance mécanique / stabilité","L'étanchéité aux flammes et gaz chauds","L'isolation thermique","Le rayonnement"],a:[0],e:"R = Résistance mécanique (stabilité au feu) ; E = Étanchéité aux flammes et gaz ; I = Isolation thermique."},
+{t:"construction",q:"Que signifie le critère « I » dans un classement REI ?",o:["Inflammabilité","Isolation thermique","Intervention","Imperméabilité à l'eau"],a:[1],e:"I = Isolation thermique : l'élément limite la transmission de la chaleur sur sa face non exposée."},
+{t:"construction",q:"L'ancien terme « coupe-feu » (CF) correspond à quels critères des Euroclasses ?",o:["R seul","R + E","R + E + I","E seul"],a:[2],e:"Coupe-feu = REI : stabilité + étanchéité aux flammes/gaz + isolation thermique. Pare-flammes = RE, stable au feu = R."},
+{t:"construction",q:"L'ancien terme « pare-flammes » (PF) correspond à :",o:["La stabilité seule (R)","L'étanchéité aux flammes et gaz (RE), sans critère d'isolation thermique","L'isolation thermique seule","La réaction au feu"],a:[1],e:"Pare-flammes = RE : stabilité + étanchéité aux flammes et gaz chauds, mais la chaleur peut traverser (pas de critère I)."},
+{t:"construction",q:"Une porte classée « CF 1/2 h » signifie que l'élément est coupe-feu pendant :",o:["5 minutes","30 minutes","1 heure","2 heures"],a:[1],e:"CF 1/2 h = coupe-feu une demi-heure, soit 30 minutes (équivalent REI 30)."},
+{t:"construction",q:"À quoi sert le cloisonnement (compartimentage) dans un bâtiment ?",o:["À décorer les locaux","À limiter la propagation du feu et des fumées d'un volume à un autre","À augmenter la surface utile","À réduire le chauffage"],a:[1],e:"Le compartimentage découpe le bâtiment en volumes isolés par des parois résistant au feu, pour contenir l'incendie et protéger les cheminements."},
+{t:"construction",q:"Quels sont les objectifs généraux de la prévention incendie dans un ERP ?",o:["Permettre l'évacuation ou la mise à l'abri des personnes","Limiter les risques d'éclosion et de propagation","Faciliter l'intervention des secours","Garantir la rentabilité de l'exploitation"],a:[0,1,2],e:"La prévention vise à protéger les personnes (évacuation), limiter la naissance et la propagation du feu, et faciliter l'alerte et l'intervention des secours."},
+{t:"construction",q:"Qu'est-ce qu'un local à risques particuliers dans un ERP ?",o:["Un local présentant un potentiel calorifique ou un risque d'incendie élevé (chaufferie, réserves, archives…)","Un local accessible au public uniquement","Un local sans fenêtre","Un local toujours interdit"],a:[0],e:"Les locaux à risques (moyens ou importants) concentrent un danger particulier ; ils sont isolés du reste par des parois et portes coupe-feu renforcées."},
+{t:"construction",q:"La desserte d'un bâtiment par les services de secours exige notamment :",o:["Des voies engins / voies échelles accessibles aux véhicules de secours","Des accès pompiers maintenus libres en permanence","Une distance maîtrisée entre les baies accessibles","Un parking visiteurs payant"],a:[0,1,2],e:"La desserte impose des voies utilisables par les engins (voie engin, voie échelle), des accès dégagés et des façades accessibles aux secours."},
+{t:"construction",q:"Combien de dégagements au minimum pour un local ou niveau recevant de 51 à 300 personnes ?",o:["1 dégagement","2 dégagements","3 dégagements","4 dégagements"],a:[1],e:"Au-delà de 50 personnes, il faut au minimum 2 dégagements (règle générale du nombre de sorties)."},
+{t:"construction",q:"Quelle est la largeur d'une unité de passage (1 UP) ?",o:["0,60 m","0,80 m","0,90 m","1,40 m"],a:[2],e:"1 UP = 0,90 m. C'est la largeur de référence d'un dégagement d'une unité de passage."},
+{t:"construction",q:"Quelle est la largeur réglementaire de 2 unités de passage ?",o:["1,20 m","1,40 m","1,80 m","1,60 m"],a:[1],e:"2 UP = 1,40 m (et non 1,80 m). C'est une exception à la règle de proportionnalité, pour tenir compte de la bousculade."},
+{t:"construction",q:"Quelle est la largeur de 3 unités de passage ?",o:["1,80 m","2,00 m","1,40 m","2,40 m"],a:[0],e:"3 UP = 1,80 m. Au-delà de 3 UP, on compte 0,60 m par unité supplémentaire (n × 0,60 m)."},
+{t:"construction",q:"Au-delà de 3 unités de passage, comment calcule-t-on la largeur d'un dégagement ?",o:["0,90 m par UP","0,60 m par UP (n × 0,60 m)","1 m par UP","0,80 m par UP"],a:[1],e:"À partir de 4 UP, la largeur = nombre d'UP × 0,60 m (ex : 4 UP = 2,40 m)."},
+{t:"construction",q:"Quel est le rôle du désenfumage ?",o:["Évacuer les fumées et gaz chauds pour maintenir les cheminements praticables","Rafraîchir le bâtiment l'été","Filtrer l'air entrant","Chauffer les circulations"],a:[0],e:"Le désenfumage extrait fumées et chaleur pour garder visibles et respirables les chemins d'évacuation, limiter la propagation et aider l'intervention."},
+{t:"construction",q:"Quels sont les deux grands principes de désenfumage ?",o:["Le désenfumage naturel","Le désenfumage mécanique","Le désenfumage chimique","Le désenfumage par aspersion"],a:[0,1],e:"Désenfumage naturel (tirage thermique via amenées d'air et exutoires) ou mécanique (extracteurs et ventilateurs)."},
+{t:"construction",q:"Dans un désenfumage naturel, on trouve :",o:["Des amenées d'air (air frais) en partie basse","Des évacuations de fumées (exutoires, ouvrants) en partie haute","Des ventilateurs d'extraction obligatoires","Un réseau d'eau sous pression"],a:[0,1],e:"Le désenfumage naturel fonctionne par tirage thermique : l'air frais entre en bas, les fumées chaudes sortent en haut (exutoires/DENFC)."},
+{t:"construction",q:"Que signifie le sigle DAS ?",o:["Dispositif Actionné de Sécurité","Détecteur Automatique de Sécurité","Dispositif d'Alarme Sonore","Double Alimentation de Secours"],a:[0],e:"DAS : Dispositif Actionné de Sécurité (porte coupe-feu, clapet, volet/exutoire de désenfumage, non-stop ascenseur…), actionné par le CMSI pour la mise en sécurité."},
+{t:"construction",q:"Quelles sont les deux fonctions de l'éclairage de sécurité dans un ERP ?",o:["L'éclairage d'évacuation (balisage)","L'éclairage d'ambiance / anti-panique","L'éclairage décoratif","L'éclairage de la façade"],a:[0,1],e:"L'éclairage de sécurité assure l'évacuation (balisage des cheminements et sorties) et l'ambiance/anti-panique (éviter la panique dans les grands locaux)."},
+{t:"construction",q:"Quelle est l'autonomie minimale réglementaire d'un éclairage de sécurité ?",o:["15 minutes","30 minutes","1 heure","4 heures"],a:[2],e:"L'éclairage de sécurité doit disposer d'une autonomie d'au moins 1 heure."},
+{t:"construction",q:"Un bloc autonome d'éclairage de sécurité est désigné par le sigle :",o:["BAES","BAAS","DAS","DAD"],a:[0],e:"BAES : Bloc Autonome d'Éclairage de Sécurité (à ne pas confondre avec BAAS, bloc autonome d'alarme sonore)."},
+{t:"construction",q:"Dans un cheminement d'évacuation, les BAES de balisage doivent être espacés au maximum de :",o:["5 m","10 m","15 m","30 m"],a:[2],e:"Les foyers lumineux de balisage sont espacés d'au maximum 15 m, et placés à chaque changement de direction, sortie et obstacle."},
+{t:"construction",q:"L'éclairage d'ambiance / anti-panique est notamment exigé dans les locaux :",o:["Pouvant recevoir plus de 100 personnes en étage ou au rez-de-chaussée","Pouvant recevoir plus de 50 personnes en sous-sol","De moins de 20 personnes","Uniquement extérieurs"],a:[0,1],e:"L'éclairage d'ambiance est imposé dans les locaux pouvant recevoir plus de 100 personnes (étage/RdC) ou plus de 50 personnes en sous-sol."},
+{t:"construction",q:"Les dégagements d'un ERP doivent être :",o:["Maintenus libres en permanence","Judicieusement répartis","Dimensionnés selon l'effectif à évacuer","Fermés à clé pendant l'exploitation"],a:[0,1,2],e:"Les dégagements doivent rester libres, être bien répartis et dimensionnés selon l'effectif. Ils ne doivent jamais être condamnés durant la présence du public."},
+{t:"construction",q:"Qu'est-ce qu'un dégagement accessoire ?",o:["Un dégagement supplémentaire quand la distance à parcourir est trop grande ou qu'une sortie risque d'être neutralisée","Une porte de service du personnel","Un ascenseur de secours","Une issue réservée aux pompiers"],a:[0],e:"Le dégagement accessoire complète les dégagements normaux lorsque leur nombre ou leur répartition est insuffisant ; il peut être plus étroit (ex : échelle, passage)."},
+{t:"construction",q:"La distance maximale à parcourir pour atteindre une sortie ou un dégagement est encadrée afin de :",o:["Limiter le temps d'exposition aux fumées lors de l'évacuation","Réduire la consommation électrique","Augmenter la capacité d'accueil","Faciliter le nettoyage"],a:[0],e:"On limite les distances de cheminement (ex. de l'ordre de 30 à 40 m) pour que l'évacuation soit rapide et que les occupants restent le moins longtemps possible exposés."},
+{t:"construction",q:"Le potentiel (ou charge) calorifique d'un local désigne :",o:["La quantité de chaleur dégagée par la combustion complète des matériaux qu'il contient","La température ambiante du local","La puissance de son chauffage","Le débit de ventilation"],a:[0],e:"Le potentiel calorifique est l'énergie totale susceptible d'être libérée par la combustion de tout le contenu combustible d'un local ; plus il est élevé, plus le risque est grand."},
+{t:"construction",q:"Un écran de cantonnement (cantonnement de désenfumage) sert à :",o:["Retenir les fumées sous le plafond dans un volume donné pour les évacuer efficacement","Protéger les personnes du rayonnement","Fermer les issues","Stocker l'eau d'extinction"],a:[0],e:"Les écrans de cantonnement limitent le déplacement latéral des fumées sous plafond et les concentrent vers les exutoires du canton de désenfumage."},
+
+/* ===================== 4. INSTALLATIONS TECHNIQUES & SSI ===================== */
+{t:"tech",q:"Que signifie le sigle SSI ?",o:["Système de Sécurité Incendie","Service de Surveillance Interne","Signal Sonore d'Incendie","Système de Secours Interne"],a:[0],e:"SSI : Système de Sécurité Incendie, ensemble des matériels qui détectent et mettent le bâtiment en sécurité."},
+{t:"tech",q:"Combien existe-t-il de catégories de SSI et comment sont-elles classées ?",o:["5 catégories, de A (la plus complète) à E (la plus simple)","3 catégories, de 1 à 3","4 catégories, de I à IV","2 catégories, A et B"],a:[0],e:"Il existe 5 catégories de SSI, de A (la plus complète, avec détection automatique généralisée) à E (la plus élémentaire)."},
+{t:"tech",q:"Un SSI de catégorie A comprend notamment :",o:["Un Système de Détection Incendie (SDI)","Un Système de Mise en Sécurité Incendie (SMSI) avec CMSI","De la détection automatique d'incendie","Un simple sifflet d'alarme"],a:[0,1,2],e:"Le SSI de catégorie A est le plus complet : SDI (détection) + SMSI piloté par un CMSI, avec détection automatique. La catégorie E, elle, est très réduite."},
+{t:"tech",q:"De quoi se compose un SSI ?",o:["D'un SDI (Système de Détection Incendie)","D'un SMSI (Système de Mise en Sécurité Incendie)","D'un groupe électrogène obligatoire","D'une colonne sèche"],a:[0,1],e:"Un SSI = SDI (détection : DM, DA, ECS) + SMSI (mise en sécurité : CMSI, DAS, diffuseurs). Groupe électrogène et colonne sèche n'en font pas partie."},
+{t:"tech",q:"Que signifie le sigle DM dans un système de détection ?",o:["Déclencheur Manuel","Détecteur Multiple","Dispositif de Mise en sécurité","Double Module"],a:[0],e:"DM : Déclencheur Manuel (bris de glace) qui permet à une personne de déclencher l'alarme. Le DA est le détecteur automatique."},
+{t:"tech",q:"Associez les détecteurs automatiques d'incendie à leur principe.",o:["Détecteur optique de fumée","Détecteur thermique / thermovélocimétrique","Détecteur de flamme (UV/IR)","Détecteur de présence par infrarouge passif"],a:[0,1,2],e:"Les DA détectent la fumée (optique), la chaleur (thermique/thermovélocimétrique) ou la flamme (UV/IR). Le détecteur de présence sert à la gestion d'éclairage, pas à l'incendie."},
+{t:"tech",q:"Quel type de détecteur automatique de fumée est aujourd'hui interdit en raison de son caractère radioactif ?",o:["Le détecteur optique","Le détecteur ionique","Le détecteur thermique","Le détecteur de flamme"],a:[1],e:"Le détecteur ionique, contenant une source radioactive, n'est plus installé et doit être remplacé."},
+{t:"tech",q:"Que signifie le sigle CMSI ?",o:["Centralisateur de Mise en Sécurité Incendie","Commande Manuelle de Sécurité Incendie","Contrôleur du Matériel de Sécurité Incendie","Centre de Maintenance Sécurité Incendie"],a:[0],e:"CMSI : Centralisateur de Mise en Sécurité Incendie, cœur du SMSI qui pilote les DAS (compartimentage, désenfumage, évacuation)."},
+{t:"tech",q:"Quelles sont les principales fonctions de mise en sécurité assurées par un SMSI ?",o:["Le compartimentage","L'évacuation (diffusion de l'alarme, déverrouillage des issues)","Le désenfumage","L'extinction automatique à eau obligatoire"],a:[0,1,2],e:"La mise en sécurité couvre le compartimentage, l'évacuation et le désenfumage (plus l'arrêt de certaines installations). L'extinction automatique n'est pas systématique."},
+{t:"tech",q:"L'équipement d'alarme de type 1 est associé à quelle catégorie de SSI ?",o:["Catégorie A","Catégorie C","Catégorie E","Aucune"],a:[0],e:"L'équipement d'alarme de type 1 (le plus complet, avec détection automatique et UGA) est associé au SSI de catégorie A."},
+{t:"tech",q:"Quel équipement d'alarme est le plus simple (ex : cloche, sifflet, bloc autonome) ?",o:["Type 1","Type 2a","Type 3","Type 4"],a:[3],e:"L'équipement d'alarme de type 4 est le plus élémentaire : tout dispositif autonome (cloche, sifflet, BAAS…) sans exigence de détection."},
+{t:"tech",q:"Que signifie le sigle UGA ?",o:["Unité de Gestion d'Alarme","Unité Générale d'Arrêt","Unité de Gestion des Accès","Ultime Garde Automatique"],a:[0],e:"UGA : Unité de Gestion d'Alarme, qui déclenche et temporise l'alarme générale dans les SSI les plus complets."},
+{t:"tech",q:"La temporisation de l'alarme générale, lorsqu'elle existe, ne peut pas dépasser :",o:["30 secondes","1 minute","5 minutes","15 minutes"],a:[2],e:"La temporisation entre l'alarme restreinte (au PC) et l'alarme générale est limitée à 5 minutes maximum, pour laisser le temps de lever le doute."},
+{t:"tech",q:"En cas d'incendie, l'usage des ascenseurs par le public :",o:["Est interdit : on utilise les escaliers","Est recommandé pour aller plus vite","Est obligatoire pour les personnes valides","Dépend de l'humeur de l'agent"],a:[0],e:"On n'utilise jamais l'ascenseur pour évacuer en cas d'incendie (risque de blocage, d'enfumage). Les ascenseurs sont le plus souvent rappelés au niveau d'accès des secours."},
+{t:"tech",q:"Qu'est-ce qu'une installation fixe d'extinction automatique à eau de type sprinkleur ?",o:["Un réseau de têtes qui se déclenchent automatiquement sous l'effet de la chaleur pour arroser le foyer","Un extincteur portatif à eau","Une lance incendie manuelle","Un détecteur de fumée"],a:[0],e:"Le sprinkleur est un réseau sous eau (ou sous air) dont les têtes s'ouvrent individuellement à la chaleur et arrosent le foyer, tout en pouvant donner l'alarme."},
+{t:"tech",q:"Un détecteur autonome déclencheur (DAD) sert principalement à :",o:["Détecter la fumée et commander localement un dispositif (ex : fermeture d'une porte)","Éteindre automatiquement le feu","Alimenter l'éclairage de sécurité","Mesurer la température extérieure"],a:[0],e:"Le DAD détecte la fumée et commande directement un organe de sécurité à proximité (par exemple la fermeture d'une porte coupe-feu)."},
+{t:"tech",q:"Dans un désenfumage mécanique, la commande manuelle au niveau du CMSI/poste de sécurité :",o:["Est prioritaire sur les commandes automatiques","Est interdite","Ne fonctionne que le jour","N'existe pas"],a:[0],e:"La commande manuelle des dispositifs de sécurité (désenfumage, DAS) est toujours prioritaire sur la commande automatique."},
+{t:"tech",q:"Pourquoi faut-il couper l'alimentation électrique d'une zone avant d'y intervenir sur un feu avec de l'eau ?",o:["Pour supprimer le risque d'électrisation et d'électrocution","Pour économiser l'énergie","Pour éteindre les lumières","Ce n'est pas nécessaire"],a:[0],e:"L'eau conduit l'électricité : on coupe le courant pour écarter tout risque d'électrisation/électrocution avant d'intervenir."},
+{t:"tech",q:"Les installations électriques d'un ERP doivent notamment comporter :",o:["Un dispositif de coupure d'urgence (coupure générale ou par zone)","Une protection contre les surintensités","Une source de sécurité pour les équipements de sécurité","Une interdiction totale de prises de courant"],a:[0,1,2],e:"On exige des coupures d'urgence, des protections contre surintensités/contacts, et une alimentation de sécurité pour les équipements de sécurité (éclairage, SSI, désenfumage…)."},
+{t:"tech",q:"Qu'appelle-t-on une source de sécurité dans une installation électrique ?",o:["Une source destinée à alimenter les équipements de sécurité en cas de défaillance de la source normale","La prise de terre","Le disjoncteur principal","Le compteur du distributeur"],a:[0],e:"La source de sécurité (batteries, groupe électrogène…) prend le relais de la source normale pour maintenir les installations de sécurité (éclairage de sécurité, désenfumage, SSI)."},
+{t:"tech",q:"Le rôle d'un clapet coupe-feu dans une gaine de ventilation est :",o:["D'obturer la gaine pour empêcher le passage du feu et des fumées d'un volume à l'autre","D'augmenter le débit d'air","De filtrer les poussières","De chauffer l'air"],a:[0],e:"Le clapet coupe-feu, un DAS, se ferme pour rétablir le compartimentage et bloquer la propagation du feu et des fumées par les gaines de ventilation."},
+{t:"tech",q:"Le sigle ECS désigne, dans un SDI :",o:["L'Équipement de Contrôle et de Signalisation","L'Éclairage Central de Sécurité","L'Extincteur à CO2 Sous pression","L'Équipe de Contrôle Sécurité"],a:[0],e:"ECS : Équipement de Contrôle et de Signalisation du SDI ; il reçoit les informations des détecteurs et déclencheurs et signale l'alarme feu."},
+{t:"tech",q:"Dans un bâtiment, le non-arrêt (rappel) des ascenseurs en cas de détection incendie permet :",o:["De ramener la cabine à un niveau sûr et d'en interdire l'usage","D'accélérer les ascenseurs","De bloquer la cabine entre deux étages","De couper tout le bâtiment"],a:[0],e:"Sur détection, les ascenseurs sont rappelés au niveau d'accès des secours (ou niveau d'évacuation), portes ouvertes, et mis hors service public."},
+
+/* ===================== 5. MOYENS DE SECOURS ===================== */
+{t:"moyens",q:"Que regroupe la notion de « moyens de secours » dans un ERP ?",o:["Les moyens d'extinction (extincteurs, RIA, colonnes…)","Le service de sécurité incendie et le système de sécurité incendie","Les moyens d'alerte des secours extérieurs","Le mobilier du public"],a:[0,1,2],e:"Les moyens de secours comprennent les moyens d'extinction, les dispositions pour faciliter l'intervention, le service de sécurité, le SSI et les moyens d'alerte."},
+{t:"moyens",q:"Un extincteur à eau pulvérisée avec additif est principalement efficace sur les feux de classe :",o:["A et B","C et D","D seulement","F seulement"],a:[0],e:"L'eau pulvérisée avec additif agit sur les feux secs (A) et, grâce à l'additif, sur les feux gras (B)."},
+{t:"moyens",q:"Quelle est la règle de dotation de base en extincteurs dans les ERP ?",o:["Au moins un extincteur à eau pulvérisée de 6 litres pour 200 à 300 m² et par niveau, avec un minimum d'un par niveau","Un extincteur pour tout le bâtiment","Un extincteur par personne","Aucune obligation"],a:[0],e:"Règle générale : un extincteur portatif à eau pulvérisée de 6 L minimum par 200 à 300 m², avec au moins un appareil par niveau."},
+{t:"moyens",q:"Que signifie le sigle RIA ?",o:["Robinet d'Incendie Armé","Réseau d'Intervention Automatique","Réserve Incendie Autonome","Raccord d'Injection d'Alarme"],a:[0],e:"RIA : Robinet d'Incendie Armé, moyen d'extinction de première intervention alimenté en eau en permanence."},
+{t:"moyens",q:"Un RIA est :",o:["Alimenté en eau en permanence et prêt à l'emploi","Réservé aux pompiers","Alimenté uniquement par les engins de secours","Vide au repos"],a:[0],e:"Le RIA est en eau en permanence, sous pression, et utilisable immédiatement par le personnel pour une première intervention."},
+{t:"moyens",q:"Une colonne sèche est :",o:["Une tuyauterie fixe rigide, vide au repos, alimentée par les pompiers à partir de leurs engins","Un réseau toujours en eau sous pression","Un type d'extincteur","Un détecteur de fumée"],a:[0],e:"La colonne sèche est une canalisation fixe, non alimentée en permanence ; les sapeurs-pompiers l'alimentent par le raccord au pied de colonne lors de l'intervention."},
+{t:"moyens",q:"Quelle est la différence principale entre une colonne sèche et une colonne humide ?",o:["La colonne humide est maintenue en eau sous pression en permanence, la colonne sèche non","La colonne sèche est plus grosse","La colonne humide est réservée au public","Il n'y a aucune différence"],a:[0],e:"La colonne humide est alimentée en eau en permanence (surpresseur), contrairement à la colonne sèche, vide au repos. Les IGH imposent des colonnes humides."},
+{t:"moyens",q:"Que distingue l'alerte de l'alarme ?",o:["L'alarme prévient les occupants d'évacuer ; l'alerte prévient les secours extérieurs","L'alerte prévient les occupants ; l'alarme prévient les pompiers","Ce sont deux synonymes","L'alarme est visuelle, l'alerte sonore uniquement"],a:[0],e:"Alarme = signal destiné aux occupants pour qu'ils évacuent. Alerte = action de prévenir les secours extérieurs (pompiers)."},
+{t:"moyens",q:"Quel numéro compose-t-on pour alerter les sapeurs-pompiers en France ?",o:["15","17","18","115"],a:[2],e:"Le 18 est le numéro des sapeurs-pompiers. Le 15 est le SAMU, le 17 la police, le 112 le numéro d'urgence européen."},
+{t:"moyens",q:"Quel est le numéro d'urgence européen, valable depuis un portable ?",o:["112","18","15","114"],a:[0],e:"Le 112 est le numéro d'urgence commun à l'Union européenne. Le 114 est destiné aux personnes sourdes ou malentendantes."},
+{t:"moyens",q:"Lors de l'alerte des secours, quelles informations faut-il transmettre ?",o:["L'adresse précise et les accès","La nature du sinistre et son importance","Les éventuelles victimes","Son numéro de sécurité sociale"],a:[0,1,2],e:"On indique le lieu exact et les accès, la nature et l'ampleur du sinistre, la présence de victimes, puis on ne raccroche qu'à la demande de l'opérateur."},
+{t:"moyens",q:"Qu'est-ce qu'une alarme générale sélective (AGS) ?",o:["Une alarme perçue uniquement par le personnel, utilisée là où l'évacuation du public est différée (types U, J)","Une alarme qui sélectionne les étages au hasard","Une alarme réservée aux pompiers","Une alarme silencieuse décorative"],a:[0],e:"L'AGS n'est audible que du personnel, dans les établissements où l'évacuation immédiate du public n'est pas possible (soins, personnes âgées) : le personnel organise alors la mise en sécurité."},
+{t:"moyens",q:"L'extincteur à CO2 présente l'avantage :",o:["De ne pas laisser de résidu et de ne pas endommager le matériel (électronique, électrique)","D'être efficace sur les feux de métaux","De refroidir durablement le foyer","D'être utilisable sur une personne en feu sans risque"],a:[0],e:"Le CO2 est propre (pas de résidu), idéal sur matériel électrique/électronique. Attention : risque de gelure au contact du diffuseur et inefficace sur les feux couvants profonds."},
+{t:"moyens",q:"Avant d'utiliser un extincteur, l'agent doit notamment :",o:["Vérifier que l'appareil est adapté à la classe de feu","Garder une issue de repli dans son dos","Attaquer le feu à sa base","Viser le sommet des flammes"],a:[0,1,2],e:"On choisit l'agent adapté à la classe de feu, on garde toujours une sortie derrière soi et on attaque la base des flammes."},
+{t:"moyens",q:"Les extincteurs portatifs doivent faire l'objet :",o:["D'une vérification périodique (au moins annuelle) par une personne compétente","D'une maintenance et d'un contrôle de pression","D'un remplacement à chaque fausse alerte","D'aucun entretien"],a:[0,1],e:"Les extincteurs sont vérifiés au moins une fois par an par un technicien compétent (pression, pesée, état) ; une maintenance approfondie est prévue périodiquement."},
+{t:"moyens",q:"Un poteau ou une bouche d'incendie sur la voie publique sert à :",o:["Alimenter les engins de secours en eau (hydrant)","Arroser les espaces verts","Signaler un ERP","Mesurer la pression de l'eau potable"],a:[0],e:"Poteaux et bouches d'incendie sont des hydrants : ils fournissent l'eau d'extinction aux sapeurs-pompiers lors de l'intervention."},
+{t:"moyens",q:"Pour être efficaces, les moyens d'extinction de première intervention doivent surtout :",o:["Être adaptés aux risques","Être signalés et accessibles","Être connus et manipulables par le personnel formé","Être cachés pour éviter le vol"],a:[0,1,2],e:"Les moyens de première intervention doivent être adaptés, visibles/accessibles et maîtrisés par un personnel entraîné. Les dissimuler les rendrait inutiles."},
+{t:"moyens",q:"Dans un ERP, la distance maximale à parcourir pour atteindre un extincteur est de l'ordre de :",o:["5 m","15 m","50 m","100 m"],a:[1],e:"Les extincteurs sont répartis de façon qu'on ait au plus une quinzaine de mètres à parcourir pour en atteindre un."},
+
+/* ===================== 6. RÔLE DE L'AGENT & RÉGLEMENTATION ===================== */
+{t:"role",q:"Quel texte fixe les missions, l'emploi et la qualification des agents SSIAP ?",o:["L'arrêté du 2 mai 2005","Le Code de la route","L'arrêté du 25 juin 1980 uniquement","Le Code civil"],a:[0],e:"L'arrêté du 2 mai 2005 (modifié) régit les missions, l'emploi et la qualification du personnel des services de sécurité incendie des ERP et IGH."},
+{t:"role",q:"Que signifie SSIAP ?",o:["Service de Sécurité Incendie et d'Assistance à Personnes","Système de Sécurité Incendie Автоmatique Permanent","Service de Surveillance Interne des Agents de Prévention","Secours Sécurité Incendie Assistance Police"],a:[0],e:"SSIAP : Service de Sécurité Incendie et d'Assistance à Personnes."},
+{t:"role",q:"Quel est le niveau de qualification correspondant à l'agent de sécurité incendie (exécution) ?",o:["SSIAP 1","SSIAP 2","SSIAP 3","SSIAP 4"],a:[0],e:"SSIAP 1 = agent de sécurité incendie. SSIAP 2 = chef d'équipe, SSIAP 3 = chef de service. Il n'existe pas de SSIAP 4."},
+{t:"role",q:"Le chef d'équipe de sécurité incendie correspond au niveau :",o:["SSIAP 1","SSIAP 2","SSIAP 3","Aucun"],a:[1],e:"Le SSIAP 2 est le chef d'équipe, qui encadre les agents SSIAP 1."},
+{t:"role",q:"Quelles sont des missions de l'agent de sécurité incendie (SSIAP 1) ?",o:["La prévention des incendies","L'alerte et l'accueil des secours","L'évacuation du public","La délivrance des autorisations de travaux"],a:[0,1,2],e:"L'agent assure prévention, sensibilisation, entretien élémentaire des moyens, alerte et accueil des secours, évacuation et intervention précoce. Les autorisations relèvent de l'autorité administrative, pas de l'agent."},
+{t:"role",q:"Parmi les missions du service de sécurité incendie figurent :",o:["L'entretien élémentaire des moyens de secours","L'exploitation du PC de sécurité incendie","L'assistance à personnes au sein de l'établissement","La vente des billets au public"],a:[0,1,2],e:"Le service assure notamment l'entretien élémentaire des moyens, l'exploitation du poste de sécurité et l'assistance à personnes ; la billetterie n'est pas une mission de sécurité."},
+{t:"role",q:"Qu'est-ce qu'une ronde de sécurité ?",o:["Un parcours de surveillance destiné à déceler et prévenir les risques, vérifier le bon état des installations et agir précocement","Une pause réglementaire","Une réunion du personnel","Un contrôle des billets"],a:[0],e:"La ronde est un parcours organisé qui permet de détecter tout risque (départ de feu, anomalie), de dissuader, de vérifier les installations et d'intervenir au plus tôt."},
+{t:"role",q:"À l'issue d'une ronde, que fait l'agent des événements constatés ?",o:["Il les consigne sur la main courante","Il les oublie","Il les communique seulement oralement","Il les publie sur les réseaux sociaux"],a:[0],e:"Tout événement, anomalie ou incident est consigné par écrit sur la main courante du poste de sécurité, qui assure la traçabilité."},
+{t:"role",q:"Qu'est-ce que la main courante ?",o:["Le document (registre) où l'agent consigne les événements, incidents et actions du service","La rambarde d'un escalier uniquement","Un extincteur portatif","Un détecteur de fumée"],a:[0],e:"La main courante est le journal de bord du poste de sécurité : elle trace chronologiquement tous les événements et interventions."},
+{t:"role",q:"Le poste de sécurité (PC sécurité) est :",o:["Le local d'où l'on exploite et surveille les installations de sécurité (SSI, alarmes, désenfumage…)","La loge du gardien d'immeuble","Un local technique fermé au public comme aux agents","La cafétéria du personnel"],a:[0],e:"Le PC sécurité centralise la surveillance et la commande des équipements de sécurité ; il est tenu par le service de sécurité incendie."},
+{t:"role",q:"Qu'est-ce que le registre de sécurité d'un ERP ?",o:["Un document obligatoire regroupant les renseignements sur la sécurité : contrôles, exercices, travaux, formations, consignes","Un registre des entrées du public","Le livre de comptes de l'établissement","Un cahier facultatif"],a:[0],e:"Le registre de sécurité est obligatoire ; il consigne les vérifications techniques, exercices d'évacuation, travaux, formations et l'organisation de la sécurité. Il est présenté à la commission de sécurité."},
+{t:"role",q:"Qui autorise l'ouverture d'un ERP au public ?",o:["Le maire (ou le préfet à Paris), après avis de la commission de sécurité","La commission de sécurité seule","L'exploitant lui-même","Les sapeurs-pompiers"],a:[0],e:"La commission de sécurité émet un avis (favorable/défavorable) ; c'est l'autorité de police (le maire, ou le préfet) qui autorise ou non l'ouverture."},
+{t:"role",q:"La commission de sécurité, lors d'une visite, rend :",o:["Un avis (favorable ou défavorable)","Une décision d'ouverture exécutoire","Une amende","Un permis de construire"],a:[0],e:"La commission rend un avis consultatif ; la décision appartient à l'autorité de police administrative (maire/préfet)."},
+{t:"role",q:"Qu'est-ce qu'un permis de feu ?",o:["Une autorisation et des mesures de prévention encadrant les travaux par points chauds (soudure, meulage, découpe)","Un permis de faire du feu de camp","Une licence d'exploitation d'un barbecue","Un diplôme de l'agent"],a:[0],e:"Le permis de feu organise la prévention lors de travaux générant des points chauds (étincelles, flammes) : il impose des mesures avant, pendant et après (surveillance)."},
+{t:"role",q:"En cas de découverte d'un début d'incendie, quel est l'ordre d'actions prioritaire de l'agent ?",o:["Donner l'alarme / alerter, puis intervenir si possible et faire évacuer","Partir en pause","Terminer sa ronde d'abord","Attendre l'arrivée des pompiers sans rien faire"],a:[0],e:"Priorité à la sauvegarde des personnes : donner l'alarme/alerter, mettre en sécurité et évacuer, puis attaquer le feu si c'est possible sans se mettre en danger."},
+{t:"role",q:"À l'arrivée des sapeurs-pompiers, le rôle de l'agent de sécurité est de :",o:["Les accueillir, les guider et leur transmettre les informations (localisation, victimes, plans, clés)","Prendre le commandement des opérations","Rester caché","Évacuer les lieux sans rien dire"],a:[0],e:"L'agent accueille et guide les secours, leur remet les informations utiles (plans, accès, points de coupure, situation) ; le commandement des opérations revient aux pompiers."},
+{t:"role",q:"La sensibilisation du personnel de l'établissement par l'agent vise à :",o:["Faire connaître les consignes, les moyens de secours et la conduite à tenir en cas d'incendie","Vendre des produits de sécurité","Remplacer les exercices d'évacuation","Former des sapeurs-pompiers professionnels"],a:[0],e:"L'agent sensibilise les employés aux consignes, à l'alarme, à l'usage des moyens de première intervention et à l'évacuation."},
+{t:"role",q:"Les consignes de sécurité incendie doivent être :",o:["Affichées et connues du personnel","Adaptées à l'établissement","Testées lors d'exercices d'évacuation","Confidentielles et inaccessibles"],a:[0,1,2],e:"Les consignes sont affichées, adaptées aux lieux et éprouvées par des exercices d'évacuation périodiques ; elles ne doivent surtout pas rester confidentielles."},
+{t:"role",q:"Lors d'une évacuation, quel est le rôle des guides-files et serre-files ?",o:["Le guide-file conduit le groupe vers la sortie ; le serre-file ferme la marche et vérifie que personne ne reste","Ils gardent les issues fermées","Ils comptent la recette","Ils appellent la presse"],a:[0],e:"Le guide-file mène les occupants vers le point de rassemblement ; le serre-file s'assure que le local est vide et que personne n'est resté en arrière."},
+{t:"role",q:"Le point de rassemblement est :",o:["Un lieu sûr, à l'écart du bâtiment, où se regroupent les personnes évacuées pour être comptées","Le hall d'entrée","Le local du PC sécurité","Le parking des pompiers"],a:[0],e:"Le point de rassemblement, situé à distance du sinistre et hors de la zone d'intervention des secours, permet de regrouper et de dénombrer les personnes évacuées."},
+{t:"role",q:"À quelle fréquence les compétences SSIAP doivent-elles être entretenues (recyclage) ?",o:["Tous les 3 ans","Tous les ans","Tous les 5 ans","Jamais"],a:[0],e:"Le recyclage (ou la remise à niveau si l'activité a été interrompue) est exigé tous les 3 ans pour continuer à exercer."},
+{t:"role",q:"Un agent de sécurité incendie peut-il abandonner son poste de sécurité sans être remplacé lorsque l'établissement reçoit du public ?",o:["Non, le poste doit rester tenu en permanence pendant la présence du public","Oui, à tout moment","Oui, pendant les heures creuses","Oui, s'il prévient par SMS"],a:[0],e:"La présence du service de sécurité incendie est permanente durant la présence du public ; le poste ne doit jamais être laissé sans surveillance."},
+{t:"role",q:"Les exercices d'évacuation dans un ERP ont pour but :",o:["De vérifier que les occupants connaissent la conduite à tenir et testent les cheminements","De tester le matériel de sécurité en conditions réelles","D'entraîner le personnel et de corriger les défauts d'organisation","De faire peur au public"],a:[0,1,2],e:"Les exercices entraînent les occupants, éprouvent cheminements et matériels, et révèlent les points à améliorer. Ils ne visent pas à effrayer mais à préparer."},
+{t:"role",q:"Que doit vérifier en priorité l'agent lors d'une ronde concernant les issues de secours ?",o:["Qu'elles sont libres, déverrouillables et non encombrées","Qu'elles sont décorées","Qu'elles sont fermées à clé","Qu'elles sont peintes en rouge"],a:[0],e:"Les issues doivent être libres de tout obstacle, manœuvrables de l'intérieur sans clé et correctement balisées ; tout verrouillage non conforme est une anomalie majeure."},
+{t:"role",q:"La surveillance des travaux par points chauds impose notamment :",o:["Un permis de feu","La présence de moyens d'extinction à proximité","Une surveillance pendant et après les travaux","L'arrêt de tout le bâtiment systématiquement"],a:[0,1,2],e:"Travaux par points chauds = permis de feu, moyens d'extinction à portée de main, et surveillance maintenue un certain temps après la fin des travaux (reprise de feu possible)."},
+{t:"role",q:"Qui est le premier responsable de la sécurité dans un établissement recevant du public ?",o:["L'exploitant (ou chef d'établissement)","L'agent SSIAP 1","Le maire","Le public"],a:[0],e:"La responsabilité de la sécurité incombe d'abord à l'exploitant ; le service de sécurité incendie l'assiste dans cette mission."},
+
+/* ===================== LOT 2 — FEU (approfondissement) ===================== */
+{t:"feu",q:"Le tétraèdre du feu ajoute au triangle du feu un 4e élément :",o:["La réaction en chaîne","La fumée","La pression","Le vent"],a:[0],e:"Le tétraèdre du feu = combustible + comburant + énergie d'activation + réaction en chaîne. Agir sur la réaction en chaîne (inhibition) permet d'éteindre."},
+{t:"feu",q:"La poudre d'extinction agit principalement par :",o:["Refroidissement","Inhibition (arrêt de la réaction en chaîne)","Étouffement total","Dilution"],a:[1],e:"La poudre casse la réaction en chaîne de la combustion : c'est un agent d'inhibition. Elle agit aussi un peu par étouffement."},
+{t:"feu",q:"La limite inférieure d'explosivité (LIE) d'un gaz correspond à :",o:["La concentration minimale de gaz dans l'air en dessous de laquelle le mélange ne s'enflamme pas","La température d'ébullition","La pression maximale admissible","La quantité maximale stockable"],a:[0],e:"En dessous de la LIE, le mélange est trop pauvre pour s'enflammer ; au-dessus de la LSE (limite supérieure), il est trop riche. Entre les deux : domaine d'explosivité."},
+{t:"feu",q:"La température d'auto-inflammation d'un combustible est :",o:["La température à partir de laquelle il s'enflamme spontanément sans source extérieure","Son point de fusion","Son point éclair","Sa température de stockage"],a:[0],e:"L'auto-inflammation survient quand le combustible atteint une température suffisante pour s'enflammer de lui-même, sans flamme ni étincelle extérieure."},
+{t:"feu",q:"Parmi les gaz dégagés lors d'un incendie, lesquels sont particulièrement toxiques ?",o:["Le monoxyde de carbone (CO)","Le cyanure d'hydrogène (HCN)","Le dioxyde de carbone (CO2)","L'azote pur"],a:[0,1,2],e:"CO (asphyxiant chimique), HCN (issu des mousses et plastiques azotés) et CO2 (asphyxiant par appauvrissement en O2) sont tous dangereux dans les fumées."},
+{t:"feu",q:"Pourquoi l'eau est-elle un excellent agent de refroidissement ?",o:["Elle a une forte capacité à absorber la chaleur en se vaporisant","Elle est incombustible et basta","Elle est colorée","Elle est acide"],a:[0],e:"L'eau absorbe énormément d'énergie pour s'évaporer (chaleur latente de vaporisation) : 1 litre d'eau se transforme en environ 1700 litres de vapeur, d'où un fort pouvoir refroidissant."},
+{t:"feu",q:"La mousse d'extinction agit sur un feu de liquide (classe B) par :",o:["Étouffement et isolement (elle forme un tapis sur le liquide)","Inhibition chimique uniquement","Refroidissement uniquement","Dispersion du liquide"],a:[0],e:"La mousse forme un tapis qui isole le combustible du comburant (étouffement) et empêche la ré-émission de vapeurs inflammables."},
+{t:"feu",q:"Quels éléments favorisent la propagation d'un incendie dans un bâtiment ?",o:["Les gaines et vides techniques non recoupés","Les matériaux de décoration inflammables","Les portes maintenues ouvertes","Un bon compartimentage coupe-feu"],a:[0,1,2],e:"Gaines non recoupées, matériaux facilement inflammables et portes bloquées ouvertes facilitent la propagation. Le compartimentage, au contraire, la freine."},
+{t:"feu",q:"La chaleur se transmet de proche en proche dans un mur ou une poutre : il s'agit de la propagation par :",o:["Conduction","Convection","Rayonnement","Projection"],a:[0],e:"La conduction est la propagation à travers la matière, sans déplacement de celle-ci ; les métaux sont d'excellents conducteurs."},
+{t:"feu",q:"Un feu couvant (combustion lente, sans flamme) présente le risque particulier :",o:["De reprise violente ou d'explosion de fumées à l'arrivée d'air","D'être facilement visible","D'être inoffensif","De s'éteindre tout seul à coup sûr"],a:[0],e:"Un feu couvant accumule des gaz imbrûlés ; un apport soudain d'oxygène peut provoquer un backdraft (explosion de fumées)."},
+{t:"feu",q:"Parmi ces agents extincteurs, lesquels sont déconseillés ou interdits sur un feu de classe C (gaz) non maîtrisable ?",o:["On coupe d'abord l'arrivée de gaz avant toute extinction","Éteindre la flamme sans couper le gaz, laissant fuir du gaz non brûlé","Utiliser de l'eau en jet plein sur la fuite","Laisser brûler de façon contrôlée en attendant la coupure"],a:[1,2],e:"Sur un feu de gaz, la règle d'or est de couper l'alimentation. Éteindre la flamme sans couper crée une fuite de gaz explosive ; l'eau en jet plein est inadaptée."},
+{t:"feu",q:"Le rayonnement thermique d'un incendie est dangereux car :",o:["Il peut enflammer à distance des matériaux sans contact direct","Il n'a aucun effet sur les personnes","Il refroidit l'environnement","Il ne traverse pas l'air"],a:[0],e:"Le rayonnement propage la chaleur par ondes infrarouges et peut enflammer des combustibles voisins et brûler les personnes à distance."},
+{t:"feu",q:"Une combustion est dite « complète » lorsque :",o:["Le combustible brûle entièrement avec assez de comburant, produisant surtout CO2 et eau","Il reste beaucoup d'imbrûlés et de CO","Il n'y a pas de flamme","Le feu est éteint"],a:[0],e:"Une combustion complète (comburant suffisant) produit essentiellement du CO2 et de l'eau. Une combustion incomplète (manque d'oxygène) dégage beaucoup de CO et d'imbrûlés toxiques."},
+{t:"feu",q:"Parmi ces matériaux, lesquels relèvent d'un feu de classe A ?",o:["Le bois","Le carton","Le tissu / textile","L'essence"],a:[0,1,2],e:"Bois, carton et textile sont des solides formant des braises : classe A. L'essence est un liquide inflammable : classe B."},
+{t:"feu",q:"Pourquoi faut-il se baisser pour évacuer un local enfumé ?",o:["Parce que l'air reste plus respirable et plus frais en partie basse","Parce qu'on avance plus vite","Parce que les détecteurs sont au sol","Ce n'est pas utile"],a:[0],e:"Les fumées chaudes et toxiques montent et se stratifient en haut ; la couche basse reste plus respirable et moins chaude."},
+{t:"feu",q:"L'extincteur à eau pulvérisée projette l'eau en fines gouttelettes afin de :",o:["Augmenter la surface d'échange et donc le pouvoir refroidissant","Économiser l'eau seulement","Faire plus de bruit","Projeter plus loin uniquement"],a:[0],e:"La pulvérisation multiplie la surface d'échange des gouttelettes avec le feu, améliorant le refroidissement et limitant le ruissellement."},
+
+/* ===================== LOT 2 — CLASSEMENT ===================== */
+{t:"classement",q:"Comment détermine-t-on la catégorie d'un ERP du 1er groupe ?",o:["En fonction de l'effectif total (public + personnel selon les cas)","Uniquement selon le public","Uniquement selon le personnel","Selon la surface seule"],a:[0],e:"Pour les 4 premières catégories, l'effectif pris en compte additionne le public et, selon le type, le personnel n'ayant pas de dégagement indépendant."},
+{t:"classement",q:"Un petit magasin dont l'effectif reste sous les seuils d'assujettissement est classé :",o:["ERP de 5e catégorie","ERP de 1re catégorie","IGH","Hors ERP"],a:[0],e:"Un établissement dont l'effectif n'atteint pas les seuils minimaux fixés par type relève de la 5e catégorie (2e groupe)."},
+{t:"classement",q:"Parmi les classes d'IGH, lesquelles sont correctement associées ?",o:["GHA = habitation","GHO = hôtel","GHR = enseignement","GHM = magasin"],a:[0,1,2],e:"GHA habitation, GHO hôtel, GHR enseignement, GHU sanitaire, GHW bureaux, GHZ mixte, GHS archives. Il n'existe pas de classe GHM (les magasins IGH relèvent d'un classement spécifique)."},
+{t:"classement",q:"Le règlement de sécurité contre l'incendie dans les ERP découle principalement de l'arrêté du :",o:["25 juin 1980","2 mai 2005","31 janvier 1986","22 octobre 1969"],a:[0],e:"L'arrêté du 25 juin 1980 (modifié) porte règlement de sécurité contre les risques d'incendie et de panique dans les ERP. L'arrêté du 31 janvier 1986 concerne les bâtiments d'habitation."},
+{t:"classement",q:"Un établissement peut relever de plusieurs types (type « à activités multiples »). Dans ce cas :",o:["Le classement tient compte de l'ensemble des activités et du type dominant","On ne retient que la plus petite activité","Il n'est pas réglementé","Il devient un IGH"],a:[0],e:"Un établissement regroupant plusieurs exploitations est classé en tenant compte de toutes ses activités ; des dispositions particulières s'ajoutent aux dispositions générales."},
+{t:"classement",q:"Les gares (parties accessibles au public) relèvent du type :",o:["GA","PS","PA","U"],a:[0],e:"Type GA : gares. PS = parcs de stationnement couverts, PA = établissements de plein air."},
+{t:"classement",q:"Un musée relève du type :",o:["Y","S","T","L"],a:[0],e:"Type Y : musées. S = bibliothèques/documentation, T = salles d'expositions à vocation commerciale."},
+{t:"classement",q:"Une salle d'exposition à vocation commerciale (foire, salon) relève du type :",o:["T","Y","M","L"],a:[0],e:"Type T : salles d'exposition. À distinguer du type Y (musées) et du type M (magasins de vente)."},
+{t:"classement",q:"Les établissements de culte relèvent du type :",o:["V","W","R","P"],a:[0],e:"Type V : établissements de culte (églises, temples, mosquées, synagogues…)."},
+{t:"classement",q:"Les bibliothèques et centres de documentation relèvent du type :",o:["S","Y","R","W"],a:[0],e:"Type S : bibliothèques, centres de documentation et de consultation d'archives."},
+{t:"classement",q:"Les établissements sportifs couverts relèvent du type :",o:["X","P","R","L"],a:[0],e:"Type X : établissements sportifs couverts (gymnases, piscines couvertes, patinoires…)."},
+{t:"classement",q:"Qu'est-ce qui différencie fondamentalement un ERP d'un IGH ?",o:["L'IGH est défini par la hauteur du plancher bas du dernier niveau ; l'ERP par l'accueil de public","L'IGH n'accueille jamais de public","L'ERP est toujours plus haut","Il n'y a aucune différence"],a:[0],e:"La notion d'IGH repose sur la hauteur (28 m habitation / 50 m autres) ; celle d'ERP sur l'accueil du public. Un bâtiment peut être à la fois ERP et situé dans un IGH."},
+{t:"classement",q:"Les structures gonflables recevant du public relèvent du type :",o:["SG","CTS","PA","EF"],a:[0],e:"Type SG : structures gonflables. CTS = chapiteaux/tentes/structures, PA = plein air."},
+{t:"classement",q:"Un refuge de montagne gardé relève du type :",o:["REF","OA","GA","PA"],a:[0],e:"Type REF : refuges de montagne. OA = hôtels-restaurants d'altitude."},
+{t:"classement",q:"Dans un ERP de type O (hôtel), le danger particulier provient surtout :",o:["De la présence de locaux à sommeil (public endormi)","De l'absence totale de personnel","De la hauteur du bâtiment","Du nombre de parkings"],a:[0],e:"Les locaux à sommeil exposent un public endormi, lent à réagir : les types à sommeil (O, J, U, R avec internat) ont des exigences renforcées (détection, alarme)."},
+
+/* ===================== LOT 2 — CONSTRUCTION ===================== */
+{t:"construction",q:"Que signifie « SF » dans l'ancien classement de résistance au feu ?",o:["Stable au feu (résistance mécanique seule, critère R)","Sans flamme","Surface du foyer","Sécurité feu"],a:[0],e:"SF = stable au feu : l'élément conserve sa résistance mécanique (R) sans garantie d'étanchéité ni d'isolation."},
+{t:"construction",q:"Un escalier encloisonné (cage d'escalier protégée) a pour but :",o:["De protéger le cheminement vertical d'évacuation contre le feu et les fumées","De décorer le bâtiment","D'augmenter la hauteur","De ventiler les locaux"],a:[0],e:"L'encloisonnement isole l'escalier par des parois et portes coupe-feu pour qu'il reste praticable pendant l'évacuation ; il est souvent désenfumé ou mis à l'abri des fumées."},
+{t:"construction",q:"À quoi sert un sas entre un escalier protégé et un parc de stationnement ou un local à risque ?",o:["À éviter le passage direct des fumées et à renforcer l'isolement","À stocker du matériel","À accueillir du public","À ventiler le parking"],a:[0],e:"Le sas crée un volume tampon avec deux portes coupe-feu qui ne s'ouvrent pas en même temps, empêchant les fumées de pénétrer dans l'escalier."},
+{t:"construction",q:"Combien de dégagements et d'unités de passage pour un local de 101 à 200 personnes (règle générale) ?",o:["2 dégagements totalisant 2 UP","2 dégagements totalisant 3 UP","1 dégagement de 2 UP","3 dégagements totalisant 4 UP"],a:[1],e:"Règle générale : de 101 à 200 personnes, 2 dégagements totalisant 3 UP (1,80 m). Au-delà, on ajoute UP et dégagements par tranches."},
+{t:"construction",q:"Pour un effectif de 1 à 19 personnes, la règle générale impose :",o:["1 dégagement d'une unité de passage (0,90 m)","2 dégagements","3 UP","Aucune sortie dédiée"],a:[0],e:"De 1 à 19 personnes : un seul dégagement d'une UP (0,90 m) suffit en règle générale."},
+{t:"construction",q:"Les portes des issues de secours empruntées par le public doivent s'ouvrir :",o:["Dans le sens de l'évacuation (vers l'extérieur) lorsque l'effectif le justifie","Toujours vers l'intérieur","Uniquement à clé","En coulissant obligatoirement"],a:[0],e:"Les portes desservant un effectif important s'ouvrent dans le sens de la sortie pour éviter la bousculade ; les portes coulissantes ou à tambour ne comptent pas comme dégagements normaux sauf dispositif conforme."},
+{t:"construction",q:"L'isolement par rapport aux tiers (bâtiments voisins) vise à :",o:["Empêcher la propagation du feu d'un bâtiment à l'autre","Protéger l'intimité des occupants","Réduire le bruit","Partager les charges"],a:[0],e:"Des parois coupe-feu (et des distances) isolent l'ERP des bâtiments tiers pour éviter la propagation de l'incendie de proche en proche."},
+{t:"construction",q:"Dans un ERP, les revêtements et la décoration des dégagements sont réglementés en réaction au feu afin de :",o:["Limiter l'inflammation et la propagation rapide sur les cheminements d'évacuation","Améliorer l'acoustique","Réduire les coûts","Faciliter le nettoyage"],a:[0],e:"On impose des classes de réaction au feu sévères aux revêtements des dégagements pour que les chemins d'évacuation ne s'embrasent pas et ne dégagent pas trop de fumées."},
+{t:"construction",q:"Le désenfumage mécanique utilise :",o:["Des ventilateurs d'extraction et d'amenée d'air","Le seul tirage thermique naturel","Des extincteurs","Des détecteurs uniquement"],a:[0],e:"Le désenfumage mécanique repose sur des ventilateurs (extracteurs de fumées et, le cas échéant, amenées d'air mécaniques) commandés par le SSI."},
+{t:"construction",q:"Les ventilateurs de désenfumage mécanique doivent pouvoir fonctionner avec des fumées chaudes. On exige typiquement une tenue de :",o:["400 °C pendant une durée déterminée (ex. 2 h) ou 200 °C selon les cas","20 °C seulement","Aucune contrainte de température","1000 °C en continu"],a:[0],e:"Les extracteurs de désenfumage sont classés en tenue à la température des fumées (par exemple 400 °C / 2 h, ou 200 °C) pour rester opérationnels pendant l'incendie."},
+{t:"construction",q:"Qu'est-ce qu'un volet de désenfumage ?",o:["Un DAS qui s'ouvre pour laisser les fumées rejoindre le conduit d'extraction du local sinistré","Un volet roulant de fenêtre","Un clapet de ventilation de confort","Une porte coupe-feu"],a:[0],e:"Le volet de désenfumage (DAS) s'ouvre, sur commande du CMSI, pour mettre le local en communication avec le conduit d'extraction des fumées."},
+{t:"construction",q:"Le recoupement des combles, vides techniques et gaines a pour objectif :",o:["D'éviter la propagation rapide du feu et des fumées dans ces volumes cachés","D'améliorer l'isolation thermique","D'augmenter la surface","De faciliter la maintenance uniquement"],a:[0],e:"Ces volumes dissimulés constituent des chemins de propagation privilégiés : on les recoupe par des parois coupe-feu pour cloisonner le risque."},
+{t:"construction",q:"Les amenées d'air d'un désenfumage doivent être situées :",o:["En partie basse du volume à désenfumer","Au plafond","À l'extérieur du bâtiment uniquement","Dans les gaines électriques"],a:[0],e:"Les amenées d'air frais sont placées en partie basse, les évacuations de fumées en partie haute, pour créer un balayage efficace du volume."},
+{t:"construction",q:"Un bloc-porte coupe-feu équipé d'un ferme-porte et asservi au SSI est un exemple de :",o:["DAS (dispositif actionné de sécurité)","Détecteur automatique","Source de sécurité","Moyen d'extinction"],a:[0],e:"Une porte coupe-feu à fermeture automatique asservie (maintenue ouverte par ventouse, libérée en cas d'alarme) est un DAS assurant le compartimentage."},
+{t:"construction",q:"Pourquoi limite-t-on la longueur des culs-de-sac dans les circulations ?",o:["Parce qu'un occupant engagé dans un cul-de-sac enfumé peut se retrouver piégé","Pour économiser la peinture","Pour le confort acoustique","Pour réduire la surface"],a:[0],e:"Les culs-de-sac (impasses) sont strictement limités en longueur car ils augmentent le risque qu'une personne s'y retrouve bloquée par les fumées."},
+
+/* ===================== LOT 2 — TECHNIQUE & SSI ===================== */
+{t:"tech",q:"Associez les catégories de SSI à leur niveau d'équipement.",o:["Catégorie A : la plus complète (détection auto + CMSI)","Catégorie E : la plus simple","Catégorie A = détection automatique généralisée","Catégorie E = détection automatique obligatoire partout"],a:[0,1,2],e:"La catégorie A est la plus complète (SDI + SMSI avec CMSI, détection auto) ; la catégorie E est la plus simple et n'impose pas de détection automatique généralisée."},
+{t:"tech",q:"Dans un SSI, à quoi sert le DAC (Dispositif Adaptateur de Commande) ?",o:["À transmettre un ordre du CMSI vers les DAS lorsque les tensions/énergies diffèrent","À détecter la fumée","À diffuser l'alarme sonore","À alimenter l'éclairage"],a:[0],e:"Le DAC adapte la commande du CMSI aux DAS qui nécessitent une énergie ou une tension particulière pour fonctionner."},
+{t:"tech",q:"Que signifie DCT dans un SMSI ?",o:["Dispositif de Commande avec Temporisation","Détecteur de Chaleur Thermique","Double Contrôle Technique","Dispositif de Coupure Totale"],a:[0],e:"DCT : Dispositif de Commande avec Temporisation, qui pilote certains DAS avec une temporisation réglable."},
+{t:"tech",q:"L'équipement d'alarme de type 2b comprend notamment :",o:["Un ou des déclencheurs manuels, une UGA et des diffuseurs, sans détection automatique généralisée","Une détection automatique généralisée obligatoire","Un simple sifflet","Aucune UGA"],a:[0],e:"Les types 2a et 2b reposent sur des déclencheurs manuels et une UGA (sans détection automatique généralisée), le 2b étant une version allégée du 2a."},
+{t:"tech",q:"Un détecteur thermovélocimétrique se déclenche :",o:["Sur une élévation rapide de température (vitesse) et/ou un seuil de température","Sur la fumée uniquement","Sur la lumière des flammes","Sur les gaz"],a:[0],e:"Le détecteur thermovélocimétrique réagit à la vitesse de montée en température (vélocimétrique) et/ou à un seuil fixe (thermostatique)."},
+{t:"tech",q:"Dans une installation sprinkleur, chaque tête :",o:["S'ouvre individuellement lorsque la chaleur fait fondre son élément fusible ou éclater son ampoule","S'ouvre toutes en même temps","Détecte la fumée","Est purement décorative"],a:[0],e:"Chaque tête de sprinkleur comporte un élément thermosensible (ampoule ou fusible) ; seules les têtes au-dessus du foyer s'ouvrent, limitant l'arrosage à la zone en feu."},
+{t:"tech",q:"L'alimentation électrique de sécurité (AES) d'un SSI doit :",o:["Prendre le relais en cas de défaillance de la source normale","Alimenter l'éclairage décoratif","Couper tout le bâtiment","Être facultative"],a:[0],e:"L'AES (batteries, et éventuellement groupe) garantit le fonctionnement du SSI même si l'alimentation normale est coupée par l'incendie."},
+{t:"tech",q:"Pourquoi les gaines d'ascenseurs doivent-elles être désenfumées ou mises en surpression dans certains bâtiments ?",o:["Pour éviter qu'elles ne jouent le rôle de cheminée propageant les fumées entre niveaux","Pour accélérer les cabines","Pour chauffer les étages","Ce n'est jamais exigé"],a:[0],e:"Une gaine d'ascenseur non protégée agit comme une cheminée (effet tirage) ; le désenfumage ou la mise en surpression limite la propagation verticale des fumées."},
+{t:"tech",q:"Une chaufferie (local à risque) doit notamment :",o:["Être isolée par des parois coupe-feu","Disposer d'une ventilation adaptée","Comporter un dispositif de coupure d'urgence du combustible","Être accessible librement au public"],a:[0,1,2],e:"La chaufferie est un local à risques : isolement coupe-feu, ventilation, coupure d'urgence de l'énergie et des commandes à l'extérieur du local. Le public n'y a pas accès."},
+{t:"tech",q:"Le dispositif de coupure d'urgence des installations de chauffage/combustible doit être :",o:["Accessible et signalé, pour couper rapidement l'alimentation en cas de sinistre","Caché pour la sécurité","Réservé aux pompiers","Supprimé après installation"],a:[0],e:"Les commandes de coupure d'urgence (gaz, fioul, électricité) doivent être accessibles, identifiées et manœuvrables rapidement par le personnel ou les secours."},
+{t:"tech",q:"La détection automatique d'incendie permet surtout :",o:["De détecter un sinistre très tôt, même en l'absence de personne","De remplacer les extincteurs","D'éteindre le feu automatiquement","De compter le public"],a:[0],e:"La détection automatique gagne un temps précieux en signalant le départ de feu dès ses prémices, de jour comme de nuit, sans présence humaine."},
+{t:"tech",q:"Sur le tableau de signalisation du SSI, l'agent peut généralement visualiser :",o:["Les zones de détection (ZD) en alarme","Les dérangements et défauts","L'état des fonctions de mise en sécurité","La météo extérieure"],a:[0,1,2],e:"Le tableau indique les zones en alarme feu, les dérangements (défauts, coupures, batteries) et l'état des mises en sécurité ; l'agent exploite ces informations pour lever le doute."},
+{t:"tech",q:"Qu'est-ce qu'une zone de mise en sécurité (ZS) ?",o:["Un volume sur lequel s'appliquent une ou plusieurs fonctions de mise en sécurité (compartimentage, désenfumage, évacuation)","Une zone interdite au public","Une zone de stockage","Un local technique"],a:[0],e:"La zone de mise en sécurité (ZS) est le volume où le SMSI déclenche une fonction donnée ; elle se distingue de la zone de détection (ZD)."},
+{t:"tech",q:"Pour l'exploitation d'un SSI de catégorie A, la présence d'un personnel formé au poste de sécurité permet :",o:["De réaliser la levée de doute avant la diffusion de l'alarme générale","De désactiver définitivement la détection","D'ignorer les alarmes","De remplacer les pompiers"],a:[0],e:"Pendant la temporisation (≤5 min), le personnel va lever le doute sur place ; s'il confirme le feu, l'évacuation est engagée, sinon il réarme le système."},
+{t:"tech",q:"Les ascenseurs destinés à être utilisés par les pompiers (ascenseurs prioritaires) :",o:["Disposent d'une alimentation et de dispositions particulières pour servir en cas d'incendie","Sont interdits d'usage en toutes circonstances","Sont identiques aux ascenseurs ordinaires","Servent à l'évacuation du public"],a:[0],e:"Certains ascenseurs sont conçus pour les secours (alimentation sécurisée, rappel, commande pompiers) ; ils ne servent pas à l'évacuation du public."},
+
+/* ===================== LOT 2 — MOYENS DE SECOURS ===================== */
+{t:"moyens",q:"Un extincteur à poudre polyvalente (ABC) a pour inconvénient :",o:["De salir fortement les lieux et d'endommager le matériel sensible (électronique)","D'être inefficace sur la classe A","De contenir de l'eau","D'être interdit en ERP"],a:[0],e:"La poudre est très efficace mais encrasse et peut endommager le matériel électronique ; on lui préfère parfois le CO2 pour les locaux sensibles."},
+{t:"moyens",q:"Associez correctement extincteur et classes de feu adaptées.",o:["CO2 → classes B et feux électriques","Poudre ABC → classes A, B, C","Eau + additif → classes A et B","Eau pulvérisée seule → classe D"],a:[0,1,2],e:"CO2 : B et feux électriques ; poudre ABC : A, B, C ; eau + additif : A et B. L'eau est proscrite sur les feux de métaux (classe D)."},
+{t:"moyens",q:"Un RIA de DN 25/8 signifie :",o:["Un diamètre de tuyau de 25 mm et un diamètre d'orifice de diffuseur de 8 mm","Un débit de 25 litres","Une longueur de 25 m","Une pression de 25 bars"],a:[0],e:"Le RIA est caractérisé par le diamètre nominal du tuyau (ex. 19, 25, 33 mm) et le diamètre de l'orifice du diffuseur ; DN 25/8 = tuyau 25 mm, orifice 8 mm."},
+{t:"moyens",q:"Les colonnes sèches sont généralement exigées lorsque :",o:["Les escaliers desservent des niveaux dont le plancher est à plus de 18 m","Le bâtiment compte moins de 2 niveaux","Il n'y a pas de public","Le bâtiment est en plein air"],a:[0],e:"On impose des colonnes sèches dans les immeubles dont les niveaux sont élevés (au-delà d'environ 18 m) pour alimenter les tuyaux des pompiers étage par étage."},
+{t:"moyens",q:"Dans un IGH, les colonnes sont :",o:["Humides (en eau sous pression en permanence)","Toujours sèches","Inexistantes","Facultatives"],a:[0],e:"Vu la hauteur, les IGH imposent des colonnes humides, maintenues en eau sous pression par surpresseur, prêtes à l'emploi à chaque niveau."},
+{t:"moyens",q:"Un poteau d'incendie « normalisé » doit fournir un débit minimal d'environ :",o:["60 m³/h sous une pression déterminée","5 m³/h","500 m³/h","1 m³/h"],a:[0],e:"La défense extérieure contre l'incendie (DECI) vise typiquement un débit de l'ordre de 60 m³/h (1000 L/min) pendant 2 heures sur les hydrants normalisés."},
+{t:"moyens",q:"Que signifie DECI ?",o:["Défense Extérieure Contre l'Incendie","Dispositif d'Extinction Contrôlé Interne","Détection Électronique Contre l'Incendie","Déclenchement d'Évacuation en Cas d'Incendie"],a:[0],e:"DECI : Défense Extérieure Contre l'Incendie, c'est-à-dire l'ensemble des points d'eau (poteaux, bouches, réserves) destinés à alimenter les secours."},
+{t:"moyens",q:"Lors de l'attaque d'un feu avec un extincteur, il faut :",o:["Attaquer la base des flammes","Progresser en gardant une issue de repli","Vider l'appareil par touches successives si besoin","Rester le plus loin possible sans viser"],a:[0,1,2],e:"On vise la base des flammes, on garde toujours une sortie dans le dos et on peut agir par impulsions ; viser trop loin sans atteindre le foyer est inefficace."},
+{t:"moyens",q:"Après avoir utilisé un extincteur, même partiellement, il faut :",o:["Le signaler et le faire recharger/vérifier, ne jamais le remettre tel quel à son emplacement","Le remettre vide à sa place","Le jeter systématiquement","Le remplir d'eau du robinet"],a:[0],e:"Un extincteur utilisé, même quelques secondes, perd sa pression et doit être rechargé puis revérifié avant d'être remis en service."},
+{t:"moyens",q:"Le foisonnement d'une mousse d'extinction désigne :",o:["Le rapport entre le volume de mousse produit et le volume de solution moussante utilisé","Sa couleur","Sa température","Son poids"],a:[0],e:"Le foisonnement caractérise l'expansion de la mousse (bas, moyen ou haut foisonnement) : plus il est élevé, plus la mousse produite est volumineuse et légère."},
+{t:"moyens",q:"Les moyens d'extinction doivent être choisis :",o:["En fonction des risques et des classes de feu présentes dans l'établissement","Au hasard","Uniquement selon le prix","Selon la couleur des murs"],a:[0],e:"La dotation en moyens d'extinction (nature, nombre, répartition) est adaptée aux risques réels et aux classes de feu susceptibles de se produire."},
+{t:"moyens",q:"L'ordre correct des priorités face à un sinistre est généralement :",o:["Sauvegarder les personnes, donner l'alarme/alerter, puis combattre le feu et protéger les biens","Protéger les biens d'abord","Combattre le feu avant d'alerter","Évacuer les biens avant les personnes"],a:[0],e:"La priorité absolue est la sauvegarde des personnes, puis l'alerte des secours, et enfin la lutte contre le feu et la protection des biens si cela reste sans danger."},
+{t:"moyens",q:"Un extincteur sur roues (mobile) de grande capacité est destiné :",o:["À couvrir des risques importants nécessitant une grande quantité d'agent extincteur","À remplacer tous les extincteurs portatifs","Au seul usage décoratif","À être porté à la main"],a:[0],e:"Les extincteurs mobiles (sur roues) offrent une grande capacité d'agent pour des risques spécifiques importants ; ils complètent les portatifs."},
+
+/* ===================== LOT 2 — RÔLE & RÉGLEMENTATION ===================== */
+{t:"role",q:"Pour exercer, l'agent de sécurité incendie doit notamment :",o:["Être titulaire du diplôme SSIAP 1 à jour (recyclage)","Détenir une attestation de secourisme en cours de validité (PSC1, SST ou PSE1)","Être apte médicalement","Détenir un permis de conduire poids lourd"],a:[0,1,2],e:"L'agent doit être qualifié SSIAP 1 (à jour de recyclage), titulaire d'un secourisme valide et apte médicalement. Le permis poids lourd n'est pas exigé."},
+{t:"role",q:"Le nombre d'agents du service de sécurité incendie dépend principalement :",o:["Du type et de la catégorie de l'établissement","De la couleur du bâtiment","Du chiffre d'affaires","Du nombre de places de parking"],a:[0],e:"L'effectif minimal du service de sécurité est fixé par le règlement en fonction du type et de la catégorie (et du classement IGH)."},
+{t:"role",q:"La « levée de doute » consiste à :",o:["Vérifier sur place la réalité d'une alarme avant d'engager l'évacuation générale","Désactiver le SSI","Appeler systématiquement la presse","Attendre sans rien faire"],a:[0],e:"Dès une alarme restreinte, l'agent se rend sur place pour confirmer (ou infirmer) le sinistre ; c'est la levée de doute, réalisée pendant la temporisation."},
+{t:"role",q:"Dans un établissement de soins (type U), l'évacuation peut être :",o:["Différée, avec transfert horizontal des patients vers une zone protégée voisine","Toujours immédiate et totale","Interdite","Confiée au public"],a:[0],e:"Vu l'état des patients, on privilégie le transfert horizontal vers un compartiment voisin mis à l'abri (évacuation différée), plutôt qu'une évacuation verticale immédiate."},
+{t:"role",q:"Le registre de sécurité doit notamment contenir :",o:["Les dates des vérifications techniques et des contrôles","Les dates et comptes rendus des exercices d'évacuation","Les consignes et l'organisation du service de sécurité","La liste des clients de l'établissement"],a:[0,1,2],e:"Le registre consigne contrôles, exercices, travaux, formations et organisation. Il ne contient pas la clientèle ; il est tenu à disposition de la commission de sécurité."},
+{t:"role",q:"Les visites périodiques de la commission de sécurité ont une périodicité qui dépend :",o:["Du type et de la catégorie de l'établissement","De la volonté de l'exploitant","Du jour de la semaine","De la météo"],a:[0],e:"La fréquence des visites périodiques (par exemple de 2 à 5 ans) est fixée selon le type et la catégorie de l'ERP."},
+{t:"role",q:"L'agent de sécurité incendie peut-il procéder à l'extinction d'un feu naissant ?",o:["Oui, avec les moyens de première intervention, s'il peut le faire sans se mettre en danger","Non, jamais","Seulement avec l'accord écrit du maire","Uniquement la nuit"],a:[0],e:"L'intervention précoce sur un feu naissant fait partie des missions de l'agent, à condition de ne pas se mettre en danger et après avoir donné l'alarme."},
+{t:"role",q:"Lors d'une évacuation, le serre-file a pour mission de :",o:["Vérifier que le local est entièrement évacué et que personne n'est resté en arrière","Ouvrir la marche vers la sortie","Garder l'entrée fermée","Compter la recette"],a:[0],e:"Le serre-file ferme la marche, s'assure qu'aucune personne ne reste (sanitaires, bureaux) et signale les éventuelles personnes en difficulté."},
+{t:"role",q:"Que doit faire l'agent en cas de déclenchement d'une alarme restreinte au poste de sécurité ?",o:["Identifier la zone concernée et se rendre sur place pour lever le doute","Ignorer l'alarme","Évacuer immédiatement sans vérifier","Couper le SSI"],a:[0],e:"L'agent repère la zone en alarme sur le tableau, s'y rend rapidement pour lever le doute, et déclenche l'évacuation si le sinistre est confirmé."},
+{t:"role",q:"La traçabilité des rondes peut être assurée par :",o:["Des points de contrôle (bâtons de ronde / lecteurs) et la main courante","Rien du tout","La mémoire de l'agent seule","Un affichage public"],a:[0],e:"Les rondes sont tracées par des dispositifs de pointage (bâtons de ronde, badges, lecteurs) et consignées sur la main courante, prouvant leur réalisation effective."},
+{t:"role",q:"Les consignes particulières de sécurité d'un établissement précisent notamment :",o:["La conduite à tenir en cas d'incendie","Les modalités d'alerte des secours","Les missions de chacun lors de l'évacuation","Le menu de la cantine"],a:[0,1,2],e:"Les consignes détaillent la conduite à tenir, l'alerte, les rôles (guides/serre-files), les points de rassemblement. Elles doivent être connues et affichées."},
+{t:"role",q:"Un exercice d'évacuation doit être réalisé :",o:["Périodiquement et consigné au registre de sécurité","Une seule fois à l'ouverture","Jamais","Uniquement en présence des pompiers"],a:[0],e:"Des exercices d'évacuation périodiques sont obligatoires ; leur date et leur bilan sont inscrits au registre de sécurité."},
+{t:"role",q:"Face à une victime inconsciente qui respire, l'agent formé au secourisme doit :",o:["La placer en position latérale de sécurité (PLS) et alerter les secours","La laisser sur le dos sans surveillance","Lui donner à boire","Attendre qu'elle se réveille seule"],a:[0],e:"Une victime inconsciente qui respire est mise en PLS pour protéger ses voies aériennes, puis on alerte et on surveille jusqu'à l'arrivée des secours."},
+{t:"role",q:"Le rôle de l'agent vis-à-vis des travaux dans l'établissement comprend :",o:["La surveillance des travaux par points chauds et la gestion du permis de feu","La réalisation des travaux lui-même","L'autorisation des marchés publics","Le paiement des entreprises"],a:[0],e:"L'agent surveille les travaux à risque (points chauds), s'assure du respect du permis de feu et de la remise en service des installations de sécurité éventuellement neutralisées."},
+{t:"role",q:"Avant toute neutralisation d'un équipement de sécurité (ex. détection) pour travaux, l'agent doit :",o:["Mettre en place des mesures compensatoires et tracer l'opération","Ne rien faire","Couper tout le bâtiment","Prévenir uniquement le public"],a:[0],e:"Toute mise hors service d'un équipement de sécurité impose des mesures compensatoires (surveillance renforcée, rondes, moyens supplémentaires) et une consignation écrite."},
+
+/* ===================== LOT 3 — FEU ===================== */
+{t:"feu",q:"Sous quels états la matière peut-elle constituer un combustible ?",o:["Solide","Liquide","Gazeux","Plasma uniquement"],a:[0,1,2],e:"Un combustible peut être solide (bois), liquide (essence) ou gazeux (propane). Ce sont surtout les vapeurs et gaz qui brûlent réellement."},
+{t:"feu",q:"La pyrolyse d'un solide combustible désigne :",o:["Sa décomposition sous l'effet de la chaleur, qui dégage des gaz inflammables","Son refroidissement","Sa dissolution dans l'eau","Sa compression"],a:[0],e:"Sous l'effet de la chaleur, le solide se décompose (pyrolyse) et libère des gaz combustibles qui, mélangés à l'air, s'enflamment."},
+{t:"feu",q:"Les vapeurs d'hydrocarbures (essence) sont généralement :",o:["Plus lourdes que l'air, elles stagnent et s'écoulent vers les points bas","Plus légères que l'air, elles montent toujours","Ininflammables","Sans danger"],a:[0],e:"La plupart des vapeurs d'hydrocarbures sont plus denses que l'air : elles s'accumulent en partie basse (caves, fosses), créant un risque d'inflammation ou d'explosion à distance."},
+{t:"feu",q:"Pourquoi l'extincteur à CO2 est-il dangereux dans un petit local fermé ?",o:["Il peut abaisser dangereusement le taux d'oxygène et provoquer une asphyxie","Il explose toujours","Il dégage des flammes","Il n'a aucun effet"],a:[0],e:"Le CO2 chasse l'oxygène ; dans un volume confiné, il peut créer une atmosphère asphyxiante pour l'opérateur. Risque aussi de gelures au contact du diffuseur."},
+{t:"feu",q:"Une oxydation lente (fermentation, rouille, auto-échauffement d'un stock) peut :",o:["Dégager de la chaleur et conduire à une auto-inflammation","Refroidir le stockage","Produire de l'oxygène","Éteindre un feu voisin"],a:[0],e:"L'oxydation lente libère de la chaleur ; si elle n'est pas évacuée (tas de fourrage, chiffons gras), la température peut monter jusqu'à l'auto-inflammation."},
+{t:"feu",q:"La différence entre déflagration et détonation tient principalement :",o:["À la vitesse du front de flamme (subsonique pour la déflagration, supersonique pour la détonation)","À la couleur de la flamme","À l'odeur","À la quantité de fumée"],a:[0],e:"La déflagration se propage à vitesse subsonique ; la détonation, beaucoup plus violente, dépasse la vitesse du son avec une onde de choc destructrice."},
+{t:"feu",q:"Sur un feu de classe A (solide), l'eau est efficace car elle :",o:["Refroidit le combustible en dessous de sa température d'inflammation","Étouffe uniquement","Inhibe la réaction chimique seule","Est électriquement conductrice"],a:[0],e:"Sur un feu de braises (classe A), l'eau pénètre et refroidit le combustible, stoppant la pyrolyse. C'est l'agent de référence pour la classe A."},
+{t:"feu",q:"Parmi ces conséquences d'un incendie, lesquelles sont immédiatement dangereuses pour les occupants ?",o:["L'intoxication par les fumées","La perte de visibilité (panique, désorientation)","Le rayonnement thermique et les brûlures","La hausse du loyer"],a:[0,1,2],e:"Intoxication, opacité et chaleur/rayonnement sont les dangers directs pour les personnes. La priorité de la prévention est de les mettre à l'abri rapidement."},
+{t:"feu",q:"Le « coup de chaleur » lors d'un incendie dans un local provient surtout :",o:["De l'accumulation des gaz chauds et du rayonnement en partie haute","Du froid extérieur","De l'humidité","Du bruit"],a:[0],e:"Les gaz chauds stratifiés en plafond et le rayonnement portent la température à des niveaux mortels ; d'où l'intérêt du désenfumage et de rester bas."},
+{t:"feu",q:"Pour qu'une combustion vive démarre, il faut que le mélange combustible/comburant soit :",o:["Dans son domaine d'inflammabilité (entre LIE et LSE) et recevoir une énergie d'activation","Toujours pur à 100 %","Refroidi","Sous vide"],a:[0],e:"Le mélange gazeux ne s'enflamme que dans son domaine d'inflammabilité (entre limite inférieure et supérieure) et en présence d'une énergie d'activation suffisante."},
+
+/* ===================== LOT 3 — CLASSEMENT ===================== */
+{t:"classement",q:"Les « dispositions générales » du règlement de sécurité ERP s'appliquent :",o:["À tous les ERP du 1er groupe, complétées par des dispositions particulières à chaque type","Uniquement au type M","Seulement aux IGH","À aucun établissement"],a:[0],e:"Le règlement comprend des dispositions générales (communes) et des dispositions particulières propres à chaque type, qui peuvent aggraver ou atténuer les règles générales."},
+{t:"classement",q:"Un ERP installé à l'intérieur d'un IGH :",o:["Doit respecter à la fois les règles ERP et les règles IGH","N'est soumis à aucune règle","Est automatiquement de 5e catégorie","Devient un simple local technique"],a:[0],e:"Un ERP situé dans un IGH cumule les obligations : réglementation ERP pour l'accueil du public et réglementation IGH pour l'immeuble."},
+{t:"classement",q:"La classe GHU d'un IGH correspond à un usage :",o:["Sanitaire (hôpital)","De bureaux","D'habitation","De stationnement"],a:[0],e:"GHU : IGH à usage sanitaire (établissements de soins). GHW = bureaux, GHA = habitation."},
+{t:"classement",q:"La classe GHS d'un IGH correspond à :",o:["Un dépôt d'archives","Un stade","Un supermarché","Une station-service"],a:[0],e:"GHS : IGH à usage de dépôt d'archives."},
+{t:"classement",q:"Pour qu'un établissement soit un ERP, le public doit être admis :",o:["Librement, moyennant une rétribution, ou sur invitation / participation","Uniquement s'il paie","Uniquement s'il est salarié","Jamais"],a:[0],e:"Est un ERP tout bâtiment où des personnes extérieures sont admises, que l'accès soit libre, payant ou sur invitation (participation à des réunions ouvertes à tous)."},
+{t:"classement",q:"Le classement en catégorie d'un ERP du 1er groupe est prononcé :",o:["Par l'autorité administrative après avis de la commission de sécurité","Par l'exploitant seul","Par les pompiers","Par les clients"],a:[0],e:"Le classement résulte de l'instruction du dossier et de l'avis de la commission de sécurité ; l'autorité de police l'entérine."},
+{t:"classement",q:"Les petits établissements de 5e catégorie sans locaux à sommeil :",o:["Restent soumis à des obligations de sécurité, mais allégées par rapport au 1er groupe","N'ont aucune obligation","Sont interdits","Sont tous des IGH"],a:[0],e:"La 5e catégorie bénéficie de règles simplifiées, mais conserve des obligations (dégagements, moyens d'extinction, alarme adaptée)."},
+{t:"classement",q:"La notion d'effectif « théorique » du public sert à :",o:["Dimensionner les dégagements et déterminer la catégorie","Calculer le chiffre d'affaires","Fixer les horaires","Compter les salariés uniquement"],a:[0],e:"L'effectif théorique, calculé selon les règles du type, détermine la catégorie et le nombre d'issues/UP nécessaires à l'évacuation."},
+
+/* ===================== LOT 3 — CONSTRUCTION ===================== */
+{t:"construction",q:"Au-delà de 500 personnes, le nombre de dégagements et d'UP est majoré de :",o:["1 dégagement et 1 UP par tranche (ou fraction) de 500 personnes supplémentaires","1 UP par personne","Rien","1 dégagement par personne"],a:[0],e:"Règle générale : au-delà de 500 personnes, on ajoute un dégagement et une unité de passage par fraction de 500 personnes au-dessus de 500."},
+{t:"construction",q:"Les planchers séparant les niveaux d'un ERP doivent être :",o:["Coupe-feu d'un degré fixé par le règlement, pour s'opposer à la propagation verticale","Sans aucune exigence","Simplement décoratifs","Pare-flammes seulement en façade"],a:[0],e:"Les planchers participent au compartimentage vertical ; leur degré coupe-feu dépend de la catégorie et de la hauteur du bâtiment."},
+{t:"construction",q:"La règle dite « C + D » en façade sert à :",o:["Limiter la propagation du feu d'un niveau à l'autre par les baies (par saillie et/ou distance)","Calculer la charge au sol","Dimensionner le chauffage","Choisir la couleur"],a:[0],e:"La règle C+D combine l'écran/saillie horizontale (C) et la distance verticale entre baies (D) pour empêcher les flammes sortant d'une fenêtre d'embraser l'étage supérieur."},
+{t:"construction",q:"Un escalier desservant les étages d'un ERP doit en principe :",o:["Être protégé (encloisonné ou à l'air libre) pour rester utilisable pendant l'évacuation","Être le plus étroit possible","Déboucher dans un local à risque","Être fermé à clé"],a:[0],e:"Les escaliers d'évacuation sont protégés (encloisonnés et désenfumés, ou à l'air libre) afin de ne pas être envahis par les fumées."},
+{t:"construction",q:"Le balisage d'évacuation doit indiquer :",o:["Les sorties et issues de secours","Les changements de direction du cheminement","Les obstacles et les sorties de secours non visibles directement","Les distributeurs de boissons"],a:[0,1,2],e:"Le balisage (BAES + panneaux) signale les sorties, les changements de direction et les obstacles pour guider les occupants vers l'extérieur."},
+{t:"construction",q:"Dans un local, lorsque deux dégagements sont exigés, ils doivent être :",o:["Judicieusement répartis pour offrir des directions de fuite opposées","Côte à côte","Dans le même angle","Superposés"],a:[0],e:"Deux sorties placées côte à côte ne servent à rien si le feu bloque cette zone : on les répartit pour offrir des directions d'évacuation distinctes."},
+{t:"construction",q:"Un atrium ou un volume vertical ouvert sur plusieurs niveaux pose le problème :",o:["De la propagation rapide des fumées entre les niveaux","D'un manque de lumière","D'un excès de portes","D'un défaut d'ascenseur"],a:[0],e:"Un atrium relie les niveaux : les fumées s'y propagent verticalement. Des mesures spécifiques (désenfumage, écrans, détection) sont imposées."},
+{t:"construction",q:"L'objectif d'un désenfumage d'escalier encloisonné est surtout :",o:["De maintenir l'escalier praticable et à l'abri des fumées pendant l'évacuation","De chauffer la cage","D'éclairer l'escalier","De ventiler l'été"],a:[0],e:"On désenfume (ou met en surpression) la cage d'escalier pour qu'elle reste utilisable et respirable durant toute l'évacuation."},
+{t:"construction",q:"Les matériaux de catégorie M0 ou Euroclasse A1 sont :",o:["Incombustibles","Facilement inflammables","Interdits","Toujours en bois"],a:[0],e:"M0 (ancien) et A1 (Euroclasse) désignent des matériaux incombustibles, qui n'alimentent pas le feu."},
+{t:"construction",q:"Dans les locaux réservés au sommeil, la détection automatique d'incendie est :",o:["Généralement exigée, car les occupants endormis réagissent lentement","Interdite","Facultative en toutes circonstances","Remplacée par des extincteurs"],a:[0],e:"Les locaux à sommeil (hôtels, hôpitaux, internats) imposent une détection automatique pour alerter très tôt un public incapable de percevoir rapidement le danger."},
+{t:"construction",q:"Le degré coupe-feu exigé pour une porte isolant un local à risques importants est :",o:["Renforcé par rapport aux portes courantes (ex. CF de degré supérieur) et équipé d'un ferme-porte","Nul","Identique à une porte de bureau","Pare-flammes de 5 minutes"],a:[0],e:"Les locaux à risques importants sont isolés par des parois et portes coupe-feu de degré renforcé, avec fermeture automatique, pour confiner le sinistre."},
+{t:"construction",q:"Les cages d'escalier ne doivent pas être utilisées comme :",o:["Lieu de stockage ou de dépôt (encombrement des cheminements)","Chemin d'évacuation","Accès entre étages","Issue vers l'extérieur"],a:[0],e:"Stocker du matériel dans une cage d'escalier réduit le dégagement, ajoute une charge calorifique et peut la rendre impraticable : c'est strictement interdit."},
+{t:"construction",q:"Le désenfumage peut être commandé :",o:["Automatiquement par le SSI (détection)","Manuellement depuis le poste de sécurité / commande locale","Par le seul vent extérieur sans dispositif","Uniquement par les pompiers"],a:[0,1],e:"Le désenfumage se déclenche automatiquement (détection via le CMSI) ou manuellement (commandes au PC ou à proximité) ; la commande manuelle reste prioritaire."},
+
+/* ===================== LOT 3 — TECHNIQUE & SSI ===================== */
+{t:"tech",q:"Un SSI de catégorie A se distingue des catégories B à E notamment par :",o:["La présence d'un système de détection automatique d'incendie (SDI) complet","L'absence de toute détection","Une simple cloche","L'absence de CMSI"],a:[0],e:"Seules les catégories A (et B dans une moindre mesure) comportent un SDI relié à un CMSI ; les catégories inférieures reposent surtout sur des déclencheurs manuels."},
+{t:"tech",q:"L'équipement d'alarme de type 3 comprend généralement :",o:["Des blocs autonomes d'alarme sonore (BAAS) et des déclencheurs manuels","Une détection automatique généralisée","Un CMSI complet","Rien"],a:[0],e:"Le type 3 associe déclencheurs manuels et BAAS de type Ma (diffusion sonore) par zone, sans détection automatique généralisée."},
+{t:"tech",q:"Un détecteur automatique à aspiration (ou multiponctuel) est utilisé :",o:["Pour surveiller de grands volumes ou des locaux difficiles d'accès en aspirant l'air vers une chambre d'analyse","Pour éteindre le feu","Pour éclairer les issues","Pour ouvrir les portes"],a:[0],e:"Le système à aspiration prélève l'air en continu via un réseau de tubes et l'analyse ; il convient aux grands volumes, aux ambiances difficiles ou aux détections très précoces."},
+{t:"tech",q:"Dans un établissement, la ventilation de confort (VMC, climatisation) en cas d'incendie doit généralement :",o:["Être arrêtée dans la zone sinistrée pour ne pas propager les fumées","Être poussée au maximum","Rester sans incidence","Souffler vers le foyer"],a:[0],e:"La ventilation de confort peut diffuser les fumées : elle est arrêtée (ou gérée) dans la zone concernée, contrairement au désenfumage qui, lui, extrait les fumées."},
+{t:"tech",q:"Un système d'extinction automatique à gaz est particulièrement adapté :",o:["Aux locaux à risques sans présence permanente (salles informatiques, locaux électriques)","Aux cuisines","Aux parkings extérieurs","Aux salles de spectacle pleines"],a:[0],e:"Les extinctions à gaz (inertage) protègent des locaux sensibles sans eau (informatique, archives, électricité), car elles n'endommagent pas le matériel ; l'évacuation préalable des personnes est impérative."},
+{t:"tech",q:"Un groupe électrogène de sécurité :",o:["Démarre automatiquement en cas de défaillance de l'alimentation normale pour maintenir les installations de sécurité","Alimente l'enseigne publicitaire","Doit être coupé en cas d'incendie","Est interdit en ERP"],a:[0],e:"Le groupe électrogène de sécurité prend automatiquement le relais pour alimenter les équipements de sécurité (éclairage, désenfumage, SSI, ascenseurs prioritaires)."},
+{t:"tech",q:"Une installation sprinkleur dite « sous air » est utilisée :",o:["Dans les locaux exposés au gel, les canalisations étant remplies d'air comprimé","Dans les locaux chauffés uniquement","Pour détecter la fumée","Pour éclairer"],a:[0],e:"Dans les zones risquant de geler (parkings, combles non chauffés), le réseau est maintenu sous air ; l'eau n'arrive qu'après ouverture d'une tête et chute de pression d'air."},
+{t:"tech",q:"Le report d'informations du SSI au poste de sécurité permet à l'agent :",o:["De connaître en temps réel les alarmes, dérangements et états de mise en sécurité","De regarder la télévision","De couper le chauffage","De compter les entrées"],a:[0],e:"Le tableau de signalisation (et ses reports éventuels) centralise les informations du SSI au poste de sécurité, base de l'action de l'agent."},
+{t:"tech",q:"En cas de personnes bloquées dans un ascenseur, l'agent doit :",o:["Les rassurer, alerter le service de dépannage/secours et ne pas tenter de manœuvre dangereuse","Forcer les portes immédiatement","Couper tous les ascenseurs sans prévenir","Ignorer l'appel"],a:[0],e:"On garde le contact avec les occupants pour les rassurer, on alerte le dépanneur ou les secours et on laisse les personnes habilitées effectuer le dégagement en sécurité."},
+{t:"tech",q:"Le principe de « zone de détection » (ZD) sert à :",o:["Localiser précisément l'origine de l'alarme dans le bâtiment","Augmenter le nombre de détecteurs inutilement","Regrouper tous les étages en une seule information","Éteindre le feu"],a:[0],e:"Le découpage en zones de détection permet d'identifier rapidement le secteur en alarme et d'y diriger la levée de doute."},
+{t:"tech",q:"Les détecteurs automatiques de fumée ne doivent pas être installés :",o:["Dans des ambiances où fumées, vapeurs ou poussières normales provoqueraient de fausses alarmes","Dans les circulations","Dans les chambres","Dans les combles"],a:[0],e:"Dans les cuisines, parkings ou locaux poussiéreux, on choisit des détecteurs adaptés (thermiques, etc.) pour éviter les déclenchements intempestifs des détecteurs de fumée."},
+{t:"tech",q:"La coupure d'urgence du gaz dans un établissement :",o:["Doit être accessible, signalée et manœuvrable rapidement depuis l'extérieur du local à risque","Est interdite","Se trouve au cœur du foyer","N'existe pas en ERP"],a:[0],e:"Les organes de coupure d'urgence (gaz, électricité, fioul) sont placés en un endroit accessible et signalé, souvent à l'extérieur du local concerné."},
+
+/* ===================== LOT 3 — MOYENS DE SECOURS ===================== */
+{t:"moyens",q:"Un extincteur « à pression permanente » se distingue d'un extincteur « à pression auxiliaire » par :",o:["Le fait d'être en permanence sous pression (pas de cartouche de gaz à percuter)","Sa couleur uniquement","Son poids","Sa classe de feu"],a:[0],e:"L'extincteur à pression permanente est constamment sous pression ; celui à pression auxiliaire contient une cartouche de gaz percutée au moment de l'emploi."},
+{t:"moyens",q:"Le plan d'évacuation affiché dans un établissement indique :",o:["Les cheminements d'évacuation et les sorties","L'emplacement des moyens de secours (extincteurs, RIA)","Le point de rassemblement et la conduite à tenir","Les tarifs d'entrée"],a:[0,1,2],e:"Le plan d'évacuation (et les consignes) montrent les cheminements, les sorties, les moyens de secours et la conduite à tenir ; il est affiché aux endroits fréquentés."},
+{t:"moyens",q:"Un RIA de DN 33/12 par rapport à un DN 19/6 offre :",o:["Un débit plus important","Une portée et une capacité d'extinction supérieures","Une mise en œuvre pouvant nécessiter plus de personnes","Un débit plus faible"],a:[0,1,2],e:"Plus le diamètre est grand (33/12 > 25/8 > 19/6), plus le débit et la portée sont élevés, mais plus la réaction à la lance est forte à maîtriser."},
+{t:"moyens",q:"Le plan d'intervention destiné aux secours représente :",o:["Les accès, les niveaux, les locaux à risques et l'emplacement des moyens et organes de coupure","Le menu du restaurant","Le planning du personnel","La liste des fournisseurs"],a:[0],e:"Le plan d'intervention aide les pompiers à se repérer : accès, cloisonnement, locaux à risques, coupures (gaz, électricité), moyens de secours."},
+{t:"moyens",q:"L'eau est un agent extincteur à proscrire sur :",o:["Les feux de métaux (classe D)","Les feux d'huile/graisse de cuisson (classe F) en jet","Les installations électriques sous tension (jet plein)","Les feux de bois (classe A)"],a:[0,1,2],e:"Eau interdite ou très dangereuse sur classe D (réaction violente), classe F (projection) et l'électrique sous tension en jet plein. Elle reste l'agent idéal de la classe A."},
+{t:"moyens",q:"Un poteau d'incendie sur la voie publique est habituellement de couleur :",o:["Rouge","Verte","Bleue","Noire"],a:[0],e:"Les poteaux d'incendie publics sont généralement rouges pour être immédiatement repérables par les secours."},
+{t:"moyens",q:"Une réserve d'eau incendie (bâche, citerne) sert lorsque :",o:["Le réseau d'eau de ville ne fournit pas un débit suffisant pour la défense incendie","Il n'y a pas d'ERP","Le bâtiment est neuf","Il y a trop d'eau de ville"],a:[0],e:"Quand le réseau public est insuffisant, une réserve d'eau (point d'eau naturel ou artificiel) complète la défense extérieure contre l'incendie."},
+{t:"moyens",q:"Lors de l'utilisation d'un RIA, il faut :",o:["Dérouler le tuyau, ouvrir la vanne d'alimentation et diriger le jet vers la base du feu","Viser le haut des flammes","Laisser le tuyau enroulé","Couper l'eau avant d'attaquer"],a:[0],e:"On déroule complètement le tuyau semi-rigide, on ouvre l'eau, on règle le jet (diffusé/bâton) et on attaque la base des flammes en gardant une voie de repli."},
+
+/* ===================== LOT 3 — RÔLE & RÉGLEMENTATION ===================== */
+{t:"role",q:"Le chef de service de sécurité incendie correspond au niveau :",o:["SSIAP 3","SSIAP 2","SSIAP 1","Aucun"],a:[0],e:"Le SSIAP 3 est le chef de service : il organise le service, gère le budget sécurité, conseille le chef d'établissement et assure le suivi réglementaire."},
+{t:"role",q:"La sécurité incendie (missions SSIAP) se distingue de la sûreté qui traite :",o:["De la malveillance (vols, intrusions, agressions)","Des incendies uniquement","Du secourisme","De l'évacuation"],a:[0],e:"La sécurité incendie protège contre l'incendie et la panique ; la sûreté concerne la malveillance. Ce sont deux domaines distincts, même si un agent peut cumuler les deux avec les qualifications requises."},
+{t:"role",q:"Les rondes de nuit présentent un enjeu particulier car :",o:["Le bâtiment est moins surveillé et un départ de feu peut évoluer longtemps avant d'être détecté","Il fait plus froid","Il n'y a jamais de risque la nuit","Les extincteurs ne fonctionnent pas"],a:[0],e:"La nuit, l'absence d'occupants et la faible surveillance augmentent le risque qu'un sinistre se développe ; les rondes et la détection automatique sont donc essentielles."},
+{t:"role",q:"Après des travaux par points chauds, la surveillance doit être maintenue :",o:["Un certain temps après la fin des travaux, car une reprise de feu reste possible","Aucun instant","Seulement pendant les travaux","Uniquement le lendemain"],a:[0],e:"Des braises ou points chauds peuvent couver et provoquer une reprise après le départ des ouvriers ; une surveillance prolongée (souvent 2 heures) est imposée par le permis de feu."},
+{t:"role",q:"Face à une victime en arrêt cardiaque, l'agent formé doit :",o:["Alerter, débuter la réanimation cardio-pulmonaire et utiliser un défibrillateur (DAE) si disponible","Donner à boire","Attendre les secours sans agir","La mettre debout"],a:[0],e:"Arrêt cardiaque : alerte immédiate, massage cardiaque (RCP) et pose d'un DAE dès que possible, en poursuivant jusqu'à l'arrivée des secours."},
+{t:"role",q:"L'affichage des consignes et plans d'évacuation doit être :",o:["Placé aux endroits fréquentés et facilement lisible par les occupants","Caché dans un local technique","Réservé au personnel de direction","Facultatif"],a:[0],e:"Consignes et plans doivent être visibles et compréhensibles par tous, afin que chacun connaisse la conduite à tenir et les cheminements."},
+{t:"role",q:"Il existe plusieurs commissions de sécurité selon l'échelon. Lesquelles ?",o:["La commission communale ou intercommunale","La commission d'arrondissement","La commission départementale","La commission internationale"],a:[0,1,2],e:"Les commissions de sécurité existent aux échelons communal/intercommunal, d'arrondissement et départemental ; elles rendent des avis à l'autorité de police."},
+{t:"role",q:"L'interdiction de fumer et l'encadrement des sources d'ignition dans un établissement relèvent :",o:["De la prévention (réduction des causes de départ de feu)","De la lutte contre l'incendie uniquement","De la décoration","De la sûreté"],a:[0],e:"Limiter les sources d'inflammation (interdiction de fumer, contrôle des points chauds) est une mesure de prévention visant à éviter l'éclosion du feu."},
+{t:"role",q:"Lorsqu'il accueille les secours, l'agent leur remet utilement :",o:["Les plans et le registre/plan d'intervention","Les clés et moyens d'accès","Les informations sur la localisation du sinistre et d'éventuelles victimes","La caisse de l'établissement"],a:[0,1,2],e:"L'agent facilite l'intervention en fournissant plans, accès, et toutes les informations opérationnelles (foyer, victimes, coupures). La caisse n'a rien à y faire."},
+{t:"role",q:"La consigne générale d'évacuation impose en principe aux occupants :",o:["De cesser toute activité et de gagner la sortie la plus proche sans se précipiter ni revenir en arrière","De prendre l'ascenseur","De récupérer leurs affaires d'abord","De rester sur place"],a:[0],e:"On évacue immédiatement et dans le calme par le cheminement balisé, sans utiliser l'ascenseur ni retourner chercher des objets, jusqu'au point de rassemblement."},
+{t:"role",q:"Le maintien en bon état des moyens de secours (vérifications, essais) est assuré :",o:["Sous la responsabilité de l'exploitant, le service de sécurité y participant par l'entretien élémentaire et les essais","Par le public","Par personne","Par la commission de sécurité seule"],a:[0],e:"L'exploitant est responsable du bon état des installations ; le service de sécurité réalise l'entretien élémentaire et les essais réguliers (détection, désenfumage, alarme) et trace tout au registre."}
+];
+
+/* ============================================================
+   LOGIQUE DE L'APPLICATION
+   ============================================================ */
+const $ = s => document.querySelector(s);
+const screens = {home:$("#home"), exam:$("#exam"), result:$("#result")};
+function show(name){for(const k in screens)screens[k].hidden=(k!==name);window.scrollTo(0,0);}
+
+// --- thème clair/sombre ---
+(function(){
+  const root=document.documentElement;
+  let saved=null; try{saved=localStorage.getItem("ssiap_theme");}catch(e){}
+  if(saved)root.setAttribute("data-theme",saved);
+  $("#themeBtn").addEventListener("click",()=>{
+    const cur=root.getAttribute("data-theme");
+    const dark=cur?cur==="dark":matchMedia("(prefers-color-scheme:dark)").matches;
+    const next=dark?"light":"dark";
+    root.setAttribute("data-theme",next);
+    try{localStorage.setItem("ssiap_theme",next);}catch(e){}
+  });
+})();
+
+$("#bankCount").textContent=BANK.length;
+
+// --- construction du menu des thèmes ---
+(function(){
+  const counts={};
+  BANK.forEach(q=>counts[q.t]=(counts[q.t]||0)+1);
+  const host=$("#themes");
+  Object.keys(THEMES).forEach(key=>{
+    const t=THEMES[key];
+    const b=document.createElement("button");
+    b.className="theme";
+    b.innerHTML=`<span class="tn">${t.k}</span><span class="tx"><b>${t.n}</b><small>${counts[key]||0} questions</small></span>`;
+    b.addEventListener("click",()=>startSession({mode:"train",theme:key}));
+    host.appendChild(b);
+  });
+})();
+
+// --- utilitaires ---
+function shuffle(arr){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function sameSet(x,y){if(x.length!==y.length)return false;const s=new Set(x);return y.every(v=>s.has(v));}
+
+// --- état de la session ---
+let S=null;
+let timerId=null;
+
+function startSession(opts){
+  // opts: {mode:"exam"|"train", theme?:key}
+  let pool=BANK.map((q,i)=>({...q,_id:i}));
+  if(opts.theme)pool=pool.filter(q=>q.t===opts.theme);
+  const count = opts.mode==="exam" ? Math.min(30,pool.length) : Math.min(opts.theme?pool.length:30,pool.length);
+  const picked=shuffle(pool).slice(0,count).map(q=>{
+    // mélange des options en gardant trace des bonnes réponses
+    const order=shuffle(q.o.map((_,k)=>k));
+    const opts2=order.map(k=>q.o[k]);
+    const correct=order.map((k,pos)=>q.a.includes(k)?pos:-1).filter(p=>p>=0);
+    return {ref:q, o:opts2, a:correct, sel:[], flag:false};
+  });
+  S={mode:opts.mode, theme:opts.theme||null, qs:picked, i:0,
+     instant:opts.mode==="train", started:Date.now(), finished:false, timed:opts.mode==="exam"};
+  stopTimer();
+  if(S.timed){
+    S.remaining=30*60; // 30 minutes
+    $("#timer").hidden=false; updateTimer();
+    timerId=setInterval(tick,1000);
+  }else{$("#timer").hidden=true;}
+  show("exam");
+  renderQuestion();
+}
+
+function tick(){S.remaining--;updateTimer();if(S.remaining<=0){stopTimer();finishExam();}}
+function stopTimer(){if(timerId){clearInterval(timerId);timerId=null;}}
+function updateTimer(){
+  const m=Math.floor(S.remaining/60),s=S.remaining%60;
+  const el=$("#timer");el.textContent=`${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+  el.classList.toggle("low",S.remaining<=120);
+}
+
+function renderQuestion(){
+  const q=S.qs[S.i];
+  $("#qNum").textContent=(S.i+1);
+  $("#qTheme").textContent=THEMES[q.ref.t].n;
+  $("#qText").textContent=q.ref.q;
+  const multi=q.a.length>1;
+  const hint=$("#qHint");
+  if(multi){hint.className="multi";hint.textContent="▸ Plusieurs réponses possibles — coche toutes les bonnes.";}
+  else{hint.className="single";hint.textContent="▸ Une seule réponse.";}
+  $("#prog").style.width=((S.i)/S.qs.length*100)+"%";
+
+  const reveal = S.finished || (S.instant && q.answered);
+  const opts=$("#opts");opts.innerHTML="";
+  q.o.forEach((text,idx)=>{
+    const b=document.createElement("button");
+    b.className="opt "+(multi?"check":"radio");
+    const chosen=q.sel.includes(idx);
+    if(chosen)b.classList.add("sel");
+    if(reveal){
+      const good=q.a.includes(idx);
+      if(good&&chosen)b.classList.add("good");
+      else if(good&&!chosen)b.classList.add("miss");
+      else if(!good&&chosen)b.classList.add("wrong");
+      b.disabled=true;
+    }
+    const letter=String.fromCharCode(65+idx);
+    b.innerHTML=`<span class="mark">${chosen?(multi?"✓":letter):letter}</span><span class="otext">${text}</span>`;
+    b.addEventListener("click",()=>selectOption(idx));
+    opts.appendChild(b);
+  });
+
+  const ex=$("#explain");
+  if(reveal){
+    ex.hidden=false;
+    const ok=sameSet(q.sel,q.a);
+    ex.innerHTML=`<b>${ok?"✓ Correct":"✗ À revoir"}</b>${q.ref.e}`;
+    ex.style.borderLeftColor=ok?"var(--ok)":"var(--bad)";
+  }else ex.hidden=true;
+
+  const flag=$("#flagBtn");
+  flag.classList.toggle("on",q.flag);
+  flag.textContent=q.flag?"⚑ Marquée":"⚑ Marquer";
+
+  $("#prevBtn").disabled=(S.i===0);
+  $("#nextBtn").textContent=(S.i===S.qs.length-1)?"Dernière question":"Suivant →";
+  buildNavGrid();
+}
+
+function selectOption(idx){
+  const q=S.qs[S.i];
+  if(S.finished)return;
+  if(S.instant&&q.answered)return; // en révision, verrouillé après validation
+  const multi=q.a.length>1;
+  if(multi){
+    if(q.sel.includes(idx))q.sel=q.sel.filter(x=>x!==idx);
+    else q.sel.push(idx);
+    renderQuestion();
+  }else{
+    q.sel=[idx];
+    if(S.instant){q.answered=true;renderQuestion();}
+    else renderQuestion();
+  }
+}
+
+function buildNavGrid(){
+  const g=$("#navGrid");g.innerHTML="";
+  S.qs.forEach((q,n)=>{
+    const b=document.createElement("button");
+    b.textContent=n+1;
+    if(q.sel.length)b.classList.add("answered");
+    if(n===S.i)b.classList.add("current");
+    if(q.flag)b.classList.add("flagged");
+    if(S.finished){b.classList.add(sameSet(q.sel,q.a)?"good":"bad");}
+    b.addEventListener("click",()=>{S.i=n;renderQuestion();});
+    g.appendChild(b);
+  });
+}
+
+$("#nextBtn").addEventListener("click",()=>{if(S.i<S.qs.length-1){S.i++;renderQuestion();}else{maybeFinish();}});
+$("#prevBtn").addEventListener("click",()=>{if(S.i>0){S.i--;renderQuestion();}});
+$("#flagBtn").addEventListener("click",()=>{S.qs[S.i].flag=!S.qs[S.i].flag;renderQuestion();});
+$("#finishBtn").addEventListener("click",maybeFinish);
+$("#quitBtn").addEventListener("click",()=>{if(confirmLeave()){stopTimer();show("home");refreshHistory();}});
+
+function confirmLeave(){return true;} // confirm() indisponible en artefact
+
+function maybeFinish(){
+  const unanswered=S.qs.filter(q=>!q.sel.length).length;
+  if(unanswered>0 && !S.finished){
+    // message intégré plutôt qu'une boîte de dialogue
+    const go=document.activeElement;
+    if(!window.__warned){window.__warned=true;
+      const btn=$("#finishBtn");btn.textContent=`Il reste ${unanswered} question(s) — cliquer encore pour terminer`;
+      btn.style.borderColor="var(--warn)";btn.style.color="var(--warn)";
+      setTimeout(()=>{window.__warned=false;btn.textContent="Terminer l'examen";
+        btn.style.borderColor="var(--accent)";btn.style.color="var(--accent)";},4000);
+      return;
+    }
+  }
+  finishExam();
+}
+
+function finishExam(){
+  stopTimer();
+  S.finished=true;
+  window.__warned=false;
+  const total=S.qs.length;
+  const good=S.qs.filter(q=>sameSet(q.sel,q.a)).length;
+  const note=Math.round(good/total*20*10)/10;
+  const passed=note>=12;
+  const elapsed=Math.floor((Date.now()-S.started)/1000);
+
+  // anneau de score
+  const pct=good/total;
+  const circ=2*Math.PI*78;
+  const ring=$("#ring");
+  ring.setAttribute("stroke-dasharray",circ.toFixed(1));
+  ring.setAttribute("stroke-dashoffset",(circ*(1-pct)).toFixed(1));
+  ring.setAttribute("stroke",passed?"var(--ok)":"var(--accent)");
+
+  $("#note20").textContent=note.toLocaleString("fr-FR");
+  $("#noteCorrect").textContent=`${good} / ${total} bonnes réponses`;
+  const v=$("#verdict");
+  v.textContent=passed?"Admis":"Ajourné";
+  v.className="verdict "+(passed?"ok":"ko");
+  $("#verdictSub").textContent=passed
+    ? "Au-dessus de la barre des 12/20. Continue sur cette lancée."
+    : "Sous la barre des 12/20 exigée à l'examen. Revois tes erreurs et recommence.";
+  $("#rGood").textContent=good;
+  $("#rBad").textContent=total-good;
+  $("#rTime").textContent=`${Math.floor(elapsed/60)}:${String(elapsed%60).padStart(2,"0")}`;
+
+  // résultats par thème
+  const byT={};
+  S.qs.forEach(q=>{const k=q.ref.t;byT[k]=byT[k]||{g:0,n:0};byT[k].n++;if(sameSet(q.sel,q.a))byT[k].g++;});
+  const bd=$("#breakdown");bd.innerHTML="";
+  Object.keys(byT).forEach(k=>{
+    const o=byT[k],p=Math.round(o.g/o.n*100);
+    const row=document.createElement("div");row.className="brow";
+    row.innerHTML=`<span class="bn">${THEMES[k].n}</span>
+      <span class="bbar"><i style="width:${p}%;background:${p>=60?"var(--ok)":"var(--accent)"}"></i></span>
+      <span class="bv">${o.g}/${o.n}</span>`;
+    bd.appendChild(row);
+  });
+  $("#breakdownCard").hidden = Object.keys(byT).length<2;
+
+  saveHistory({date:Date.now(),note,good,total,passed,mode:S.mode,theme:S.theme});
+  show("result");
+}
+
+$("#reviewBtn").addEventListener("click",()=>{S.i=0;$("#timer").hidden=true;show("exam");renderQuestion();});
+$("#replayBtn").addEventListener("click",()=>startSession({mode:S.mode,theme:S.theme}));
+$("#homeBtn").addEventListener("click",()=>{show("home");refreshHistory();});
+
+document.querySelectorAll(".mode").forEach(b=>b.addEventListener("click",()=>startSession({mode:b.dataset.mode})));
+
+// --- historique (localStorage) ---
+function loadHistory(){try{return JSON.parse(localStorage.getItem("ssiap_hist")||"[]");}catch(e){return [];}}
+function saveHistory(entry){try{const h=loadHistory();h.unshift(entry);localStorage.setItem("ssiap_hist",JSON.stringify(h.slice(0,12)));}catch(e){}}
+function refreshHistory(){
+  const h=loadHistory();
+  const block=$("#historyBlock"),host=$("#history");
+  if(!h.length){block.hidden=true;return;}
+  block.hidden=false;host.innerHTML="";
+  h.forEach(e=>{
+    const d=new Date(e.date);
+    const label=e.theme?THEMES[e.theme].n:(e.mode==="exam"?"Examen blanc":"Entraînement");
+    const row=document.createElement("div");row.className="hrow";
+    row.innerHTML=`<span class="pill ${e.passed?"ok":"ko"}">${e.passed?"Admis":"Ajourné"}</span>
+      <span>${label}</span>
+      <span class="hd">${d.toLocaleDateString("fr-FR")} · ${e.good}/${e.total}</span>
+      <span class="hn">${e.note.toLocaleString("fr-FR")}/20</span>`;
+    host.appendChild(row);
+  });
+}
+$("#clearHist").addEventListener("click",()=>{try{localStorage.removeItem("ssiap_hist");}catch(e){}refreshHistory();});
+
+refreshHistory();
+show("home");
+</script>
