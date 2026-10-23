@@ -1,0 +1,1009 @@
+<title>Plan d'intervention 3D</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout : poste de lecture opérationnel — maquette 3D à gauche, fiche d'intervention à droite (empilée sur mobile). */
+:root {
+  --bg: #eceff0;
+  --surface: #ffffff;
+  --surface-2: #f5f7f7;
+  --fg: #162025;
+  --muted: #586870;
+  --line: #d2d9dc;
+  --accent: #1d4e89;
+  --accent-fg: #ffffff;
+
+  /* Couleurs réglementaires des plans (NF S 60-303) */
+  --c-ext: #d0241c;
+  --c-alarm: #d26a00;
+  --c-evac: #0d8a43;
+  --c-cut: #1c68c7;
+  --c-risk: #c99a00;
+  --on-sem: #ffffff;
+  --on-risk: #1b1600;
+
+  /* Scène 3D */
+  --scene-bg: #dfe5e7;
+  --scene-ground: #cdd5d8;
+  --scene-grid: #b6c1c5;
+  --scene-road: #9aa5aa;
+  --scene-wall: #f6f7f7;
+  --scene-cut: #26323a;
+  --scene-slab: #aab4b8;
+  --f-work: #e7eaeb;
+  --f-circ: #d3e8d9;
+  --f-wet: #d5e4ee;
+  --f-risk: #f1e2a6;
+  --f-stair: #c3cbcf;
+  --scene-door: #8a6a4a;
+  --scene-glass: #8fc3e6;
+
+  --font-display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1418; --surface: #151d22; --surface-2: #1a242a; --fg: #e3e9eb; --muted: #93a2a9; --line: #29353c;
+    --accent: #7fb0f0; --accent-fg: #0b1420;
+    --c-ext: #ff5b50; --c-alarm: #ff9c3d; --c-evac: #37c977; --c-cut: #5ea4ff; --c-risk: #f0c64a; --on-sem: #0b1014; --on-risk: #1b1600;
+    --scene-bg: #11191e; --scene-ground: #172127; --scene-grid: #24323a; --scene-road: #2b363c; --scene-wall: #7f8d93; --scene-cut: #0a0f12; --scene-slab: #3a464c;
+    --f-work: #2a3338; --f-circ: #1f3a2a; --f-wet: #1f3341; --f-risk: #4a4120; --f-stair: #38434a; --scene-door: #a5825e; --scene-glass: #4d86ad;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1418; --surface: #151d22; --surface-2: #1a242a; --fg: #e3e9eb; --muted: #93a2a9; --line: #29353c;
+  --accent: #7fb0f0; --accent-fg: #0b1420;
+  --c-ext: #ff5b50; --c-alarm: #ff9c3d; --c-evac: #37c977; --c-cut: #5ea4ff; --c-risk: #f0c64a; --on-sem: #0b1014; --on-risk: #1b1600;
+  --scene-bg: #11191e; --scene-ground: #172127; --scene-grid: #24323a; --scene-road: #2b363c; --scene-wall: #7f8d93; --scene-cut: #0a0f12; --scene-slab: #3a464c;
+  --f-work: #2a3338; --f-circ: #1f3a2a; --f-wet: #1f3341; --f-risk: #4a4120; --f-stair: #38434a; --scene-door: #a5825e; --scene-glass: #4d86ad;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: var(--font-body); font-size: 14px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 16px 32px;
+}
+.wrap { max-width: 1440px; margin: 0 auto; display: grid; gap: 16px; }
+
+/* En-tête */
+.top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px; padding-bottom: 12px; border-bottom: 2px solid var(--fg); }
+.top h1 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: clamp(26px, 4vw, 36px); line-height: 1; letter-spacing: .01em; text-transform: uppercase; text-wrap: balance; }
+.top p { margin: 4px 0 0; color: var(--muted); }
+.stamp { font-family: var(--font-mono); font-size: 12px; border: 1.5px solid var(--c-ext); color: var(--c-ext); padding: 4px 10px; border-radius: 4px; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
+
+.main { display: grid; grid-template-columns: minmax(0, 1fr) 368px; gap: 16px; align-items: start; }
+@media (max-width: 960px) { .main { grid-template-columns: minmax(0, 1fr); } }
+
+/* Vue 3D */
+.viewport { position: relative; height: clamp(440px, 76vh, 860px); border-radius: var(--r); overflow: hidden; background: var(--scene-bg); border: 1px solid var(--line); touch-action: none; }
+.viewport canvas { display: block; width: 100%; height: 100%; outline: none; }
+.labels { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.lbl { position: absolute; left: 0; top: 0; will-change: transform; }
+
+.room-lbl { font-family: var(--font-display); font-weight: 600; font-size: 13px; line-height: 1.1; text-align: center; color: var(--fg); text-transform: uppercase; letter-spacing: .04em; white-space: nowrap; text-shadow: 0 0 3px var(--scene-bg), 0 0 6px var(--scene-bg); }
+.room-lbl small { display: block; font-family: var(--font-mono); font-weight: 400; font-size: 10.5px; text-transform: none; letter-spacing: 0; color: var(--muted); }
+
+.badge { pointer-events: auto; cursor: pointer; border: 0; margin: 0; font: 700 11px/1 var(--font-display); letter-spacing: .05em; padding: 3px 5px 2px; border-radius: 3px; color: var(--on-sem); background: var(--c); box-shadow: 0 0 0 1.5px var(--scene-bg), 0 1px 3px rgba(0,0,0,.25); white-space: nowrap; }
+.badge:hover, .badge:focus-visible { outline: 2px solid var(--fg); outline-offset: 1px; z-index: 2; }
+.badge.sel { outline: 2px solid var(--fg); outline-offset: 2px; }
+.badge[data-layer="ext"] { --c: var(--c-ext); }
+.badge[data-layer="alarm"] { --c: var(--c-alarm); }
+.badge[data-layer="evac"] { --c: var(--c-evac); }
+.badge[data-layer="cut"] { --c: var(--c-cut); }
+.badge[data-layer="risk"] { --c: var(--c-risk); color: var(--on-risk); }
+
+.ov { position: absolute; display: flex; gap: 8px; flex-wrap: wrap; }
+.ov-tl { top: 12px; left: 12px; right: 12px; justify-content: space-between; align-items: flex-start; pointer-events: none; }
+.ov-tl > * { pointer-events: auto; }
+.ov-bl { left: 12px; bottom: 12px; pointer-events: none; }
+.ov-br { right: 12px; bottom: 12px; pointer-events: none; }
+
+.floors { display: flex; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 4px; gap: 4px; box-shadow: 0 2px 10px rgba(0,0,0,.08); }
+.floors button { appearance: none; border: 0; background: transparent; color: var(--fg); cursor: pointer; border-radius: 5px; padding: 6px 12px 5px; text-align: left; min-width: 72px; }
+.floors button b { display: block; font: 700 22px/1 var(--font-display); letter-spacing: .02em; }
+.floors button span { display: block; font-size: 11px; color: var(--muted); margin-top: 2px; white-space: nowrap; }
+.floors button:hover { background: var(--surface-2); }
+.floors button[aria-pressed="true"] { background: var(--accent); color: var(--accent-fg); }
+.floors button[aria-pressed="true"] span { color: inherit; opacity: .85; }
+.floors button:focus-visible, .tool:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.tools { display: flex; gap: 6px; }
+.tool { appearance: none; border: 1px solid var(--line); background: var(--surface); color: var(--fg); font: 500 13px/1 var(--font-body); padding: 9px 12px; border-radius: 7px; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,.08); }
+.tool:hover { background: var(--surface-2); }
+.tool[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
+
+.levelcard { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; font-size: 12px; box-shadow: 0 2px 10px rgba(0,0,0,.08); }
+.levelcard strong { font: 700 16px/1.1 var(--font-display); text-transform: uppercase; letter-spacing: .03em; display: block; }
+.levelcard .kv { font-family: var(--font-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.hint { font-size: 11px; color: var(--muted); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 5px 8px; }
+@media (max-width: 600px) { .hint { display: none; } .floors button { min-width: 0; padding: 6px 9px 5px; } .floors button span { display: none; } }
+
+/* Panneau latéral */
+.panel { display: grid; gap: 12px; min-width: 0; }
+@media (min-width: 961px) { .panel { max-height: clamp(440px, 76vh, 860px); overflow-y: auto; padding-right: 4px; } }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 14px 16px; min-width: 0; }
+.card h2 { margin: 0 0 10px; font: 700 13px/1 var(--font-display); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.card h3 { margin: 0; font: 700 20px/1.15 var(--font-display); text-transform: uppercase; letter-spacing: .02em; text-wrap: balance; }
+.card p { margin: 6px 0 0; }
+
+.sel-empty { color: var(--muted); font-size: 13px; }
+.sel-head { display: flex; gap: 10px; align-items: flex-start; }
+.sel-head .badge { pointer-events: none; font-size: 13px; padding: 5px 7px 4px; margin-top: 2px; }
+.sel-where { color: var(--muted); font-size: 13px; margin-top: 2px; }
+.sel-desc { font-size: 13.5px; }
+.sel-act { margin-top: 10px; padding: 8px 10px; background: var(--surface-2); border-left: 3px solid var(--fg); font-size: 13px; border-radius: 0 6px 6px 0; }
+.sel-act b { font-family: var(--font-display); text-transform: uppercase; letter-spacing: .05em; font-size: 12px; display: block; }
+
+.layers { display: grid; gap: 4px; }
+.layer { display: flex; align-items: center; gap: 10px; padding: 6px 8px; border-radius: 6px; cursor: pointer; }
+.layer:hover { background: var(--surface-2); }
+.layer input { width: 16px; height: 16px; accent-color: var(--accent); margin: 0; }
+.layer .sw { width: 14px; height: 14px; border-radius: 3px; background: var(--c); flex: none; }
+.layer .nm { flex: 1; }
+.layer .ct { font-family: var(--font-mono); font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.layer[data-layer="ext"] { --c: var(--c-ext); }
+.layer[data-layer="alarm"] { --c: var(--c-alarm); }
+.layer[data-layer="evac"] { --c: var(--c-evac); }
+.layer[data-layer="cut"] { --c: var(--c-cut); }
+.layer[data-layer="risk"] { --c: var(--c-risk); }
+.layer[data-layer="rooms"] { --c: var(--muted); }
+
+.keys { display: grid; gap: 0; margin: 0; }
+.keys > div { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 10px; padding: 7px 0; border-top: 1px solid var(--line); }
+.keys > div:first-child { border-top: 0; padding-top: 0; }
+.keys dt { font: 600 12px/1.4 var(--font-display); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.keys dd { margin: 0; font-size: 13px; }
+.keys dd button { appearance: none; border: 0; background: none; padding: 0; color: var(--accent); font: inherit; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; text-align: left; }
+
+.inv { display: grid; gap: 2px; }
+.inv-floor { font: 600 12px/1 var(--font-display); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 10px 0 4px; }
+.inv-floor:first-child { margin-top: 0; }
+.inv button { appearance: none; display: flex; align-items: center; gap: 8px; width: 100%; border: 0; background: transparent; color: var(--fg); padding: 5px 6px; border-radius: 5px; cursor: pointer; text-align: left; font: inherit; font-size: 13px; }
+.inv button:hover, .inv button:focus-visible { background: var(--surface-2); outline: none; }
+.inv button .badge { pointer-events: none; min-width: 44px; text-align: center; }
+.inv button .w { color: var(--muted); font-size: 12px; margin-left: auto; text-align: right; }
+
+.facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 14px; margin: 0; }
+.facts dt { font: 600 11px/1.2 var(--font-display); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.facts dd { margin: 2px 0 0; font-size: 13px; }
+.facts .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.note { font-size: 12px; color: var(--muted); }
+.err { padding: 24px; color: var(--fg); }
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>Plan d'intervention 3D</h1>
+      <p>Bâtiment exemple · Bureaux R+1 · 2 × 50 m² — support de lecture pour agents SSIAP et sapeurs-pompiers</p>
+    </div>
+    <span class="stamp">Exemple · données fictives</span>
+  </header>
+
+  <div class="main">
+    <section class="viewport" id="viewport" aria-label="Maquette 3D du bâtiment">
+      <div class="labels" id="labels"></div>
+      <div class="ov ov-tl">
+        <div class="floors" role="group" aria-label="Choix du niveau">
+          <button type="button" id="btn-rdc" data-floor="rdc" aria-pressed="true"><b>RDC</b><span>Rez-de-chaussée</span></button>
+          <button type="button" id="btn-r1" data-floor="r1" aria-pressed="false"><b>R+1</b><span>1er étage</span></button>
+          <button type="button" id="btn-all" data-floor="all" aria-pressed="false"><b>Tout</b><span>Vue éclatée</span></button>
+        </div>
+        <div class="tools">
+          <button type="button" class="tool" id="btn-plan" aria-pressed="false">Vue de dessus</button>
+          <button type="button" class="tool" id="btn-reset">Recentrer</button>
+        </div>
+      </div>
+      <div class="ov ov-bl">
+        <div class="levelcard" id="levelcard"></div>
+      </div>
+      <div class="ov ov-br">
+        <div class="hint">Glisser : pivoter · Molette : zoom · Clic droit : déplacer · Touches 1 2 3</div>
+      </div>
+    </section>
+
+    <aside class="panel">
+      <div class="card" id="sel-card" aria-live="polite">
+        <h2>Sélection</h2>
+        <div id="sel"><p class="sel-empty">Touchez un repère ou un local sur la maquette pour afficher son emplacement et la conduite à tenir.</p></div>
+      </div>
+
+      <div class="card">
+        <h2>Points clés d'intervention</h2>
+        <dl class="keys" id="keys"></dl>
+      </div>
+
+      <div class="card">
+        <h2>Calques</h2>
+        <div class="layers" id="layers"></div>
+      </div>
+
+      <div class="card">
+        <h2>Inventaire du niveau</h2>
+        <div class="inv" id="inv"></div>
+      </div>
+
+      <div class="card">
+        <h2>Fiche établissement</h2>
+        <dl class="facts">
+          <div><dt>Activité</dt><dd>Bureaux, accueil du public limité</dd></div>
+          <div><dt>Classement</dt><dd>ERP type W, 5<sup>e</sup> cat.</dd></div>
+          <div><dt>Niveaux</dt><dd>RDC + R+1</dd></div>
+          <div><dt>Surface</dt><dd class="num">2 × 50 m²</dd></div>
+          <div><dt>Effectif max</dt><dd class="num">19 pers.</dd></div>
+          <div><dt>Plancher haut</dt><dd class="num">+3,00 m</dd></div>
+          <div><dt>Alarme</dt><dd>Type 4, sonore</dd></div>
+          <div><dt>Énergies</dt><dd>Électricité, gaz naturel</dd></div>
+        </dl>
+        <p class="note" style="margin-top:12px">Implantation, effectifs et équipements fictifs, fournis à titre d'exemple pour une proposition de plan 3D. Les couleurs suivent les conventions des plans d'intervention (NF S 60-303).</p>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(function () {
+"use strict";
+const viewport = document.getElementById("viewport");
+if (!window.THREE || !THREE.OrbitControls) {
+  viewport.innerHTML = '<p class="err">La bibliothèque 3D n\'a pas pu être chargée. Vérifiez la connexion puis rechargez la page.</p>';
+  return;
+}
+
+/* ---------- Constantes (mètres) ---------- */
+const FH = 3.0;        // hauteur d'étage
+const CUT = 1.6;       // hauteur de coupe des murs
+const TE = 0.25, TI = 0.12; // épaisseur murs extérieurs / intérieurs
+const BASE = 0.12;     // dalle RDC au-dessus du terrain
+const EXPLODE = 3.6;   // écart supplémentaire en vue éclatée
+
+/* ---------- Calques ---------- */
+const LAYERS = [
+  { id: "ext",   name: "Moyens d'extinction" },
+  { id: "alarm", name: "Alarme et détection" },
+  { id: "evac",  name: "Évacuation et secours" },
+  { id: "cut",   name: "Coupures et accès pompiers" },
+  { id: "risk",  name: "Locaux à risques" },
+  { id: "rooms", name: "Noms des locaux" }
+];
+const layerOn = {}; LAYERS.forEach(l => layerOn[l.id] = true);
+
+/* ---------- Types d'équipements ---------- */
+const TYPES = {
+  ext_eau: { layer: "ext", code: "EAU", shape: "ext", name: "Extincteur eau pulvérisée 6 L", desc: "Feux de classe A (solides) et B (liquides). Portée utile 3 à 5 m.", act: "Attaquer à la base des flammes, en balayant. Ne pas utiliser sur un tableau électrique sous tension sans marquage 1000 V." },
+  ext_co2: { layer: "ext", code: "CO₂", shape: "ext", name: "Extincteur CO₂ 2 kg", desc: "Feux d'origine électrique et de liquides. Sans résidu.", act: "Tenir le diffuseur par la poignée isolée (froid intense). Ventiler le local après usage." },
+  dm:      { layer: "alarm", code: "DM", shape: "dm", name: "Déclencheur manuel", desc: "Boîtier rouge à membrane. Déclenche l'alarme générale du bâtiment.", act: "Appuyer au centre de la membrane. Réarmement avec la clé du tableau d'alarme." },
+  det:     { layer: "alarm", code: "DF", shape: "det", name: "Détecteur de fumée", desc: "Détecteur optique autonome en plafond.", act: "Repérer le détecteur en alarme (voyant rouge) pour localiser le sinistre." },
+  ala:     { layer: "alarm", code: "ALARME", shape: "panel", name: "Tableau d'alarme type 4", desc: "Centralise les déclencheurs manuels. Clé de réarmement dans le bureau d'accueil.", act: "Lire la zone en défaut, faire la levée de doute avant tout réarmement." },
+  baes:    { layer: "evac", code: "BAES", shape: "baes", name: "Bloc autonome d'éclairage de sécurité", desc: "Balisage des dégagements, autonomie 1 h en cas de coupure secteur.", act: "Vérifier l'allumage après coupure générale de l'électricité." },
+  exit:    { layer: "evac", code: "SORTIE", shape: "exit", name: "Issue", desc: "", act: "" },
+  plan:    { layer: "evac", code: "PLAN", shape: "panel", name: "Plan d'évacuation et consignes", desc: "Plan orienté « vous êtes ici » et consignes de sécurité affichées.", act: "" },
+  dae:     { layer: "evac", code: "DAE", shape: "panel", name: "Défibrillateur automatisé externe", desc: "Armoire murale signalée, accessible sans clé.", act: "Mettre en marche et suivre les instructions vocales. Appeler le 15 ou le 112." },
+  pr:      { layer: "evac", code: "RASSEMBLEMENT", shape: "ring", name: "Point de rassemblement", desc: "Parking sud, à 8 m de la façade principale.", act: "Comptage des personnes par le chargé d'évacuation avant l'arrivée des secours." },
+  elec:    { layer: "cut", code: "ÉLEC", shape: "panel", name: "Coupure générale électricité", desc: "Tableau général basse tension (TGBT), local technique RDC.", act: "Coupure par l'interrupteur général. Prévenir le responsable avant intervention sur les serveurs." },
+  gaz:     { layer: "cut", code: "GAZ", shape: "panel", name: "Vanne de coupure gaz", desc: "Coffret extérieur façade ouest, alimentation de la kitchenette.", act: "Quart de tour, poignée perpendiculaire à la conduite = fermé." },
+  eau:     { layer: "cut", code: "V. EAU", shape: "panel", name: "Vanne d'arrêt eau générale", desc: "Sous l'évier des sanitaires RDC.", act: "Fermer en cas de fuite ou d'inondation des locaux." },
+  pomp:    { layer: "cut", code: "ACCÈS SP", shape: "ring", name: "Accès sapeurs-pompiers", desc: "Entrée principale côté voie engins, façade sud.", act: "Accueil des secours par l'agent SSIAP avec plans et clés." },
+  baie:    { layer: "cut", code: "BAIE", shape: "none", name: "Baie accessible aux échelles", desc: "Fenêtre de la salle de réunion R+1, ouvrable de l'intérieur.", act: "Mise en station d'une échelle depuis la voie engins." },
+  risk:    { layer: "risk", code: "RISQUE", shape: "none", name: "Local à risques", desc: "", act: "" }
+};
+
+/* ---------- Données des niveaux ---------- */
+// Repère : x de -5 à 5 (ouest → est), z de -2,5 à 2,5 (nord → sud). Le nord est vers -z.
+// Ouvertures : a/b = distances depuis l'origine du mur ; k = door | cf | exit | open | win | baie ; s = sens d'ouverture.
+const FLOORS = {
+  rdc: {
+    id: "rdc", code: "RDC", name: "Rez-de-chaussée", alt: "±0,00 m", eff: 9,
+    rooms: [
+      { name: "Hall d'accueil", kind: "circ", r: [-2, 0, 5, 2.5], note: "Circulation principale, dessert les deux sorties." },
+      { name: "Bureau d'accueil", kind: "work", r: [-5, 0, -2, 2.5], note: "Poste d'accueil. Clé du tableau d'alarme et trousseau de secours." },
+      { name: "Salle de pause", kind: "work", r: [-5, -2.5, -1, 0], note: "Kitchenette avec plaque gaz 2 feux." },
+      { name: "Sanitaires", kind: "wet", r: [-1, -2.5, 1, 0], note: "Vanne d'arrêt eau générale sous l'évier." },
+      { name: "Local technique", kind: "risk", r: [1, -2.5, 3, 0], note: "TGBT et baie informatique. Local à risques moyens, porte coupe-feu ½ h." },
+      { name: "Escalier", kind: "stair", r: [3, -2.5, 5, 0], note: "Escalier à deux volées vers le R+1." }
+    ],
+    walls: [
+      { p: [-5, -2.5, 5, -2.5], t: TE, o: [{ a: 1.2, b: 2.8, k: "win" }, { a: 6.4, b: 7.2, k: "win" }] },
+      { p: [-5, 2.5, 5, 2.5], t: TE, o: [{ a: 0.8, b: 2.2, k: "win" }, { a: 6, b: 7.4, k: "exit", s: 1 }, { a: 8.2, b: 9.4, k: "win" }] },
+      { p: [-5, -2.5, -5, 2.5], t: TE, o: [{ a: 0.8, b: 2, k: "win" }, { a: 3.2, b: 4.2, k: "win" }] },
+      { p: [5, -2.5, 5, 2.5], t: TE, o: [{ a: 3.1, b: 4.1, k: "exit", s: -1 }] },
+      { p: [-5, 0, 5, 0], t: TI, o: [{ a: 3.1, b: 3.9, k: "door", s: -1 }, { a: 4.4, b: 5.2, k: "door", s: -1 }, { a: 6.5, b: 7.3, k: "cf", s: -1 }, { a: 8.3, b: 9.7, k: "open" }] },
+      { p: [-2, 0, -2, 2.5], t: TI, o: [{ a: 0.9, b: 1.8, k: "door", s: 1 }] },
+      { p: [-1, -2.5, -1, 0], t: TI, o: [] },
+      { p: [1, -2.5, 1, 0], t: TI, o: [] },
+      { p: [3, -2.5, 3, 0], t: TI, o: [] }
+    ],
+    items: [
+      { t: "ext_eau", x: 0.6, z: 2.25, w: "Hall, à gauche de l'entrée principale" },
+      { t: "ext_eau", x: 4.7, z: 2.25, w: "Hall, angle sud-est" },
+      { t: "ext_co2", x: 2.65, z: 0.22, w: "Hall, devant le local technique" },
+      { t: "ext_eau", x: -2.35, z: -0.25, w: "Salle de pause, près de la porte" },
+      { t: "dm", x: 2.75, z: 2.33, w: "Hall, à droite de l'entrée principale" },
+      { t: "dm", x: 4.83, z: 0.35, w: "Hall, près de la sortie est" },
+      { t: "ala", x: -1.88, z: 0.45, w: "Hall, mur ouest" },
+      { t: "plan", x: -1.88, z: 1.95, w: "Hall, mur ouest, face à l'entrée" },
+      { t: "dae", x: 0.6, z: 0.15, w: "Hall, mur nord" },
+      { t: "elec", x: 2.6, z: -2.2, w: "Local technique, mur nord" },
+      { t: "eau", x: -0.6, z: -2.2, w: "Sanitaires, sous l'évier" },
+      { t: "gaz", x: -5.3, z: -1.4, y: 0.6, w: "Façade ouest, coffret extérieur" },
+      { t: "det", x: -3, z: -1.25, w: "Salle de pause, plafond" },
+      { t: "det", x: -3.5, z: 1.25, w: "Bureau d'accueil, plafond" },
+      { t: "det", x: 0.4, z: 1.25, w: "Hall, plafond ouest" },
+      { t: "det", x: 3.6, z: 1.25, w: "Hall, plafond est" },
+      { t: "det", x: 2, z: -1.25, w: "Local technique, plafond" },
+      { t: "baes", x: 1.7, z: 2.3, w: "Au-dessus de l'entrée principale" },
+      { t: "baes", x: 4.8, z: 1.1, w: "Au-dessus de la sortie est" },
+      { t: "baes", x: 4, z: 0.08, w: "Départ d'escalier" },
+      { t: "exit", x: 1.7, z: 2.75, w: "Façade sud", name: "Sortie principale", desc: "Porte vitrée 2 vantaux, 1,40 m (2 UP). Ouverture vers l'extérieur.", act: "Point d'accueil des secours." },
+      { t: "exit", x: 5.3, z: 1.1, w: "Façade est", name: "Sortie secondaire", desc: "Porte 0,90 m (1 UP) avec barre anti-panique.", act: "Débouche sur l'allée latérale vers le parking." },
+      { t: "risk", x: 2, z: -1.6, w: "Local technique", name: "Local à risques moyens", desc: "TGBT, onduleur et baie informatique. Parois et porte coupe-feu ½ h.", act: "Privilégier le CO₂. Couper l'électricité avant toute attaque à l'eau." }
+    ],
+    evac: [
+      [[-3.6, 1.35], [1.7, 1.35], [1.7, 2.6]],
+      [[-3, -1.2], [-1.5, -1.2], [-1.5, 1.35]],
+      [[-0.2, -1.2], [-0.2, 1.35]],
+      [[1.9, -1.2], [1.9, 1.35]],
+      [[4.5, -0.9], [4.5, 1.1], [5.2, 1.1]]
+    ]
+  },
+  r1: {
+    id: "r1", code: "R+1", name: "1er étage", alt: "+3,00 m", eff: 10,
+    rooms: [
+      { name: "Circulation", kind: "circ", r: [-2, 0, 5, 2.5], note: "Dégagement unique vers l'escalier." },
+      { name: "Salle de réunion", kind: "work", r: [-5, 0, -2, 2.5], note: "8 personnes max. Baie accessible aux échelles en façade sud." },
+      { name: "Bureau", kind: "work", r: [-5, -2.5, -1, 0], note: "Open space, 4 postes." },
+      { name: "Archives", kind: "risk", r: [-1, -2.5, 1, 0], note: "Stockage papier, potentiel calorifique élevé. Porte coupe-feu ½ h." },
+      { name: "Sanitaires", kind: "wet", r: [1, -2.5, 3, 0], note: "" },
+      { name: "Escalier", kind: "stair", r: [3, -2.5, 5, 0], note: "Trémie d'escalier, descente vers le RDC.", noFloor: true }
+    ],
+    walls: [
+      { p: [-5, -2.5, 5, -2.5], t: TE, o: [{ a: 1.2, b: 2.8, k: "win" }, { a: 6.4, b: 7.2, k: "win" }] },
+      { p: [-5, 2.5, 5, 2.5], t: TE, o: [{ a: 0.6, b: 2.4, k: "baie" }, { a: 4.2, b: 5.4, k: "win" }, { a: 7.2, b: 8.4, k: "win" }] },
+      { p: [-5, -2.5, -5, 2.5], t: TE, o: [{ a: 0.8, b: 2, k: "win" }, { a: 3.2, b: 4.2, k: "win" }] },
+      { p: [5, -2.5, 5, 2.5], t: TE, o: [{ a: 3.1, b: 4.1, k: "win" }] },
+      { p: [-5, 0, 5, 0], t: TI, o: [{ a: 3.1, b: 3.9, k: "door", s: -1 }, { a: 4.4, b: 5.2, k: "cf", s: -1 }, { a: 6.5, b: 7.3, k: "door", s: -1 }, { a: 8.3, b: 9.7, k: "open" }] },
+      { p: [-2, 0, -2, 2.5], t: TI, o: [{ a: 0.9, b: 1.8, k: "door", s: 1 }] },
+      { p: [-1, -2.5, -1, 0], t: TI, o: [] },
+      { p: [1, -2.5, 1, 0], t: TI, o: [] },
+      { p: [3, -2.5, 3, 0], t: TI, o: [] }
+    ],
+    items: [
+      { t: "ext_eau", x: 2.75, z: 0.22, w: "Palier, en haut de l'escalier" },
+      { t: "ext_eau", x: 0.55, z: 0.22, w: "Circulation, devant les archives" },
+      { t: "ext_co2", x: -1.75, z: 2.25, w: "Circulation, extrémité ouest" },
+      { t: "dm", x: 4.83, z: 0.35, w: "Palier, mur est" },
+      { t: "plan", x: 4.83, z: 1.9, w: "Palier, mur est" },
+      { t: "det", x: -3, z: -1.25, w: "Bureau, plafond" },
+      { t: "det", x: -3.5, z: 1.25, w: "Salle de réunion, plafond" },
+      { t: "det", x: 0, z: -1.25, w: "Archives, plafond" },
+      { t: "det", x: 1.5, z: 1.25, w: "Circulation, plafond" },
+      { t: "det", x: 4, z: -1.6, w: "Cage d'escalier, plafond" },
+      { t: "baes", x: 4, z: 0.08, w: "Départ d'escalier" },
+      { t: "baes", x: -1.5, z: 2.3, w: "Circulation, côté ouest" },
+      { t: "exit", x: 4.5, z: -0.6, w: "Cage d'escalier", name: "Escalier vers RDC", desc: "Seul dégagement du niveau, largeur 0,90 m (1 UP).", act: "Évacuer par l'escalier puis le hall du RDC. Ne jamais utiliser l'escalier comme zone d'attente." },
+      { t: "baie", x: -3.5, z: 2.75, w: "Façade sud, salle de réunion" },
+      { t: "risk", x: 0, z: -1.7, w: "Archives", name: "Local à risques moyens", desc: "Stockage papier sur rayonnages, environ 2 tonnes. Parois et porte coupe-feu ½ h.", act: "Attaque à l'eau. Risque de fumées denses, engager les équipes sous ARI." }
+    ],
+    evac: [
+      [[-3, -1.2], [-1.5, -1.2], [-1.5, 1.25], [4.5, 1.25], [4.5, -0.3]],
+      [[-3.6, 1.25], [-1.5, 1.25]],
+      [[-0.2, -1.2], [-0.2, 1.25]],
+      [[1.9, -1.2], [1.9, 1.25]]
+    ]
+  }
+};
+const SITE = {
+  items: [
+    { t: "pr", x: 0, z: 8, w: "Parking sud, à 8 m de la façade" },
+    { t: "pomp", x: 1.7, z: 4.2, w: "Devant l'entrée principale, façade sud" }
+  ],
+  evac: [
+    [[1.7, 2.6], [1.7, 6.4], [0.8, 7.4]],
+    [[5.2, 1.1], [6.6, 1.1], [6.6, 7.2], [1.4, 8.2]]
+  ]
+};
+
+/* ---------- Thème ---------- */
+const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim() || "#888888";
+
+/* ---------- Scène ---------- */
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+viewport.insertBefore(renderer.domElement, viewport.firstChild);
+renderer.domElement.setAttribute("tabindex", "0");
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 400);
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+controls.maxPolarAngle = Math.PI * 0.49;
+controls.minDistance = 4;
+controls.maxDistance = 60;
+
+scene.add(new THREE.HemisphereLight(0xffffff, 0x8899a0, 0.75));
+const sun = new THREE.DirectionalLight(0xffffff, 0.65);
+sun.position.set(-8, 18, 10);
+scene.add(sun);
+const amb = new THREE.AmbientLight(0xffffff, 0.2);
+scene.add(amb);
+
+const M = {}; // matériaux
+const std = () => new THREE.MeshStandardMaterial({ roughness: 0.9, metalness: 0 });
+["wall", "cut", "slab", "ground", "road", "door", "work", "circ", "wet", "risk", "stair"].forEach(k => M[k] = std());
+M.glass = new THREE.MeshStandardMaterial({ roughness: 0.2, transparent: true, opacity: 0.45 });
+["ext", "alarm", "evac", "cut_s", "riskS"].forEach(k => M[k] = new THREE.MeshStandardMaterial({ roughness: 0.6 }));
+M.evacFlat = new THREE.MeshBasicMaterial();
+M.line = new THREE.LineBasicMaterial();
+M.ghost = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.07, depthWrite: false });
+M.ghostLine = new THREE.LineBasicMaterial({ transparent: true, opacity: 0.15 });
+M.sel = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.22, depthWrite: false, side: THREE.DoubleSide });
+M.selRing = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.9 });
+
+// Hachures des locaux à risques
+const hatchCanvas = document.createElement("canvas");
+hatchCanvas.width = hatchCanvas.height = 64;
+(function () {
+  const c = hatchCanvas.getContext("2d");
+  c.strokeStyle = "#ffffff"; c.lineWidth = 7;
+  for (let i = -64; i <= 128; i += 22) { c.beginPath(); c.moveTo(i, 64); c.lineTo(i + 64, 0); c.stroke(); }
+})();
+const hatchTex = new THREE.CanvasTexture(hatchCanvas);
+hatchTex.wrapS = hatchTex.wrapT = THREE.RepeatWrapping;
+M.hatch = new THREE.MeshBasicMaterial({ map: hatchTex, transparent: true, opacity: 0.55, depthWrite: false });
+
+let grid = null;
+function applyTheme() {
+  const c = n => new THREE.Color(cssVar(n));
+  scene.background = c("--scene-bg");
+  M.wall.color = c("--scene-wall"); M.cut.color = c("--scene-cut"); M.slab.color = c("--scene-slab");
+  M.ground.color = c("--scene-ground"); M.road.color = c("--scene-road"); M.door.color = c("--scene-door");
+  M.work.color = c("--f-work"); M.circ.color = c("--f-circ"); M.wet.color = c("--f-wet"); M.risk.color = c("--f-risk"); M.stair.color = c("--f-stair");
+  M.glass.color = c("--scene-glass");
+  M.ext.color = c("--c-ext"); M.alarm.color = c("--c-alarm"); M.evac.color = c("--c-evac"); M.cut_s.color = c("--c-cut"); M.riskS.color = c("--c-risk");
+  M.evacFlat.color = c("--c-evac"); M.hatch.color = c("--c-risk");
+  M.line.color = c("--scene-cut"); M.ghost.color = c("--fg"); M.ghostLine.color = c("--fg");
+  M.sel.color = c("--accent"); M.selRing.color = c("--accent");
+  if (grid) { scene.remove(grid); grid.geometry.dispose(); }
+  grid = new THREE.GridHelper(48, 48, c("--scene-grid"), c("--scene-grid"));
+  grid.position.y = 0.003;
+  scene.add(grid);
+}
+
+/* ---------- Constructeurs ---------- */
+function box(w, h, d, mat) { return new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat); }
+const wallMats = () => [M.wall, M.wall, M.cut, M.wall, M.wall, M.wall];
+
+const labels = [];
+function addLabel(parent, floorId, layer, x, y, z, el, anchor) {
+  const o = new THREE.Object3D();
+  o.position.set(x, y, z);
+  parent.add(o);
+  el.classList.add("lbl");
+  el.hidden = true;
+  document.getElementById("labels").appendChild(el);
+  const L = { o, el, floorId, layer, anchor: anchor || "center", shown: false };
+  labels.push(L);
+  return L;
+}
+
+function addWall(g, wd) {
+  const [x1, z1, x2, z2] = wd.p, t = wd.t;
+  const dx = x2 - x1, dz = z2 - z1, L = Math.hypot(dx, dz), ux = dx / L, uz = dz / L, ang = -Math.atan2(dz, dx);
+  const at = d => [x1 + ux * d, z1 + uz * d];
+  const seg = (a, b, y0, h, mats) => {
+    const ea = a <= 0 ? -t / 2 : a, eb = b >= L ? L + t / 2 : b;
+    if (eb - ea < 0.01) return;
+    const m = new THREE.Mesh(new THREE.BoxGeometry(eb - ea, h, t), mats || wallMats());
+    const [cx, cz] = at((ea + eb) / 2);
+    m.position.set(cx, y0 + h / 2, cz); m.rotation.y = ang;
+    g.add(m);
+    return m;
+  };
+  let cur = 0;
+  [...wd.o].sort((p, q) => p.a - q.a).forEach(o => {
+    seg(cur, o.a, 0, CUT);
+    const w = o.b - o.a;
+    if (o.k === "win" || o.k === "baie") {
+      const sill = o.k === "baie" ? 0.6 : 0.9;
+      seg(o.a, o.b, 0, sill);
+      const gl = box(w, CUT - sill, 0.03, M.glass);
+      const [cx, cz] = at((o.a + o.b) / 2);
+      gl.position.set(cx, sill + (CUT - sill) / 2, cz); gl.rotation.y = ang;
+      g.add(gl);
+    } else if (o.k !== "open") {
+      // vantail ouvert à 90° et arc de débattement au sol
+      const s = o.s || 1, nx = -uz * s, nz = ux * s;
+      const [hx, hz] = at(o.a);
+      const leafW = o.k === "exit" && w > 1.2 ? w / 2 : w;
+      const leaf = box(0.05, CUT * 0.92, leafW, o.k === "cf" ? M.riskS : (o.k === "exit" ? M.evac : M.door));
+      leaf.position.set(hx + nx * leafW / 2, CUT * 0.46, hz + nz * leafW / 2);
+      leaf.rotation.y = ang;
+      g.add(leaf);
+      const pts = [];
+      for (let i = 0; i <= 16; i++) {
+        const th = (i / 16) * Math.PI / 2;
+        pts.push(new THREE.Vector3(hx + (ux * Math.cos(th) + nx * Math.sin(th)) * leafW, 0.02, hz + (uz * Math.cos(th) + nz * Math.sin(th)) * leafW));
+      }
+      g.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), M.line));
+      if (leafW < w) { // second vantail
+        const [hx2, hz2] = at(o.b);
+        const leaf2 = leaf.clone();
+        leaf2.position.set(hx2 + nx * leafW / 2, CUT * 0.46, hz2 + nz * leafW / 2);
+        g.add(leaf2);
+      }
+    }
+    cur = o.b;
+  });
+  seg(cur, L, 0, CUT);
+}
+
+function addEvac(g, paths, y) {
+  paths.forEach(path => {
+    for (let i = 0; i < path.length - 1; i++) {
+      const [ax, az] = path[i], [bx, bz] = path[i + 1];
+      const L = Math.hypot(bx - ax, bz - az), ang = -Math.atan2(bz - az, bx - ax);
+      const strip = box(L + 0.12, 0.012, 0.1, M.evacFlat);
+      strip.position.set((ax + bx) / 2, y, (az + bz) / 2); strip.rotation.y = ang;
+      strip.userData.layer = "evac";
+      g.add(strip);
+      // chevrons dans le sens de l'évacuation
+      const n = Math.max(1, Math.floor(L / 0.9));
+      for (let k = 1; k <= n; k++) {
+        const f = k / (n + 1);
+        const sh = new THREE.Shape();
+        sh.moveTo(0.2, 0); sh.lineTo(-0.1, 0.16); sh.lineTo(-0.1, -0.16); sh.closePath();
+        const tri = new THREE.Mesh(new THREE.ShapeGeometry(sh), M.evacFlat);
+        tri.rotation.x = -Math.PI / 2;
+        const holder = new THREE.Object3D();
+        holder.position.set(ax + (bx - ax) * f, y + 0.01, az + (bz - az) * f);
+        holder.rotation.y = ang;
+        holder.add(tri);
+        holder.userData.layer = "evac";
+        g.add(holder);
+      }
+    }
+  });
+}
+
+function makeItemMesh(type, it) {
+  const T = TYPES[type];
+  const mat = { ext: M.ext, alarm: M.alarm, evac: M.evac, cut: M.cut_s, risk: M.riskS }[T.layer];
+  let m = null, top = 1.2;
+  switch (T.shape) {
+    case "ext": m = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 0.5, 16), mat); m.position.y = 0.25; top = 0.75; break;
+    case "dm": m = box(0.14, 0.14, 0.14, mat); m.position.y = 1.3; top = 1.55; break;
+    case "det": m = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, 0.05, 20), mat); m.position.y = 2.2; top = 2.4; break;
+    case "panel": m = box(0.26, 0.32, 0.26, mat); m.position.y = it.y || 1.2; top = (it.y || 1.2) + 0.35; break;
+    case "baes": m = box(0.34, 0.1, 0.1, mat); m.position.y = CUT + 0.25; top = CUT + 0.5; break;
+    case "exit": m = box(0.3, 0.02, 0.3, mat); m.position.y = 0.02; top = 0.5; break;
+    case "ring": m = new THREE.Mesh(new THREE.RingGeometry(0.45, 0.65, 40), mat); m.rotation.x = -Math.PI / 2; m.position.y = 0.02; m.material = mat.clone(); m.material.side = THREE.DoubleSide; top = 0.4; break;
+    default: top = 0.9;
+  }
+  if (m) { m.position.x = it.x; m.position.z = it.z; m.userData.item = it; m.userData.layer = T.layer; }
+  return { mesh: m, top };
+}
+
+/* ---------- Bâtiment ---------- */
+const site = new THREE.Group();
+scene.add(site);
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(48, 48), M.ground);
+ground.rotation.x = -Math.PI / 2;
+site.add(ground);
+const road = box(48, 0.01, 4, M.road);
+road.position.set(0, 0.005, 11.5);
+site.add(road);
+{
+  const el = document.createElement("div");
+  el.className = "room-lbl";
+  el.innerHTML = "Voie engins<small>accès sapeurs-pompiers</small>";
+  addLabel(site, "site", "rooms", -6, 0.05, 11.5, el);
+  // Flèche du nord
+  const sh = new THREE.Shape();
+  sh.moveTo(0, -0.9); sh.lineTo(0.35, 0.4); sh.lineTo(0, 0.15); sh.lineTo(-0.35, 0.4); sh.closePath();
+  const n = new THREE.Mesh(new THREE.ShapeGeometry(sh), M.cut);
+  n.rotation.x = -Math.PI / 2; n.position.set(-7.6, 0.02, -3.2);
+  site.add(n);
+  const nl = document.createElement("div");
+  nl.className = "room-lbl"; nl.textContent = "N";
+  addLabel(site, "site", "rooms", -7.6, 0.05, -4.5, nl);
+}
+
+const floors = {};
+const allItems = [];
+let itemSeq = 0;
+
+function buildItems(parent, floorId, list) {
+  list.forEach(it => {
+    const T = TYPES[it.t];
+    it.id = "it" + (itemSeq++);
+    it.floorId = floorId;
+    it.type = T;
+    const { mesh, top } = makeItemMesh(it.t, it);
+    if (mesh) parent.add(mesh);
+    it.mesh = mesh;
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "badge";
+    b.dataset.layer = T.layer;
+    b.textContent = T.code;
+    b.setAttribute("aria-label", (it.name || T.name) + ", " + it.w);
+    b.addEventListener("click", e => { e.stopPropagation(); select({ item: it }); });
+    it.label = addLabel(parent, floorId, T.layer, it.x, top, it.z, b, "bottom");
+    it.anchor = it.label.o;
+    allItems.push(it);
+  });
+}
+
+function buildFloor(F) {
+  const g = new THREE.Group();
+  g.userData.floorId = F.id;
+  scene.add(g);
+  // dalle (avec trémie d'escalier au R+1)
+  if (F.id === "rdc") {
+    const s = box(10 + TE, 0.2, 5 + TE, M.slab); s.position.y = -0.1; g.add(s);
+  } else {
+    const s1 = box(8 + TE / 2, 0.2, 5 + TE, M.slab); s1.position.set(-1 - TE / 4, -0.1, 0); g.add(s1);
+    const s2 = box(2 + TE / 2, 0.2, 2.5 + TE / 2, M.slab); s2.position.set(4 + TE / 4, -0.1, 1.25 + TE / 4); g.add(s2);
+    // garde-corps de trémie
+    const gc = box(1.6, 1.0, 0.04, M.cut); gc.position.set(3.9, 0.5, -2.2); g.add(gc);
+  }
+  F.rooms.forEach(R => {
+    const [x1, z1, x2, z2] = R.r, w = x2 - x1, d = z2 - z1;
+    R.area = w * d;
+    R.floorId = F.id;
+    if (!R.noFloor) {
+      const p = new THREE.Mesh(new THREE.PlaneGeometry(w, d), M[R.kind]);
+      p.rotation.x = -Math.PI / 2; p.position.set((x1 + x2) / 2, 0.004, (z1 + z2) / 2);
+      p.userData.room = R;
+      g.add(p);
+      R.mesh = p;
+    }
+    if (R.kind === "risk") {
+      const h = new THREE.Mesh(new THREE.PlaneGeometry(w, d), M.hatch);
+      h.material = M.hatch;
+      hatchTex.repeat.set(1, 1);
+      const geo = h.geometry, uv = geo.attributes.uv;
+      for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * w * 1.6, uv.getY(i) * d * 1.6);
+      h.rotation.x = -Math.PI / 2; h.position.set((x1 + x2) / 2, 0.008, (z1 + z2) / 2);
+      h.userData.layer = "risk";
+      g.add(h);
+    }
+    const el = document.createElement("div");
+    el.className = "room-lbl";
+    el.innerHTML = R.name + "<small>" + R.area.toLocaleString("fr-FR") + " m²</small>";
+    addLabel(g, F.id, "rooms", (x1 + x2) / 2, 0.05, R.kind === "stair" ? z1 + 0.5 : (z1 + z2) / 2, el);
+  });
+  F.walls.forEach(wd => addWall(g, wd));
+  // escalier : volée montante ouest, palier nord, volée est (RDC → R+1)
+  if (F.id === "rdc") {
+    const n = 9, run = 1.7 / n, rise = (FH / 2) / n;
+    for (let i = 0; i < n; i++) {
+      const st = box(0.86, rise * (i + 1), run, M.stair);
+      st.position.set(3.53, rise * (i + 1) / 2, -0.2 - run * (i + 0.5)); g.add(st);
+      const st2 = box(0.86, FH / 2 + rise * (i + 1), run, M.stair);
+      st2.position.set(4.47, (FH / 2 + rise * (i + 1)) / 2, -1.9 + run * (i + 0.5)); g.add(st2);
+    }
+    const land = box(1.9, FH / 2, 0.5, M.stair); land.position.set(4, FH / 4, -2.15); g.add(land);
+    const lim = box(0.05, FH, 1.7, M.cut); lim.position.set(4, FH / 2, -1.05); g.add(lim);
+  }
+  addEvac(g, F.evac, 0.02);
+  buildItems(g, F.id, F.items);
+  F.group = g;
+  F.state = "solid";
+  F.yTarget = F.id === "rdc" ? BASE : BASE + FH;
+  g.position.y = F.yTarget;
+  floors[F.id] = F;
+}
+
+applyTheme();
+buildFloor(FLOORS.rdc);
+buildFloor(FLOORS.r1);
+addEvac(site, SITE.evac, 0.03);
+buildItems(site, "site", SITE.items);
+
+/* ---------- Fantôme / visibilité ---------- */
+function setGhost(F, ghost) {
+  F.group.traverse(o => {
+    if (!o.material) return;
+    if (ghost) {
+      if (o.userData.orig === undefined) o.userData.orig = o.material;
+      o.material = o.isLine ? M.ghostLine : M.ghost;
+    } else if (o.userData.orig !== undefined) {
+      o.material = o.userData.orig;
+      delete o.userData.orig;
+    }
+  });
+}
+function applyLayers() {
+  scene.traverse(o => { if (o.userData.layer) o.visible = layerOn[o.userData.layer]; });
+}
+
+/* ---------- Caméra ---------- */
+let mode = "rdc", planView = false;
+const tween = { t: 1, fromP: new THREE.Vector3(), toP: new THREE.Vector3(), fromT: new THREE.Vector3(), toT: new THREE.Vector3() };
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function viewFor(m) {
+  const ty = m === "rdc" ? BASE + 0.4 : m === "r1" ? BASE + FH + 0.4 : BASE + (FH + EXPLODE) / 2 + 0.6;
+  const target = new THREE.Vector3(0.8, ty, m === "r1" ? 1.2 : 2.4);
+  const dist = m === "all" ? 27 : 19;
+  const dir = planView ? new THREE.Vector3(0, 1, 0.0001) : new THREE.Vector3(0.55, 0.78, 1).normalize();
+  return { target, pos: target.clone().add(dir.multiplyScalar(planView ? dist * 1.05 : dist)) };
+}
+function flyTo(v) {
+  tween.fromP.copy(camera.position); tween.fromT.copy(controls.target);
+  tween.toP.copy(v.pos); tween.toT.copy(v.target);
+  tween.t = reduceMotion ? 1 : 0;
+  if (reduceMotion) { camera.position.copy(v.pos); controls.target.copy(v.target); }
+}
+controls.addEventListener("start", () => { tween.t = 1; });
+
+function setMode(m) {
+  mode = m;
+  const rdc = floors.rdc, r1 = floors.r1;
+  if (m === "rdc") { setGhost(rdc, false); rdc.state = "solid"; r1.state = "hidden"; r1.group.visible = false; rdc.group.visible = true; r1.yTarget = BASE + FH; }
+  if (m === "r1") { setGhost(rdc, true); rdc.state = "ghost"; rdc.group.visible = true; r1.state = "solid"; r1.group.visible = true; r1.yTarget = BASE + FH; }
+  if (m === "all") { setGhost(rdc, false); rdc.state = "solid"; r1.state = "solid"; rdc.group.visible = r1.group.visible = true; r1.yTarget = BASE + FH + EXPLODE; }
+  if (reduceMotion) r1.group.position.y = r1.yTarget;
+  document.querySelectorAll(".floors button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.floor === m)));
+  if (selection && selection.item && !floorShows(selection.item.floorId)) select(null);
+  if (selection && selection.room && !floorShows(selection.room.floorId)) select(null);
+  flyTo(viewFor(m));
+  renderLevelCard(); renderInventory(); renderLayerCounts();
+}
+function floorShows(id) { return id === "site" || (floors[id] && floors[id].state === "solid"); }
+
+/* ---------- Sélection ---------- */
+let selection = null;
+const selPlane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), M.sel);
+selPlane.rotation.x = -Math.PI / 2; selPlane.visible = false;
+const selRing = new THREE.Mesh(new THREE.RingGeometry(0.32, 0.4, 40), M.selRing);
+selRing.rotation.x = -Math.PI / 2; selRing.visible = false;
+selRing.material.side = THREE.DoubleSide;
+scene.add(selRing);
+
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]); }
+
+function select(s) {
+  selection = s;
+  document.querySelectorAll(".badge.sel").forEach(b => b.classList.remove("sel"));
+  selPlane.visible = false; selRing.visible = false;
+  if (selPlane.parent) selPlane.parent.remove(selPlane);
+  const box = document.getElementById("sel");
+  if (!s) { box.innerHTML = '<p class="sel-empty">Touchez un repère ou un local sur la maquette pour afficher son emplacement et la conduite à tenir.</p>'; return; }
+  if (s.item) {
+    const it = s.item, T = it.type;
+    it.label.el.classList.add("sel");
+    selRing.visible = true;
+    const lvl = it.floorId === "site" ? "Extérieur" : floors[it.floorId].code;
+    const desc = it.desc || T.desc, act = it.act || T.act;
+    box.innerHTML =
+      '<div class="sel-head"><span class="badge" data-layer="' + T.layer + '">' + esc(T.code) + '</span><div><h3>' + esc(it.name || T.name) + '</h3>' +
+      '<div class="sel-where">' + esc(lvl) + ' · ' + esc(it.w) + '</div></div></div>' +
+      (desc ? '<p class="sel-desc">' + esc(desc) + '</p>' : "") +
+      (act ? '<div class="sel-act"><b>Conduite à tenir</b>' + esc(act) + '</div>' : "");
+  } else if (s.room) {
+    const R = s.room, F = floors[R.floorId];
+    const [x1, z1, x2, z2] = R.r;
+    selPlane.material = M.sel; delete selPlane.userData.orig;
+    selPlane.scale.set(x2 - x1, z2 - z1, 1);
+    selPlane.position.set((x1 + x2) / 2, 0.012, (z1 + z2) / 2);
+    F.group.add(selPlane); selPlane.visible = true;
+    const inRoom = F.items.filter(it => it.t !== "risk" && it.x >= x1 && it.x <= x2 && it.z >= z1 && it.z <= z2);
+    box.innerHTML =
+      '<h3>' + esc(R.name) + '</h3><div class="sel-where">' + esc(F.code) + ' · ' + R.area.toLocaleString("fr-FR") + ' m²' + (R.kind === "risk" ? ' · local à risques' : '') + '</div>' +
+      (R.note ? '<p class="sel-desc">' + esc(R.note) + '</p>' : "") +
+      (inRoom.length ? '<div class="inv" style="margin-top:8px">' + inRoom.map(invRow).join("") + '</div>' : "");
+    bindInv(box);
+  }
+}
+function invRow(it) {
+  return '<button type="button" data-id="' + it.id + '"><span class="badge" data-layer="' + it.type.layer + '">' + esc(it.type.code) + '</span><span>' + esc(it.name || it.type.name) + '</span><span class="w">' + esc(it.w.split(",")[0]) + '</span></button>';
+}
+function bindInv(root) {
+  root.querySelectorAll("button[data-id]").forEach(b => b.addEventListener("click", () => {
+    const it = allItems.find(i => i.id === b.dataset.id);
+    if (!it) return;
+    if (!floorShows(it.floorId)) setMode(it.floorId);
+    if (!layerOn[it.type.layer]) { layerOn[it.type.layer] = true; syncLayerInputs(); applyLayers(); }
+    select({ item: it });
+  }));
+}
+
+/* clic sur la maquette (local ou équipement) */
+const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+let downAt = null;
+renderer.domElement.addEventListener("pointerdown", e => { downAt = [e.clientX, e.clientY]; });
+renderer.domElement.addEventListener("pointerup", e => {
+  if (!downAt || Math.hypot(e.clientX - downAt[0], e.clientY - downAt[1]) > 5) return;
+  const r = renderer.domElement.getBoundingClientRect();
+  ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+  ray.setFromCamera(ndc, camera);
+  const targets = [];
+  Object.values(floors).forEach(F => { if (F.state === "solid") F.group.traverse(o => { if (o.isMesh && o.visible && (o.userData.room || o.userData.item)) targets.push(o); }); });
+  site.traverse(o => { if (o.isMesh && o.visible && o.userData.item) targets.push(o); });
+  const hit = ray.intersectObjects(targets, false)[0];
+  if (!hit) { select(null); return; }
+  if (hit.object.userData.item) select({ item: hit.object.userData.item });
+  else select({ room: hit.object.userData.room });
+});
+
+/* ---------- Panneau ---------- */
+function renderLevelCard() {
+  const el = document.getElementById("levelcard");
+  if (mode === "all") {
+    el.innerHTML = '<strong>Vue éclatée</strong><span class="kv">RDC ±0,00 · R+1 +3,00 · 2 × 50 m²</span>';
+  } else {
+    const F = floors[mode];
+    el.innerHTML = '<strong>' + F.code + ' · ' + F.name + '</strong><span class="kv">Plancher ' + F.alt + ' · 50 m² · ' + F.eff + ' pers. · quadrillage 1 m</span>';
+  }
+}
+function visibleItems() {
+  return allItems.filter(it => it.t !== "risk" && (mode === "all" ? true : (it.floorId === mode || (mode === "rdc" && it.floorId === "site"))));
+}
+function renderInventory() {
+  const inv = document.getElementById("inv");
+  const groups = mode === "all" ? ["rdc", "r1", "site"] : (mode === "rdc" ? ["rdc", "site"] : ["r1"]);
+  const order = Object.keys(TYPES);
+  let html = "";
+  groups.forEach(fid => {
+    const list = allItems.filter(it => it.floorId === fid && it.t !== "det").sort((a, b) => order.indexOf(a.t) - order.indexOf(b.t));
+    if (!list.length) return;
+    html += '<div class="inv-floor">' + (fid === "site" ? "Extérieur" : floors[fid].code + " · " + floors[fid].name) + '</div>';
+    html += list.map(invRow).join("");
+    const dets = allItems.filter(it => it.floorId === fid && it.t === "det").length;
+    if (dets) html += '<p class="note" style="margin:4px 6px 0">+ ' + dets + ' détecteurs de fumée en plafond</p>';
+  });
+  inv.innerHTML = html;
+  bindInv(inv);
+}
+
+function renderLayers() {
+  const box = document.getElementById("layers");
+  box.innerHTML = LAYERS.map(l =>
+    '<label class="layer" data-layer="' + l.id + '"><input type="checkbox" id="layer-' + l.id + '" checked><span class="sw"></span><span class="nm">' + l.name + '</span><span class="ct" data-ct="' + l.id + '"></span></label>'
+  ).join("");
+  LAYERS.forEach(l => document.getElementById("layer-" + l.id).addEventListener("change", e => {
+    layerOn[l.id] = e.target.checked; applyLayers();
+    if (selection && selection.item && !layerOn[selection.item.type.layer]) select(null);
+  }));
+}
+function syncLayerInputs() { LAYERS.forEach(l => { document.getElementById("layer-" + l.id).checked = layerOn[l.id]; }); }
+function renderLayerCounts() {
+  const items = visibleItems();
+  LAYERS.forEach(l => {
+    const el = document.querySelector('[data-ct="' + l.id + '"]');
+    if (!el) return;
+    if (l.id === "rooms") { el.textContent = mode === "all" ? "12" : "6"; return; }
+    if (l.id === "risk") { el.textContent = String(allItems.filter(it => it.t === "risk" && (mode === "all" || it.floorId === mode)).length); return; }
+    el.textContent = String(items.filter(it => it.type.layer === l.id).length);
+  });
+}
+
+function renderKeys() {
+  const find = t => allItems.find(i => i.t === t);
+  const rows = [
+    ["Coupure élec.", "elec", "TGBT, local technique RDC"],
+    ["Coupure gaz", "gaz", "Coffret extérieur, façade ouest"],
+    ["Arrêt eau", "eau", "Sanitaires RDC, sous l'évier"],
+    ["Alarme", "ala", "Tableau type 4, hall RDC"],
+    ["Rassemblement", "pr", "Parking sud, à 8 m"],
+    ["Accès secours", "pomp", "Entrée principale, voie engins au sud"]
+  ];
+  let html = rows.map(r => {
+    const it = find(r[1]);
+    return '<div><dt>' + r[0] + '</dt><dd><button type="button" data-id="' + it.id + '">' + esc(r[2]) + '</button></dd></div>';
+  }).join("");
+  const risks = allItems.filter(i => i.t === "risk");
+  html += '<div><dt>Locaux à risques</dt><dd>' + risks.map(it => '<button type="button" data-id="' + it.id + '">' + esc(floors[it.floorId].code + " · " + it.w) + '</button>').join("<br>") + '</dd></div>';
+  html += '<div><dt>Dégagements</dt><dd>RDC : 2 sorties (sud 2 UP, est 1 UP). R+1 : escalier unique 1 UP.</dd></div>';
+  const keys = document.getElementById("keys");
+  keys.innerHTML = html;
+  keys.querySelectorAll("button[data-id]").forEach(b => b.addEventListener("click", () => {
+    const it = allItems.find(i => i.id === b.dataset.id);
+    const target = it.floorId === "site" ? "rdc" : it.floorId;
+    if (mode !== "all" && mode !== target) setMode(target);
+    if (!layerOn[it.type.layer]) { layerOn[it.type.layer] = true; syncLayerInputs(); applyLayers(); }
+    select({ item: it });
+  }));
+}
+
+/* ---------- Contrôles ---------- */
+document.querySelectorAll(".floors button").forEach(b => b.addEventListener("click", () => setMode(b.dataset.floor)));
+const btnPlan = document.getElementById("btn-plan");
+btnPlan.addEventListener("click", () => {
+  planView = !planView;
+  btnPlan.setAttribute("aria-pressed", String(planView));
+  btnPlan.textContent = planView ? "Vue 3D" : "Vue de dessus";
+  flyTo(viewFor(mode));
+});
+document.getElementById("btn-reset").addEventListener("click", () => flyTo(viewFor(mode)));
+window.addEventListener("keydown", e => {
+  if (e.target.closest && e.target.closest("input, textarea")) return;
+  if (e.key === "1") setMode("rdc");
+  else if (e.key === "2") setMode("r1");
+  else if (e.key === "3") setMode("all");
+  else if (e.key === "Escape") select(null);
+});
+
+/* ---------- Rendu ---------- */
+function resize() {
+  const w = viewport.clientWidth, h = viewport.clientHeight;
+  if (!w || !h) return;
+  renderer.setSize(w, h, false);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+}
+new ResizeObserver(resize).observe(viewport);
+resize();
+
+const v3 = new THREE.Vector3();
+function updateLabels() {
+  const w = viewport.clientWidth, h = viewport.clientHeight;
+  for (const L of labels) {
+    let vis = layerOn[L.layer] && floorShows(L.floorId);
+    if (vis) {
+      L.o.getWorldPosition(v3).project(camera);
+      if (v3.z > 1 || v3.z < -1) vis = false;
+      else {
+        const x = (v3.x + 1) / 2 * w, y = (1 - v3.y) / 2 * h;
+        L.el.style.transform = "translate(" + x.toFixed(1) + "px," + y.toFixed(1) + "px) translate(-50%," + (L.anchor === "bottom" ? "-100%" : "-50%") + ")";
+      }
+    }
+    if (vis !== L.shown) { L.el.hidden = !vis; L.shown = vis; }
+  }
+}
+
+const clock = new THREE.Clock();
+function frame() {
+  const dt = Math.min(clock.getDelta(), 0.05);
+  if (tween.t < 1) {
+    tween.t = Math.min(1, tween.t + dt / 0.7);
+    const k = 1 - Math.pow(1 - tween.t, 3);
+    camera.position.lerpVectors(tween.fromP, tween.toP, k);
+    controls.target.lerpVectors(tween.fromT, tween.toT, k);
+  }
+  const r1 = floors.r1.group;
+  r1.position.y += (floors.r1.yTarget - r1.position.y) * Math.min(1, dt * 7);
+  if (selRing.visible && selection && selection.item) {
+    selection.item.anchor.getWorldPosition(v3);
+    const baseY = selection.item.anchor.parent.getWorldPosition(new THREE.Vector3()).y;
+    selRing.position.set(v3.x, baseY + 0.03, v3.z);
+    const s = reduceMotion ? 1 : 1 + 0.15 * Math.sin(clock.elapsedTime * 4);
+    selRing.scale.set(s, s, s);
+  }
+  controls.update();
+  renderer.render(scene, camera);
+  updateLabels();
+  requestAnimationFrame(frame);
+}
+
+/* ---------- Thème dynamique ---------- */
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", applyTheme);
+new MutationObserver(applyTheme).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+renderLayers();
+renderKeys();
+const v0 = viewFor("rdc");
+camera.position.copy(v0.pos); controls.target.copy(v0.target);
+setMode("rdc");
+tween.t = 1;
+camera.position.copy(v0.pos); controls.target.copy(v0.target);
+applyLayers();
+frame();
+})();
+</script>
