@@ -1,0 +1,1309 @@
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>QCU TFP APS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+  /* Layout : écran de révision centré, une colonne ; bandeau sticky + cartes de question */
+  :root{
+    --bg:#eef1f5;
+    --surface:#ffffff;
+    --surface-2:#f4f6fa;
+    --ink:#131a26;
+    --ink-soft:#4a566b;
+    --line:#d9dfe9;
+    --navy:#152439;
+    --navy-ink:#f3f6fb;
+    --flame:#d8352a;
+    --flame-soft:#fbe7e5;
+    --good:#1f8a4c;
+    --good-soft:#e3f4ea;
+    --bad:#c22f28;
+    --bad-soft:#fbe6e4;
+    --accent:#2f6fd0;
+    --shadow:0 1px 2px rgba(19,26,38,.06), 0 8px 24px rgba(19,26,38,.07);
+    color-scheme:light;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --bg:#0c1118;
+      --surface:#141c28;
+      --surface-2:#1b2535;
+      --ink:#e9eef6;
+      --ink-soft:#9aa7bd;
+      --line:#2a3647;
+      --navy:#0f1a2b;
+      --navy-ink:#eef3fb;
+      --flame:#f06a5f;
+      --flame-soft:#38211f;
+      --good:#56c98a;
+      --good-soft:#15291e;
+      --bad:#f0837b;
+      --bad-soft:#331a19;
+      --accent:#6fa6f0;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px rgba(0,0,0,.5);
+      color-scheme:dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0c1118;
+    --surface:#141c28;
+    --surface-2:#1b2535;
+    --ink:#e9eef6;
+    --ink-soft:#9aa7bd;
+    --line:#2a3647;
+    --navy:#0f1a2b;
+    --navy-ink:#eef3fb;
+    --flame:#f06a5f;
+    --flame-soft:#38211f;
+    --good:#56c98a;
+    --good-soft:#15291e;
+    --bad:#f0837b;
+    --bad-soft:#331a19;
+    --accent:#6fa6f0;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px rgba(0,0,0,.5);
+    color-scheme:dark;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"Source Sans 3", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{font-family:"Archivo", ui-sans-serif, system-ui, sans-serif}
+  .tnum{font-variant-numeric:tabular-nums}
+
+  .wrap{
+    max-width:720px;
+    margin:0 auto;
+    padding-left:max(16px, env(safe-area-inset-left,0px));
+    padding-right:max(16px, env(safe-area-inset-right,0px));
+    padding-block:0 48px;
+  }
+
+  /* ---- Header ---- */
+  header.top{
+    background:var(--navy);
+    color:var(--navy-ink);
+    position:sticky;
+    top:env(safe-area-inset-top,0px);
+    z-index:20;
+    border-bottom:1px solid rgba(255,255,255,.08);
+  }
+  body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:21;background:var(--navy)}
+  .top-inner{
+    max-width:720px;margin:0 auto;
+    padding-left:max(16px, env(safe-area-inset-left,0px));
+    padding-right:max(16px, env(safe-area-inset-right,0px));
+    padding-block:12px;
+    display:flex;align-items:center;gap:12px;
+  }
+  .brand{display:flex;align-items:center;gap:10px;min-width:0}
+  .flame{flex:none;width:30px;height:30px}
+  .brand .t1{font-family:"Archivo";font-weight:800;font-size:1.05rem;letter-spacing:.02em;line-height:1}
+  .brand .t2{font-size:.72rem;color:#aebbd0;letter-spacing:.14em;text-transform:uppercase;margin-top:3px}
+  .top-spacer{flex:1}
+  .ghost-btn{
+    flex:none;background:rgba(255,255,255,.08);color:var(--navy-ink);
+    border:1px solid rgba(255,255,255,.16);border-radius:9px;
+    padding:7px 10px;font-size:.82rem;cursor:pointer;font-family:inherit;
+    display:inline-flex;align-items:center;gap:6px;
+  }
+  .ghost-btn:hover{background:rgba(255,255,255,.15)}
+
+  /* progress bar under header during quiz */
+  .progress-rail{height:4px;background:rgba(255,255,255,.12);width:100%}
+  .progress-fill{height:100%;background:var(--flame);width:0;transition:width .3s ease}
+
+  /* ---- generic ---- */
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
+  .eyebrow{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--flame);font-weight:700}
+  .muted{color:var(--ink-soft)}
+  button{font-family:inherit}
+
+  /* ---- Setup screen ---- */
+  .setup{margin-top:24px;display:flex;flex-direction:column;gap:18px}
+  .intro h1{font-size:1.7rem;line-height:1.1;margin:.4rem 0 .5rem;text-wrap:balance}
+  .intro p{margin:0;color:var(--ink-soft);max-width:60ch}
+
+  .section-label{font-size:.8rem;font-weight:700;letter-spacing:.04em;color:var(--ink-soft);text-transform:uppercase;margin-bottom:2px}
+
+  .theme-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media (max-width:460px){.theme-grid{grid-template-columns:1fr}}
+  .theme-tile{
+    display:flex;flex-direction:column;gap:3px;text-align:left;
+    background:var(--surface);border:1.5px solid var(--line);border-radius:13px;
+    padding:13px 14px;cursor:pointer;position:relative;transition:border-color .15s, background .15s;
+  }
+  .theme-tile:hover{border-color:var(--accent)}
+  .theme-tile[aria-pressed="true"]{border-color:var(--flame);background:var(--flame-soft)}
+  .theme-tile .tt-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .theme-tile .uv{font-size:.68rem;font-weight:800;letter-spacing:.08em;color:var(--flame);text-transform:uppercase}
+  .theme-tile .tt-name{font-family:"Archivo";font-weight:700;font-size:1.02rem;line-height:1.15}
+  .theme-tile .count{font-size:.78rem;color:var(--ink-soft)}
+  .check{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--line);flex:none;display:grid;place-items:center}
+  .theme-tile[aria-pressed="true"] .check{background:var(--flame);border-color:var(--flame)}
+  .check svg{width:12px;height:12px;opacity:0}
+  .theme-tile[aria-pressed="true"] .check svg{opacity:1}
+
+  /* ---- Accordéon par UV ---- */
+  .uv-list{display:flex;flex-direction:column;gap:10px}
+  .uv-group{border:1.5px solid var(--line);border-radius:14px;overflow:hidden;background:var(--surface)}
+  .uv-head{width:100%;display:flex;align-items:center;gap:12px;padding:14px 15px;background:none;border:none;cursor:pointer;text-align:left;color:var(--ink)}
+  .uv-head:hover{background:var(--surface-2)}
+  .uv-chevron{flex:none;transition:transform .2s ease;color:var(--flame);display:grid;place-items:center}
+  .uv-head[aria-expanded="true"] .uv-chevron{transform:rotate(90deg)}
+  .uv-head-txt{flex:1;min-width:0}
+  .uv-code{font-family:"Archivo";font-weight:700;font-size:1.04rem;line-height:1.15}
+  .uv-sub{font-size:.8rem;color:var(--ink-soft);margin-top:2px}
+  .uv-badge{flex:none;font-size:.74rem;font-weight:700;background:var(--surface-2);border:1px solid var(--line);color:var(--ink-soft);border-radius:999px;padding:3px 10px;font-variant-numeric:tabular-nums}
+  .uv-badge.on{background:var(--flame);border-color:var(--flame);color:#fff}
+  .uv-body{display:flex;flex-direction:column;gap:9px;padding:0 12px 14px;border-top:1px solid var(--line)}
+  .uv-tools{display:flex;justify-content:flex-end;padding-top:10px}
+  .uv-selectall{background:none;border:none;color:var(--accent);font-size:.82rem;font-weight:600;cursor:pointer;padding:4px 2px;font-family:inherit}
+  .uv-selectall:hover{text-decoration:underline}
+
+  .pills{display:flex;flex-wrap:wrap;gap:8px}
+  .pill{
+    background:var(--surface);border:1.5px solid var(--line);border-radius:999px;
+    padding:8px 15px;font-size:.9rem;cursor:pointer;color:var(--ink);
+    font-variant-numeric:tabular-nums;transition:border-color .15s, background .15s;
+  }
+  .pill[aria-pressed="true"]{border-color:var(--flame);background:var(--flame);color:#fff}
+  :root[data-theme="dark"] .pill[aria-pressed="true"],
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .pill[aria-pressed="true"]{color:#0c1118}}
+
+  .toggle-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 2px}
+  .switch{position:relative;width:46px;height:26px;flex:none}
+  .switch input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer}
+  .slider{position:absolute;inset:0;background:var(--line);border-radius:999px;transition:background .15s}
+  .slider::before{content:"";position:absolute;width:20px;height:20px;left:3px;top:3px;background:#fff;border-radius:50%;transition:transform .15s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+  .switch input:checked + .slider{background:var(--flame)}
+  .switch input:checked + .slider::before{transform:translateX(20px)}
+
+  .start-btn{
+    width:100%;background:var(--flame);color:#fff;border:none;border-radius:13px;
+    padding:16px;font-size:1.08rem;font-weight:700;font-family:"Archivo";cursor:pointer;
+    display:flex;align-items:center;justify-content:center;gap:10px;letter-spacing:.01em;
+  }
+  .start-btn:disabled{opacity:.45;cursor:not-allowed}
+  .start-btn:not(:disabled):hover{filter:brightness(1.05)}
+
+  .best{display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--ink-soft);justify-content:center}
+
+  /* ---- Quiz screen ---- */
+  .quiz{margin-top:20px;display:flex;flex-direction:column;gap:16px}
+  .q-meta{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:.82rem}
+  .q-tag{display:inline-flex;align-items:center;gap:6px;background:var(--surface-2);border:1px solid var(--line);border-radius:999px;padding:4px 11px;font-weight:600;color:var(--ink-soft)}
+  .q-counter{color:var(--ink-soft);font-weight:600}
+  .q-card{padding:20px}
+  .q-text{font-family:"Archivo";font-weight:700;font-size:1.22rem;line-height:1.3;margin:0 0 4px;text-wrap:balance}
+  .q-hint{font-size:.8rem;color:var(--ink-soft);margin-bottom:14px}
+  .options{display:flex;flex-direction:column;gap:10px;margin-top:10px}
+  .opt{
+    display:flex;align-items:flex-start;gap:12px;width:100%;text-align:left;
+    background:var(--surface);border:1.5px solid var(--line);border-radius:12px;
+    padding:13px 14px;cursor:pointer;font-size:1rem;color:var(--ink);transition:border-color .12s, background .12s;
+  }
+  .opt:not(:disabled):hover{border-color:var(--accent)}
+  .opt .letter{
+    flex:none;width:26px;height:26px;border-radius:7px;background:var(--surface-2);
+    border:1px solid var(--line);display:grid;place-items:center;font-weight:700;font-size:.85rem;font-family:"Archivo";
+  }
+  .opt .otxt{flex:1;min-width:0;padding-top:2px}
+  .opt .mark{flex:none;width:22px;height:22px;opacity:0;transition:opacity .15s}
+  .opt.correct{border-color:var(--good);background:var(--good-soft)}
+  .opt.correct .letter{background:var(--good);border-color:var(--good);color:#fff}
+  .opt.correct .mark{opacity:1;color:var(--good)}
+  .opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+  .opt.wrong .letter{background:var(--bad);border-color:var(--bad);color:#fff}
+  .opt.wrong .mark{opacity:1;color:var(--bad)}
+  .opt:disabled{cursor:default}
+  .opt.dim{opacity:.6}
+
+  .explain{
+    margin-top:14px;border-left:3px solid var(--accent);background:var(--surface-2);
+    border-radius:0 10px 10px 0;padding:12px 14px;font-size:.92rem;
+  }
+  .explain .ex-head{font-weight:700;font-family:"Archivo";margin-bottom:3px;display:flex;align-items:center;gap:7px}
+  .explain.ok .ex-head{color:var(--good)}
+  .explain.ko .ex-head{color:var(--bad)}
+  .explain.ok{border-left-color:var(--good)}
+  .explain.ko{border-left-color:var(--bad)}
+
+  .next-btn{
+    width:100%;background:var(--navy);color:var(--navy-ink);border:none;border-radius:12px;
+    padding:14px;font-size:1rem;font-weight:700;font-family:"Archivo";cursor:pointer;
+    display:flex;align-items:center;justify-content:center;gap:9px;
+  }
+  .next-btn:hover{filter:brightness(1.12)}
+  .quit-link{background:none;border:none;color:var(--ink-soft);font-size:.85rem;cursor:pointer;text-decoration:underline;padding:6px;align-self:center}
+
+  /* ---- Results ---- */
+  .results{margin-top:24px;display:flex;flex-direction:column;gap:16px}
+  .score-card{padding:26px 20px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px}
+  .ring{position:relative;width:150px;height:150px;margin:4px 0}
+  .ring svg{transform:rotate(-90deg)}
+  .ring .pct{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .ring .pct b{font-family:"Archivo";font-size:2.3rem;line-height:1;font-variant-numeric:tabular-nums}
+  .ring .pct span{font-size:.8rem;color:var(--ink-soft)}
+  .verdict{font-family:"Archivo";font-weight:800;font-size:1.3rem;margin-top:4px}
+  .verdict.pass{color:var(--good)}
+  .verdict.fail{color:var(--flame)}
+  .score-sub{color:var(--ink-soft);font-size:.95rem}
+  .breakdown{display:flex;flex-direction:column;gap:9px;padding:16px 18px}
+  .bd-row{display:flex;align-items:center;gap:12px;font-size:.9rem}
+  .bd-row .bd-name{flex:1;min-width:0}
+  .bd-bar{flex:none;width:90px;height:7px;border-radius:999px;background:var(--surface-2);overflow:hidden}
+  .bd-bar i{display:block;height:100%;background:var(--accent);border-radius:999px}
+  .bd-score{flex:none;font-variant-numeric:tabular-nums;font-weight:700;width:46px;text-align:right}
+
+  .review{display:flex;flex-direction:column;gap:12px}
+  .rv-title{font-family:"Archivo";font-weight:800;font-size:1.1rem;margin:8px 2px 0}
+  .rv-card{padding:15px 16px}
+  .rv-q{font-weight:700;font-family:"Archivo";font-size:1rem;margin:0 0 9px;display:flex;gap:9px}
+  .rv-q .ic{flex:none;margin-top:2px}
+  .rv-line{font-size:.9rem;display:flex;gap:7px;padding:2px 0}
+  .rv-line .lab{flex:none;font-weight:700;width:68px;color:var(--ink-soft)}
+  .rv-line.good .val{color:var(--good);font-weight:600}
+  .rv-line.bad .val{color:var(--bad);font-weight:600}
+  .rv-exp{font-size:.86rem;color:var(--ink-soft);margin-top:7px;padding-top:7px;border-top:1px dashed var(--line)}
+
+  .actions{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+  .footer-note{margin-top:30px;font-size:.78rem;color:var(--ink-soft);text-align:center;line-height:1.6}
+
+  :focus-visible{outline:2.5px solid var(--accent);outline-offset:2px}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<header class="top">
+  <div class="top-inner">
+    <div class="brand">
+      <svg class="flame" viewBox="0 0 24 24" aria-hidden="true"><path fill="#d8352a" d="M13.5 1.5c.4 3-1.2 4.6-2.8 6.1C9 9.2 7.3 10.9 7.3 13.7a6.7 6.7 0 0 0 13.4.2c0-2-.9-3.8-1.8-5-.2 1.1-.9 1.9-1.8 2.1.6-2.4-.3-5-2-6.8-.6-.6-1.2-1.2-1.6-2.7Z"/><path fill="#f6a01e" d="M12.4 10.3c.3 1.6-.7 2.5-1.5 3.3-.7.7-1.5 1.5-1.5 2.9a3.2 3.2 0 0 0 6.4.1c0-1.4-.9-2.5-1.6-3.3-.2.6-.6 1-1.1 1.1.4-1.3-.1-2.7-1.1-4.1Z"/></svg>
+      <div>
+        <div class="t1">QCU TFP APS</div>
+        <div class="t2">Agent de prévention et de sécurité</div>
+      </div>
+    </div>
+    <div class="top-spacer"></div>
+    <button class="ghost-btn" id="themeBtn" aria-label="Basculer le thème clair/sombre">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <span id="themeLbl">Sombre</span>
+    </button>
+  </div>
+  <div class="progress-rail" id="progressRail" hidden><div class="progress-fill" id="progressFill"></div></div>
+</header>
+
+<main class="wrap" id="app"></main>
+
+<script>
+/* ===================== BANQUE DE QUESTIONS ===================== *
+ * Issues des fiches de révision CFPS fournies.
+ * Chaque question : une seule bonne réponse (QCU).
+ * answer = index de la bonne réponse dans options (avant mélange).
+ * ============================================================== */
+const THEMES = {
+  incendie:   { uv:"UV05", name:"Incendie", short:"Incendie" },
+  republique: { uv:"UV02", name:"Principes de la République", short:"République" },
+  penal:      { uv:"UV02", name:"Code pénal", short:"Code pénal" },
+  livre6:     { uv:"UV02", name:"Livre VI · CNAPS · Carte pro", short:"Livre VI" },
+  deonto:     { uv:"UV02", name:"Code de déontologie", short:"Déontologie" },
+  libertes:   { uv:"UV02", name:"Respect des libertés publiques", short:"Libertés publiques" },
+  apprehension:{ uv:"UV02", name:"Conditions d'appréhension", short:"Appréhension" },
+  filieres:   { uv:"UV06", name:"Filières métiers", short:"Filières métiers" },
+  modalites:  { uv:"UV06", name:"Modalités d'appréhension (en exercice)", short:"Appréhension (exercice)" },
+};
+
+const BANK = [
+  /* ---------------- INCENDIE (UV05) ---------------- */
+  { t:"incendie", q:"Comment définit-on un incendie ?", o:[
+    "Un feu violent qui échappe au contrôle de l'homme dans l'espace et dans le temps",
+    "Toute flamme visible, même maîtrisée",
+    "Une combustion lente sans flamme",
+    "Une simple montée de température dans un local"], a:0,
+    e:"Un incendie est un feu violent qui échappe au contrôle de l'homme dans l'espace et dans le temps. La priorité absolue reste le sauvetage et l'évacuation des personnes." },
+  { t:"incendie", q:"Quels sont les trois éléments du triangle du feu ?", o:[
+    "Combustible, comburant, énergie d'activation",
+    "Chaleur, fumée, flamme",
+    "Oxygène, eau, chaleur",
+    "Combustible, fumée, étincelle"], a:0,
+    e:"Le feu naît de la réunion du combustible, du comburant et d'une énergie d'activation. Supprimer un seul de ces éléments éteint le feu." },
+  { t:"incendie", q:"Dans le triangle du feu, l'oxygène de l'air joue le rôle de :", o:[
+    "Comburant","Combustible","Énergie d'activation","Inhibiteur"], a:0,
+    e:"L'oxygène (environ 21 % de l'air) est le comburant. Attention au piège : si une proposition dit que l'oxygène est le combustible, elle est fausse." },
+  { t:"incendie", q:"Le mode d'extinction par étouffement consiste à :", o:[
+    "Empêcher l'apport d'oxygène (supprimer le comburant)",
+    "Abaisser la température",
+    "Empêcher l'apport de combustible",
+    "Empêcher la réaction chimique"], a:0,
+    e:"Étouffer = priver le feu d'oxygène. Refroidir supprime l'énergie d'activation, la coupure d'alimentation supprime le combustible, l'inhibition casse la réaction chimique." },
+  { t:"incendie", q:"Le refroidissement comme mode d'extinction permet de supprimer :", o:[
+    "L'énergie d'activation","Le comburant","Le combustible","La réaction en chaîne"], a:0,
+    e:"Refroidir, c'est abaisser la température et donc supprimer l'énergie d'activation du triangle du feu." },
+  { t:"incendie", q:"La propagation de la chaleur par les mouvements ascendants des fumées et gaz chauds s'appelle :", o:[
+    "La convection","La conduction","Le rayonnement","La projection"], a:0,
+    e:"Convection = transport de chaleur par les fumées et gaz chauds qui montent. La conduction passe par la masse d'un solide, le rayonnement par ondes électromagnétiques." },
+  { t:"incendie", q:"À quelle classe de feu appartiennent le bois, le carton, le papier et le tissu ?", o:[
+    "Classe A","Classe B","Classe C","Classe F"], a:0,
+    e:"Classe A = feux secs de solides formant des braises. Classe B = liquides/gras, C = gaz, D = métaux, F = auxiliaires de cuisson." },
+  { t:"incendie", q:"Les feux de gaz (butane, propane, hydrogène) relèvent de la classe :", o:[
+    "Classe C","Classe A","Classe B","Classe D"], a:0,
+    e:"Classe C = gaz. Le réflexe essentiel est de fermer la vanne : laisser la vanne ouverte crée un risque d'explosion." },
+  { t:"incendie", q:"Sur un feu de métaux (classe D), que ne faut-il surtout pas utiliser ?", o:[
+    "De l'eau","De la poudre D","Du sable sec","Du ciment sec"], a:0,
+    e:"L'eau est interdite sur les feux de métaux (comme sur l'huile/graisse de cuisson et les batteries). On utilise poudre D, sable, ciment sec ou terre." },
+  { t:"incendie", q:"Quelle est la première cause de mortalité lors d'un incendie ?", o:[
+    "L'asphyxie (environ 80 %)","Les brûlures","L'effondrement","La panique"], a:0,
+    e:"L'asphyxie est la première cause de décès (environ 80 % selon le support), à cause des fumées toxiques : vapeur d'eau, CO₂, monoxyde de carbone, suies..." },
+  { t:"incendie", q:"Combien de dangers présente la fumée selon le support ?", o:[
+    "5 dangers","3 dangers","7 dangers","2 dangers"], a:0,
+    e:"Les 5 dangers de la fumée : toxiques, opaques, rayonnantes, inflammables/explosives, envahissantes/mobiles." },
+  { t:"incendie", q:"L'extincteur au CO₂ s'emploie à quelle distance et par quel mode ?", o:[
+    "À moins d'1 m, par étouffement","À 3-4 m, par inhibition","À 2-3 m, par refroidissement","À plus de 5 m, par projection"], a:0,
+    e:"Le CO₂ (2 ou 5 kg) s'utilise à moins d'1 m, agit par étouffement et fonctionne en pression permanente." },
+  { t:"incendie", q:"Quelle est la distance maximale à parcourir pour atteindre un extincteur ?", o:[
+    "15 mètres","30 mètres","10 mètres","50 mètres"], a:0,
+    e:"Distance de parcours : 15 m maximum. À ne pas confondre avec la distance entre deux extincteurs, qui est de 30 m maximum." },
+  { t:"incendie", q:"À quelle hauteur la poignée d'un extincteur doit-elle se situer ?", o:[
+    "1,20 m du sol","0,80 m du sol","1,50 m du sol","2 m du sol"], a:0,
+    e:"La poignée de l'extincteur est placée à 1,20 m du sol pour une préhension rapide." },
+  { t:"incendie", q:"Quel dispositif permet de repérer les extincteurs sous pression (eau/additif et poudre) ?", o:[
+    "Le manomètre","Le plomb","La goupille","Le diffuseur"], a:0,
+    e:"Le manomètre indique les appareils sous pression permanente. Le CO₂ fonctionne aussi en pression permanente mais sans manomètre." },
+  { t:"incendie", q:"À quelle fréquence doivent avoir lieu, au minimum, les exercices et essais d'évacuation ?", o:[
+    "Au moins tous les 6 mois","Tous les ans","Tous les 3 mois","Tous les 2 ans"], a:0,
+    e:"Selon l'article R4227-39 cité dans le support, exercices et essais ont lieu au moins tous les six mois et sont consignés dans un registre." },
+  { t:"incendie", q:"Pendant combien de temps l'éclairage de sécurité doit-il fonctionner au minimum ?", o:[
+    "1 heure","30 minutes","2 heures","6 heures"], a:0,
+    e:"L'éclairage de sécurité balise vers l'extérieur et doit fonctionner au minimum 1 heure en cas de défaillance de l'éclairage normal." },
+  { t:"incendie", q:"Quel est le rôle du serre-file lors d'une évacuation ?", o:[
+    "Fouiller les locaux et s'assurer que personne ne reste dans sa zone",
+    "Conduire les personnes vers le point de rassemblement",
+    "Donner l'ordre de réintégration",
+    "Appeler directement les sapeurs-pompiers"], a:0,
+    e:"Le serre-file ferme la marche : il contrôle la zone, accompagne les personnes et ne quitte sa zone qu'après s'être assuré que personne n'y reste. Le guide-file, lui, conduit vers le point de rassemblement." },
+  { t:"incendie", q:"En cas d'incendie, quel est l'impératif n°1 pour l'agent de sécurité ?", o:[
+    "Le sauvetage et l'évacuation des personnes",
+    "Éteindre le feu coûte que coûte",
+    "Protéger les biens de valeur",
+    "Fermer toutes les issues"], a:0,
+    e:"La priorité absolue est le sauvetage et l'évacuation du personnel et du public. L'ordre : protéger sans s'exposer → alerter → évacuer → rejoindre le rassemblement et rendre compte." },
+
+  /* ---------------- PRINCIPES DE LA RÉPUBLIQUE (UV02) ---------------- */
+  { t:"republique", q:"De quand date la Constitution française actuelle ?", o:[
+    "Du 4 octobre 1958","Du 14 juillet 1789","Du 9 décembre 1905","Du 4 octobre 1848"], a:0,
+    e:"La Constitution du 4 octobre 1958 est celle de la Ve République ; c'est la norme juridique suprême. Ses principes fondamentaux figurent à l'article 1er." },
+  { t:"republique", q:"Selon l'article 1er, la France est une République :", o:[
+    "Indivisible, laïque, démocratique et sociale",
+    "Libre, égale, fraternelle et solidaire",
+    "Unie, neutre, élue et sociale",
+    "Indivisible, souveraine, laïque et fédérale"], a:0,
+    e:"Formule à connaître par cœur : « La France est une République indivisible, laïque, démocratique et sociale. »" },
+  { t:"republique", q:"Quelle est la devise de la République française ?", o:[
+    "Liberté, Égalité, Fraternité",
+    "Liberté, Dignité, Solidarité",
+    "Égalité, Laïcité, Fraternité",
+    "Unité, Liberté, Justice"], a:0,
+    e:"La devise « Liberté, Égalité, Fraternité » est adoptée en 1848. Liberté et égalité viennent de la DDHC de 1789 ; la fraternité est affirmée dans le préambule de 1848." },
+  { t:"republique", q:"Le qualificatif « laïque » de la République signifie que :", o:[
+    "L'État est neutre à l'égard des cultes et garantit la liberté de conscience",
+    "La religion est interdite dans l'espace public",
+    "Seuls les cultes reconnus sont autorisés",
+    "L'État finance tous les cultes"], a:0,
+    e:"Laïcité = neutralité de l'État à l'égard des cultes + garantie de la liberté de conscience et du libre exercice des cultes dans le cadre de la loi." },
+  { t:"republique", q:"Quel article du Code pénal interdit la discrimination ?", o:[
+    "L'article 225-1","L'article 122-5","L'article R631-27","L'article 16 du Code civil"], a:0,
+    e:"L'article 225-1 du Code pénal interdit de traiter moins favorablement une personne selon un critère prohibé (origine, sexe, âge, religion, handicap...)." },
+  { t:"republique", q:"La loi de séparation des Églises et de l'État date du :", o:[
+    "9 décembre 1905","4 octobre 1958","26 août 1789","15 février 1848"], a:0,
+    e:"La loi du 9 décembre 1905 garantit la liberté de conscience et le libre exercice des cultes, sous les restrictions nécessaires à l'ordre public." },
+  { t:"republique", q:"Qui a composé La Marseillaise ?", o:[
+    "Rouget de Lisle (en 1792)","Marianne","Victor Hugo","Un auteur anonyme de 1789"], a:0,
+    e:"L'hymne national a été composé par Rouget de Lisle dans la nuit du 25 au 26 avril 1792." },
+  { t:"republique", q:"Que représente Marianne ?", o:[
+    "L'allégorie de la République, coiffée du bonnet phrygien",
+    "La première présidente française",
+    "La déesse de la justice",
+    "Le symbole de la monarchie"], a:0,
+    e:"Marianne est l'allégorie de la République, coiffée du bonnet phrygien ; elle apparaît en 1792." },
+  { t:"republique", q:"Quelles sont les trois composantes traditionnelles de l'ordre public ?", o:[
+    "Tranquillité, sécurité, salubrité",
+    "Liberté, égalité, fraternité",
+    "Police, gendarmerie, justice",
+    "Prévention, protection, répression"], a:0,
+    e:"Trilogie classique : tranquillité, sécurité, salubrité. La dignité humaine a été ajoutée par le Conseil d'État." },
+  { t:"republique", q:"Quels sont les trois pouvoirs de l'État de droit ?", o:[
+    "Législatif, exécutif, judiciaire",
+    "Président, Premier ministre, Parlement",
+    "National, régional, local",
+    "Police, armée, justice"], a:0,
+    e:"Séparation des pouvoirs : législatif (Parlement : Assemblée + Sénat), exécutif (Président + Gouvernement), judiciaire (justice indépendante)." },
+  { t:"republique", q:"Quelle norme se trouve au sommet de la hiérarchie des normes ?", o:[
+    "La Constitution",
+    "Les lois",
+    "Les règlements et décisions administratives",
+    "Les traités internationaux"], a:0,
+    e:"Hiérarchie : Constitution → traités et conventions internationaux → lois → règlements et décisions administratives. Une règle doit respecter la norme supérieure." },
+  { t:"republique", q:"Le Code de déontologie de la sécurité privée figure à quel article ?", o:[
+    "L'article R631-27 du CSI","L'article 225-1 du Code pénal","L'article 1er de la Constitution","L'article 16 du Code civil"], a:0,
+    e:"L'article R631-27 du CSI impose respect et dignité, tact, diplomatie et courtoisie ; familiarité et discrimination sont interdites." },
+  { t:"republique", q:"Que fête-t-on le 14 juillet ?", o:[
+    "La prise de la Bastille (1789) et la fête de la Fédération (1790)",
+    "La proclamation de la Ve République",
+    "La signature de la Constitution de 1958",
+    "L'adoption de la devise nationale"], a:0,
+    e:"Fête nationale : prise de la Bastille le 14 juillet 1789 et fête de la Fédération le 14 juillet 1790." },
+
+  /* ---------------- CODE PÉNAL (UV02) ---------------- */
+  { t:"penal", q:"Quelle est la différence entre responsabilité civile et pénale ?", o:[
+    "La civile répare un dommage ; la pénale sanctionne une infraction au nom de la société",
+    "La civile sanctionne ; la pénale indemnise",
+    "Elles sont identiques",
+    "La civile ne concerne que les entreprises"], a:0,
+    e:"Responsabilité civile = réparer le dommage causé à une personne. Responsabilité pénale = répondre d'une infraction et subir la peine. Un même fait peut recevoir plusieurs qualifications." },
+  { t:"penal", q:"Quels sont les trois éléments constitutifs d'une infraction ?", o:[
+    "Élément légal, élément matériel, élément moral",
+    "Crime, délit, contravention",
+    "Auteur, complice, victime",
+    "Plainte, enquête, jugement"], a:0,
+    e:"Toute infraction réunit un élément légal (prévu par la loi), un élément matériel (action ou omission) et un élément moral (intention ou faute)." },
+  { t:"penal", q:"Quelle juridiction juge les crimes ?", o:[
+    "La cour d'assises","Le tribunal de police","Le tribunal correctionnel","Le tribunal administratif"], a:0,
+    e:"Contravention → tribunal de police ; délit → tribunal correctionnel ; crime → cour d'assises." },
+  { t:"penal", q:"Concernant la tentative, laquelle de ces affirmations est exacte ?", o:[
+    "La tentative de crime est toujours punissable ; celle de contravention ne l'est pas",
+    "Toute tentative est punissable",
+    "Aucune tentative n'est punissable",
+    "Seule la tentative de contravention est punissable"], a:0,
+    e:"Tentative de crime : punissable. Tentative de délit : seulement dans les cas prévus par la loi. Tentative de contravention : jamais punissable." },
+  { t:"penal", q:"La légitime défense est prévue par l'article :", o:[
+    "122-5 du Code pénal","221-1 du Code pénal","223-6 du Code pénal","311-3 du Code pénal"], a:0,
+    e:"Article 122-5 : pas de responsabilité pénale face à une atteinte injustifiée, si la défense est nécessaire, simultanée et proportionnée." },
+  { t:"penal", q:"Combien de conditions doivent être réunies pour la légitime défense ?", o:[
+    "6 conditions (3 pour l'atteinte, 3 pour la défense)",
+    "2 conditions",
+    "4 conditions",
+    "Aucune condition particulière"], a:0,
+    e:"Atteinte : injustifiée, réelle, actuelle. Défense : nécessaire, simultanée (immédiate), proportionnée. Une seule condition manquante fait tomber la justification." },
+  { t:"penal", q:"La non-assistance à personne en péril est encadrée par quel principe essentiel ?", o:[
+    "L'assistance est due dans la mesure où elle est possible sans risque pour soi ou les tiers",
+    "Il faut porter secours même au péril de sa vie",
+    "Seuls les secouristes diplômés sont concernés",
+    "Elle ne s'applique qu'aux professionnels de santé"], a:0,
+    e:"Art. 223-6 : s'abstenir volontairement de porter assistance (par action personnelle ou en provoquant les secours), sans risque pour soi ou les tiers : 5 ans et 75 000 €." },
+  { t:"penal", q:"Que prévoit l'article 112-1 (non-rétroactivité) ?", o:[
+    "La loi pénale plus sévère ne vaut que pour l'avenir ; la loi plus douce s'applique immédiatement",
+    "Toute loi pénale s'applique aux faits passés",
+    "La loi plus douce ne s'applique jamais",
+    "Seul le juge décide de la rétroactivité"], a:0,
+    e:"Principe de non-rétroactivité : une loi pénale plus sévère ne s'applique qu'aux faits postérieurs à son entrée en vigueur ; la loi plus douce s'applique immédiatement." },
+  { t:"penal", q:"Le vol est défini comme :", o:[
+    "La soustraction frauduleuse d'une chose appartenant à autrui",
+    "Une tromperie pour obtenir une remise de bien",
+    "La dégradation d'un bien d'autrui",
+    "L'occupation illégale d'un lieu"], a:0,
+    e:"Vol (art. 311-1) = soustraction frauduleuse d'une chose appartenant à autrui. Le vol simple : 3 ans et 45 000 €. La soustraction d'énergie est assimilée au vol." },
+  { t:"penal", q:"Quelle peine encourt l'auteur d'un meurtre (art. 221-1) ?", o:[
+    "30 ans de réclusion criminelle",
+    "10 ans d'emprisonnement",
+    "La perpétuité systématique",
+    "20 ans de réclusion criminelle"], a:0,
+    e:"Meurtre (art. 221-1) : donner volontairement la mort à autrui, puni de 30 ans de réclusion criminelle." },
+  { t:"penal", q:"L'escroquerie, selon le support, est :", o:[
+    "Un délit d'action : une simple omission ne suffit pas",
+    "Un crime jugé aux assises",
+    "Une simple contravention",
+    "Toujours punissable par omission"], a:0,
+    e:"L'escroquerie est un délit d'action : tromper (usurpation, manœuvre, mensonge) pour obtenir une remise. Une simple omission ne constitue pas une escroquerie." },
+  { t:"penal", q:"La rébellion (art. 433-6) se définit comme :", o:[
+    "Une résistance violente à une personne dépositaire de l'autorité publique dans l'exercice de ses fonctions",
+    "Le fait d'insulter un agent",
+    "Le refus de décliner son identité",
+    "Un attroupement sur la voie publique"], a:0,
+    e:"Rébellion = résistance violente à une personne dépositaire de l'autorité publique ou chargée d'une mission de service public : 1 an et 15 000 €, en réunion 2 ans et 30 000 €." },
+
+  /* ---------------- LIVRE VI / CNAPS / CARTE PRO (UV02) ---------------- */
+  { t:"livre6", q:"Le Livre VI relève de quel code ?", o:[
+    "Le Code de la sécurité intérieure (CSI)",
+    "Le Code pénal",
+    "Le Code du travail",
+    "Le Code civil"], a:0,
+    e:"Le Livre VI du Code de la sécurité intérieure encadre les activités privées de sécurité et leurs conditions d'accès." },
+  { t:"livre6", q:"Le Livre VI confère-t-il un pouvoir de police à l'agent de sécurité ?", o:[
+    "Non, il fixe un cadre professionnel contrôlé",
+    "Oui, les mêmes pouvoirs que la police",
+    "Oui, mais uniquement la nuit",
+    "Oui, sur réquisition du maire"], a:0,
+    e:"L'autorisation d'exercice ne confère aucune prérogative de puissance publique. Principe clé : activité privée ≠ service public (art. L. 611-1)." },
+  { t:"livre6", q:"Que signifie le sigle CNAPS ?", o:[
+    "Conseil national des activités privées de sécurité",
+    "Commission nationale des agents privés de sûreté",
+    "Centre national d'aptitude professionnelle de sécurité",
+    "Comité national des APS"], a:0,
+    e:"Le CNAPS est l'établissement public qui régule les activités privées de sécurité : il délivre certains titres, contrôle et participe à la discipline (Titre III du Livre VI)." },
+  { t:"livre6", q:"Depuis la réforme du 1er mai 2022, qui délivre les cartes professionnelles ?", o:[
+    "Le directeur du CNAPS",
+    "La commission régionale d'agrément et de contrôle",
+    "Le préfet",
+    "L'employeur"], a:0,
+    e:"Depuis le 1er mai 2022, c'est le directeur du CNAPS qui délivre agréments, autorisations et cartes professionnelles. Ne pas répondre « commission régionale d'agrément et de contrôle »." },
+  { t:"livre6", q:"Quelle est la durée de validité de la carte professionnelle ?", o:[
+    "5 ans","3 ans","10 ans","1 an"], a:0,
+    e:"La carte professionnelle est valable 5 ans à compter de sa délivrance, sous forme dématérialisée (numéro d'enregistrement CNAPS)." },
+  { t:"livre6", q:"Quand faut-il présenter la demande de renouvellement de la carte pro ?", o:[
+    "Au moins 3 mois avant l'expiration",
+    "Le jour de l'expiration",
+    "6 mois après l'expiration",
+    "Au moins 1 an avant l'expiration"], a:0,
+    e:"La demande de renouvellement se présente au moins 3 mois avant l'expiration, avec notamment l'attestation de stage MAC (maintien et actualisation des compétences)." },
+  { t:"livre6", q:"La sanction disciplinaire d'interdiction temporaire d'exercer peut aller jusqu'à :", o:[
+    "7 ans","2 ans","5 ans","10 ans"], a:0,
+    e:"Sanctions disciplinaires : avertissement, blâme, interdiction temporaire d'exercer jusqu'à 7 ans, et pénalités financières possibles." },
+  { t:"livre6", q:"Pour un ressortissant étranger concerné, quel niveau de français est requis ?", o:[
+    "Niveau B1","Niveau A1","Niveau C2","Aucun niveau exigé"], a:0,
+    e:"Pour les ressortissants étrangers concernés, un justificatif de français au moins de niveau B1 est exigé selon les modalités réglementaires." },
+  { t:"livre6", q:"Que ne doit-on pas confondre au sujet de la carte professionnelle ?", o:[
+    "La carte CNAPS (numéro d'enregistrement) et la carte d'entreprise remise par l'employeur",
+    "La carte pro et le permis de conduire",
+    "La carte CNAPS et le diplôme TFP APS",
+    "La carte d'entreprise et le contrat de travail"], a:0,
+    e:"Le numéro CNAPS dématérialisé est le titre administratif. En plus, l'employeur remet une carte professionnelle d'entreprise (photo, identité, activités, employeur, n° CNAPS) à restituer en fin de contrat." },
+  { t:"livre6", q:"Une carte professionnelle valide autorise-t-elle à intervenir dans un conflit du travail ?", o:[
+    "Non, c'est expressément interdit",
+    "Oui, sur demande de l'employeur",
+    "Oui, pour maintenir l'ordre",
+    "Oui, uniquement en cas de grève"], a:0,
+    e:"Une carte valide n'autorise pas l'agent à intervenir dans un conflit du travail ni à surveiller les opinions politiques, philosophiques, religieuses ou syndicales." },
+  { t:"livre6", q:"Avant un appel aux forces de l'ordre en surveillance à distance, l'agent doit procéder à :", o:[
+    "Une levée de doute",
+    "Une interpellation",
+    "Une fouille des lieux",
+    "Une dispersion de l'attroupement"], a:0,
+    e:"La surveillance à distance doit être précédée d'une levée de doute avant tout appel injustifié aux forces publiques." },
+  { t:"livre6", q:"La Convention collective nationale « Prévention-Sécurité » date du :", o:[
+    "15 février 1985","4 octobre 1958","1er mai 2022","9 décembre 1905"], a:0,
+    e:"Convention collective nationale des entreprises de prévention et de sécurité du 15 février 1985, étendue par arrêté du 25 juillet 1985. Elle complète le Livre VI pour les relations de travail." },
+  { t:"livre6", q:"Quelle est la pause minimale légale après 6 heures de travail consécutives ?", o:[
+    "20 minutes","15 minutes","30 minutes","1 heure"], a:0,
+    e:"La pause minimale légale est de 20 minutes après 6 heures de travail consécutives. En sécurité, la durée quotidienne peut aller jusqu'à 12 heures selon les accords applicables." },
+
+  /* ---------------- CODE DE DÉONTOLOGIE (UV02) ---------------- */
+  { t:"deonto", q:"Qu'est-ce que la déontologie ?", o:[
+    "L'ensemble des règles et devoirs qui régissent une profession et la conduite de ceux qui l'exercent",
+    "Une loi pénale propre à la sécurité privée",
+    "Le règlement intérieur d'une entreprise",
+    "Un code de bonne conduite facultatif"], a:0,
+    e:"La déontologie regroupe les principes et règles éthiques qui guident une activité professionnelle et déterminent les devoirs minimums exigibles ; elle régit aussi les rapports avec les clients et le public." },
+  { t:"deonto", q:"De quel texte est issu le Code de déontologie de la sécurité privée ?", o:[
+    "Le décret n° 2012-870 du 10 juillet 2012",
+    "La loi du 9 décembre 1905",
+    "Le décret du 1er mai 2022",
+    "La convention collective du 15 février 1985"], a:0,
+    e:"Le code de déontologie est issu du décret n° 2012-870 du 10 juillet 2012, depuis abrogé et intégré à la partie réglementaire du Livre VI, titre III, du Code de la sécurité intérieure." },
+  { t:"deonto", q:"Quelle est, selon le support, la première de toutes les règles de déontologie de l'agent ?", o:[
+    "Le respect du secret professionnel",
+    "Le port de la tenue",
+    "La ponctualité",
+    "L'obéissance à l'employeur"], a:0,
+    e:"Le respect du secret professionnel est le premier des devoirs de l'APS : c'est la garantie qui permet aux clients de confier leurs biens en toute sécurité." },
+  { t:"deonto", q:"Concernant la violence, que prévoit la déontologie de l'agent ?", o:[
+    "Interdiction de toute violence, sauf en cas de légitime défense",
+    "Usage libre de la force pour faire respecter les consignes",
+    "Violence autorisée contre tout contrevenant",
+    "Aucune règle sur la violence"], a:0,
+    e:"Toute violence est interdite, sauf en cas de légitime défense. De même, aucun port d'arme, sauf exception (ex. transport de fonds)." },
+  { t:"deonto", q:"L'agent de sécurité peut-il se prévaloir de l'autorité publique (police, gendarmerie) ?", o:[
+    "Non, jamais",
+    "Oui, pour impressionner un contrevenant",
+    "Oui, en cas d'urgence",
+    "Oui, s'il est ancien policier"], a:0,
+    e:"L'agent ne doit jamais se prévaloir de l'autorité publique. Il reste un acteur privé : activité privée ≠ service public." },
+  { t:"deonto", q:"À qui l'agent doit-il présenter sa carte professionnelle ?", o:[
+    "Au CNAPS, aux clients et aux autorités",
+    "Uniquement à son employeur",
+    "Uniquement à la police",
+    "À toute personne qui la demande"], a:0,
+    e:"La carte professionnelle se présente au CNAPS, aux clients et aux autorités. L'agent doit toujours pouvoir être identifié et contrôlé." },
+  { t:"deonto", q:"Dans quels cas l'agent doit-il informer son employeur ?", o:[
+    "En cas de suspension ou retrait de sa carte, et en cas de condamnation",
+    "Seulement en cas de démission",
+    "Seulement en cas d'accident du travail",
+    "Il n'a aucune obligation d'information"], a:0,
+    e:"L'agent doit informer son employeur en cas de suspension ou de retrait de la carte professionnelle, ainsi qu'en cas de condamnations." },
+  { t:"deonto", q:"Le respect de la dignité s'impose à l'agent :", o:[
+    "Y compris en dehors de l'exercice de sa profession",
+    "Uniquement pendant ses heures de travail",
+    "Uniquement en présence de clients",
+    "Uniquement en uniforme"], a:0,
+    e:"La dignité s'impose à l'agent y compris en dehors de l'exercice professionnel : c'est un repère classique du QCU." },
+  { t:"deonto", q:"Comment le marchandage est-il défini par le Code du travail ?", o:[
+    "Une opération à but lucratif de fourniture de main-d'œuvre causant un préjudice au salarié ou éludant la loi/la convention collective",
+    "La vente illégale de prestations de sécurité",
+    "Le fait de négocier un contrat de sécurité",
+    "Le défaut de carte professionnelle"], a:0,
+    e:"Le marchandage est une opération à but lucratif de prêt de main-d'œuvre qui cause un préjudice au salarié ou élude l'application de la loi ou d'une convention/accord collectif." },
+  { t:"deonto", q:"Quels sont les 3 critères du délit de marchandage ?", o:[
+    "Transfert du lien de subordination, but lucratif, violation des droits",
+    "Vol, escroquerie, abus de confiance",
+    "Absence de carte, de tenue, d'autorisation",
+    "Alcool, violence, port d'arme"], a:0,
+    e:"Les 3 critères : transfert du lien de subordination (le salarié travaille sous l'autorité du client), but lucratif (la sous-traitante tire profit) et violation des droits (inégalité de traitement, convention non appliquée)." },
+  { t:"deonto", q:"Quelle amende encourt une entreprise pour marchandage ?", o:[
+    "150 000 €, avec possibilité de dissolution ou d'interdiction d'exercer",
+    "30 000 €",
+    "45 000 €",
+    "7 500 €"], a:0,
+    e:"Entreprise (personne morale) : 150 000 € d'amende, avec ou sans dissolution, interdiction d'exercer, fermeture d'établissements ou exclusion des marchés publics. La personne physique encourt jusqu'à 2 ans et 30 000 €." },
+  { t:"deonto", q:"Comment le code de déontologie est-il porté à la connaissance du salarié ?", o:[
+    "Affiché dans l'entreprise, remis à l'embauche et référencé dans le contrat de travail",
+    "Uniquement publié au Journal officiel",
+    "Uniquement remis sur demande du salarié",
+    "Transmis seulement aux dirigeants"], a:0,
+    e:"Le code est affiché de façon visible, remis par l'employeur à tout salarié dès l'embauche (même pour une mission ponctuelle), référencé dans le contrat de travail et enseigné en formation." },
+
+  /* ---------------- RESPECT DES LIBERTÉS PUBLIQUES (UV02) ---------------- */
+  { t:"libertes", q:"Quel article pose le principe « Chacun a droit au respect de sa vie privée » ?", o:[
+    "L'article 9 du Code civil","L'article 544 du Code civil","L'article 226-1 du Code pénal","L'article 73 du CPP"], a:0,
+    e:"L'article 9 du Code civil garantit le respect de la vie privée. Le juge peut prescrire des mesures (séquestre, saisie), y compris en référé en cas d'urgence." },
+  { t:"libertes", q:"Capter, enregistrer ou transmettre sans consentement des paroles privées ou l'image d'une personne dans un lieu privé est puni de :", o:[
+    "1 an d'emprisonnement et 45 000 € d'amende",
+    "3 ans et 45 000 €",
+    "5 ans et 75 000 €",
+    "6 mois et 7 500 €"], a:0,
+    e:"Articles 226-1 et 226-2 du Code pénal : 1 an d'emprisonnement et 45 000 € d'amende. Les mêmes peines visent la conservation, l'utilisation ou la diffusion de l'enregistrement." },
+  { t:"libertes", q:"Le droit de propriété se décompose en trois éléments :", o:[
+    "Usus, fructus, abusus",
+    "Usage, location, vente",
+    "Possession, jouissance, cession",
+    "Nom, image, voix"], a:0,
+    e:"Usus (droit d'user de la chose), fructus (droit d'en percevoir les fruits), abusus (droit d'en disposer, ex. la mise en location)." },
+  { t:"libertes", q:"Quel article du Code civil permet à un propriétaire de jouir et disposer de la chose « de la manière la plus absolue » ?", o:[
+    "L'article 544","L'article 545","L'article 546","L'article 647"], a:0,
+    e:"Art. 544 : jouir et disposer de la manière la plus absolue, sauf usage prohibé par les lois et règlements. Le droit de propriété n'est donc pas total (ex. tapage nocturne)." },
+  { t:"libertes", q:"Que signifie le sigle CNIL ?", o:[
+    "Commission nationale de l'informatique et des libertés",
+    "Conseil national de l'identité et des libertés",
+    "Comité national d'information légale",
+    "Centre national de l'informatique libre"], a:0,
+    e:"La CNIL est l'autorité chargée de veiller à la protection des données personnelles : elle informe, régule, contrôle, conseille, alerte et peut sanctionner." },
+  { t:"libertes", q:"Quelle est la différence entre vidéo-protection et vidéo-surveillance ?", o:[
+    "La vidéo-protection filme la voie publique et les lieux ouverts au public ; la vidéo-surveillance filme les lieux non ouverts au public",
+    "La vidéo-protection filme l'intérieur ; la vidéo-surveillance filme l'extérieur",
+    "Ce sont deux mots pour la même chose",
+    "La vidéo-surveillance est réservée à la police"], a:0,
+    e:"Vidéo-protection = voie publique et lieux ouverts au public (rue, gare, centre commercial). Vidéo-surveillance = lieux non ouverts au public (réserve de magasin, entrepôt)." },
+  { t:"libertes", q:"Quelle est la durée maximale de conservation des images de vidéoprotection de la voie publique ?", o:[
+    "1 mois (sauf besoin d'une procédure pénale)",
+    "1 an",
+    "6 mois",
+    "1 semaine"], a:0,
+    e:"À compter de la transmission, la conservation ne peut excéder 1 mois, sauf nécessité pour les besoins d'une procédure pénale (art. 10 de la loi n° 95-73 du 21 janvier 1995)." },
+  { t:"libertes", q:"La séquestration d'une personne (art. 224-1 du Code pénal) est punie de :", o:[
+    "20 ans de réclusion criminelle",
+    "10 ans d'emprisonnement",
+    "5 ans et 75 000 €",
+    "30 ans de réclusion criminelle"], a:0,
+    e:"Art. 224-1 : arrêter, enlever, détenir ou séquestrer une personne sans ordre des autorités et hors les cas prévus par la loi = 20 ans de réclusion criminelle." },
+  { t:"libertes", q:"L'homicide involontaire (art. 221-6 du Code pénal) est puni de :", o:[
+    "3 ans et 45 000 € (5 ans et 75 000 € en cas de faute délibérée)",
+    "30 ans de réclusion",
+    "1 an et 15 000 €",
+    "20 ans de réclusion"], a:0,
+    e:"Causer la mort d'autrui par maladresse, imprudence ou négligence : 3 ans et 45 000 €. En cas de violation manifestement délibérée d'une obligation de sécurité : 5 ans et 75 000 €." },
+  { t:"libertes", q:"Quel est le rôle de l'APS face à un litige civil entre particuliers ?", o:[
+    "Il ne tranche pas le litige : il protège, constate et alerte",
+    "Il arbitre le conflit sur place",
+    "Il convoque les parties",
+    "Il saisit lui-même le tribunal"], a:0,
+    e:"Les juridictions civiles (TGI, TI…) tranchent les litiges entre particuliers. Le rôle de l'APS n'est pas de juger : il protège, constate et alerte dans le cadre de ses missions." },
+
+  /* ---------------- CONDITIONS D'APPRÉHENSION (UV02) ---------------- */
+  { t:"apprehension", q:"Quel article du Code de procédure pénale définit l'infraction flagrante ?", o:[
+    "L'article 53","L'article 73","L'article 803","L'article 224-1"], a:0,
+    e:"Art. 53 CPP : est flagrant le crime ou délit qui se commet actuellement, qui vient de se commettre, avec poursuite par la clameur publique, ou avec objets/traces/indices apparents." },
+  { t:"apprehension", q:"Combien de situations de flagrance l'article 53 prévoit-il ?", o:[
+    "4 situations","2 situations","6 situations","3 situations"], a:0,
+    e:"Les 4 situations : l'infraction se commet actuellement, vient de se commettre, poursuite par la clameur publique, ou objets/traces/indices apparents." },
+  { t:"apprehension", q:"Quel article fonde le droit d'appréhender l'auteur d'une infraction ?", o:[
+    "L'article 73 du Code de procédure pénale",
+    "L'article 53 du Code de procédure pénale",
+    "L'article 122-5 du Code pénal",
+    "L'article L611-1 du CSI"], a:0,
+    e:"Art. 73 CPP : en cas de crime flagrant ou de délit flagrant puni d'emprisonnement, toute personne a qualité pour appréhender l'auteur et le conduire devant l'OPJ le plus proche." },
+  { t:"apprehension", q:"L'appréhension de l'article 73 est possible pour :", o:[
+    "Un crime flagrant ou un délit flagrant puni d'emprisonnement",
+    "Toute infraction, y compris les contraventions",
+    "Les délits punis seulement d'une amende",
+    "Toute personne suspecte"], a:0,
+    e:"Condition à mémoriser : crime flagrant OU délit flagrant puni d'emprisonnement. Les contraventions et les délits punis seulement d'une amende sont exclus." },
+  { t:"apprehension", q:"Dans le cadre de l'article 73, que peut faire l'APS ?", o:[
+    "Appréhender et employer une force strictement nécessaire et proportionnée",
+    "Fouiller la personne et ses bagages",
+    "Demander une pièce d'identité",
+    "Se comporter comme un OPJ"], a:0,
+    e:"L'APS peut appréhender, employer une force strictement nécessaire et proportionnée, palper par sécurité et contrôler les bagages (L613-2/L613-3 CSI). Il ne peut PAS arrêter, fouiller, exiger une identité ou agir en OPJ." },
+  { t:"apprehension", q:"Après avoir appréhendé l'auteur, à qui l'APS doit-il le remettre ?", o:[
+    "À l'officier de police judiciaire (OPJ) le plus proche",
+    "Au directeur du magasin",
+    "Au CNAPS",
+    "Au procureur directement"], a:0,
+    e:"L'auteur est conduit ou mis à disposition de l'OPJ le plus proche (police nationale, gendarmerie nationale ou maire de la commune), après avoir avisé sans délai les services compétents." },
+  { t:"apprehension", q:"L'APS dispose, en matière d'appréhension :", o:[
+    "Des mêmes droits qu'un simple citoyen, dans les conditions prévues par la loi",
+    "Des mêmes pouvoirs qu'un officier de police judiciaire",
+    "D'un pouvoir de contrôle d'identité",
+    "D'un droit de perquisition"], a:0,
+    e:"L'APS n'est ni policier ni gendarme : il a les droits d'un citoyen. Il observe, protège, alerte et agit sans se substituer aux forces de l'ordre." },
+  { t:"apprehension", q:"Le menottage (art. 803 du CPP) n'est possible que si la personne est :", o:[
+    "Dangereuse pour autrui, pour elle-même, ou susceptible de prendre la fuite",
+    "Suspectée d'une contravention",
+    "Refusant de parler",
+    "De mauvaise foi"], a:0,
+    e:"Art. 803 : nul ne peut être menotté s'il n'est considéré comme dangereux pour autrui ou lui-même, ou susceptible de fuir. Le menottage n'est jamais automatique et l'APS en assume la responsabilité." },
+  { t:"apprehension", q:"L'appréhension d'un mineur impose :", o:[
+    "Un appel au responsable légal ou, à défaut, aux forces de l'ordre (appel obligatoire)",
+    "Une simple surveillance jusqu'à sa libération",
+    "Aucune formalité particulière",
+    "Sa remise directe à ses parents sans autre démarche"], a:0,
+    e:"Pour un mineur, l'appel devient obligatoire : il faut prévenir le responsable légal ou, à défaut, la police ou la gendarmerie." },
+  { t:"apprehension", q:"Exercer une surveillance sur la voie publique sans autorisation préfectorale est puni de :", o:[
+    "2 ans d'emprisonnement et 30 000 € d'amende",
+    "6 mois et 7 500 €",
+    "1 an et 15 000 €",
+    "5 ans et 75 000 €"], a:0,
+    e:"La surveillance sur la voie publique exige une autorisation préfectorale (à conserver pendant la vacation). L'exercer sans autorisation : 2 ans d'emprisonnement et 30 000 € d'amende." },
+  { t:"apprehension", q:"En magasin, un portique antivol qui se déclenche constitue-t-il la preuve d'un vol ?", o:[
+    "Non, c'est un simple indice ; le vol est constitué au passage en caisse sans payer ou à la sortie sans achat",
+    "Oui, c'est une preuve suffisante",
+    "Oui, cela autorise une fouille",
+    "Oui, cela justifie une arrestation"], a:0,
+    e:"Un portique déclenché est un indice, pas une preuve systématique. Le vol est constitué au passage en caisse sans payer ou à la sortie sans achat. L'infraction cachée n'est pas un flagrant délit." },
+  { t:"apprehension", q:"Pendant l'attente de la police, la personne appréhendée :", o:[
+    "Ne doit jamais rester seule et doit être maintenue dans des conditions dignes",
+    "Peut être laissée seule dans un local fermé",
+    "Peut être attachée à un point fixe",
+    "Doit être interrogée par l'agent"], a:0,
+    e:"La personne ne doit jamais rester seule, être protégée (agressions, destruction de preuves) et maintenue dignement (vouvoiement, respect de l'état physique). Ne jamais l'attacher à un point fixe." },
+
+  /* ---------------- FILIÈRES MÉTIERS (UV06) ---------------- */
+  { t:"filieres", q:"Combien de filières le support de l'UV06 présente-t-il ?", o:[
+    "6 filières","4 filières","3 filières","8 filières"], a:0,
+    e:"6 filières : Surveillance, Distribution, Télésurveillance, Incendie, Aéroportuaire et Nucléaire." },
+  { t:"filieres", q:"À quelle filière appartiennent l'agent pré-vol et l'agent arrière-caisse ?", o:[
+    "La Distribution","La Surveillance","L'Incendie","La Télésurveillance"], a:0,
+    e:"Filière Distribution : prévention des vols et de la malveillance en magasin (surface de vente, vidéo, arrière-caisse)." },
+  { t:"filieres", q:"Quelle filière concerne les ERP et les IGH ?", o:[
+    "L'Incendie (notamment SSIAP)","La Surveillance","L'Aéroportuaire","Le Nucléaire"], a:0,
+    e:"La filière Incendie couvre la prévention et la sécurité incendie en ERP/IGH et en milieu industriel, notamment les métiers SSIAP." },
+  { t:"filieres", q:"À quelle filière le TFP APS prépare-t-il principalement ?", o:[
+    "La Surveillance","La Distribution","L'Incendie","Le Nucléaire"], a:0,
+    e:"Le TFP APS prépare principalement aux fondamentaux de la filière Surveillance, la plus généraliste. Il faut toutefois savoir reconnaître les autres filières." },
+  { t:"filieres", q:"De quand date l'accord relatif aux qualifications professionnelles à retenir ?", o:[
+    "Du 26 septembre 2016","Du 15 février 1985","Du 10 juillet 2012","Du 1er mai 2022"], a:0,
+    e:"L'accord relatif aux qualifications professionnelles (26 septembre 2016) rattache les métiers repères à la Convention collective nationale des entreprises de prévention et de sécurité. Attention à la coquille « 2006 » du support." },
+  { t:"filieres", q:"Le chef de poste dispose-t-il d'un pouvoir hiérarchique ?", o:[
+    "Non : il coordonne, donne un avis et rend compte à sa hiérarchie",
+    "Oui, il commande toute l'équipe",
+    "Oui, il peut sanctionner les agents",
+    "Oui, il remplace le directeur"], a:0,
+    e:"Le chef de poste coordonne la bonne exécution de la prestation mais ne dispose PAS d'un pouvoir hiérarchique : il peut donner un avis et rend compte à sa hiérarchie." },
+  { t:"filieres", q:"Pour l'agent cynophile, quel est le rôle du chien ?", o:[
+    "Le chien est l'auxiliaire du conducteur",
+    "Le chien est le supérieur de l'agent",
+    "Le chien appartient au client",
+    "Le chien remplace l'agent la nuit"], a:0,
+    e:"L'agent cynophile forme une équipe Homme/Chien ; il est propriétaire du chien en règle. Le chien est l'auxiliaire du conducteur, pas l'inverse." },
+  { t:"filieres", q:"Quelle est la mission clé de l'agent de sécurité filtrage ?", o:[
+    "Empêcher l'introduction d'objets illicites dans une zone définie",
+    "Faire des rondes de nuit",
+    "Analyser les images radioscopiques",
+    "Conduire un chien d'intervention"], a:0,
+    e:"Le filtrage empêche l'introduction d'objets illicites dans une zone définie (hors zone de sûreté aéroportuaire), contrôle la concordance objet/convoyeur et lève le doute dans le respect des libertés publiques." },
+  { t:"filieres", q:"Quelle est la mission clé de l'opérateur filtrage ?", o:[
+    "Analyser les images radioscopiques et informations des appareils de contrôle",
+    "Faire des rondes mobiles",
+    "Diriger le poste de sécurité incendie",
+    "Contrôler les pièces d'identité"], a:0,
+    e:"L'opérateur filtrage assure l'analyse des informations des appareils de contrôle, notamment la visualisation des images radioscopiques." },
+  { t:"filieres", q:"Que recouvre le métier de SSIAP 1 ?", o:[
+    "Agent opérationnel : prévention, évacuation, assistance et exploitation du PC sécurité",
+    "Chef d'équipe qui dirige le poste lors des sinistres",
+    "Chef de service qui organise et conseille",
+    "Conducteur de chien d'intervention"], a:0,
+    e:"SSIAP 1 = agent : prévention des incendies, alerte, évacuation du public, assistance à personnes et exploitation du PC sécurité. SSIAP 2 encadre l'équipe, SSIAP 3 organise le service." },
+  { t:"filieres", q:"L'agent pré-vol (inspecteur magasin) vérifie-t-il les pièces d'identité et moyens de paiement ?", o:[
+    "Non, ce n'est pas son rôle",
+    "Oui, systématiquement",
+    "Oui, uniquement les mineurs",
+    "Oui, à la demande de la caisse"], a:0,
+    e:"L'agent pré-vol ne vérifie ni la pertinence des moyens de paiement ni les pièces d'identité. Il n'a pas l'uniforme obligatoire mais doit avoir sa carte professionnelle sur lui en cas de contrôle." },
+  { t:"filieres", q:"Pour quel métier de la Distribution le port de l'uniforme est-il obligatoire ?", o:[
+    "L'agent arrière-caisse","L'agent pré-vol","L'agent vidéo","Aucun"], a:0,
+    e:"L'agent arrière-caisse est soumis au port obligatoire de l'uniforme. L'agent pré-vol, lui, n'y est pas soumis mais doit porter sa carte professionnelle." },
+  { t:"filieres", q:"Quelle est la durée de la formation « Titre professionnel ASCCI » (agent cynophile) citée dans le support ?", o:[
+    "315 heures","175 heures","70 heures","500 heures"], a:0,
+    e:"Le support indique 315 heures pour le Titre professionnel Agent de sécurité conducteur de chien d'intervention (ASCCI)." },
+  { t:"filieres", q:"Que protège l'Agent de sécurité Qualifié (ASQ) ?", o:[
+    "Les biens meubles et immeubles et les personnes liées à la sécurité des biens",
+    "Uniquement les personnes",
+    "Uniquement la voie publique",
+    "Uniquement les systèmes informatiques"], a:0,
+    e:"L'ASQ protège les biens meubles et immeubles ainsi que les personnes physiques ou morales liées directement ou indirectement à la sécurité des biens. C'est le socle généraliste de la filière Surveillance." },
+
+  /* ---------------- MODALITÉS D'APPRÉHENSION EN EXERCICE (UV06) ---------------- */
+  { t:"modalites", q:"Quel est le réflexe central lors d'une appréhension en magasin ?", o:[
+    "Ne pas confondre appréhension, contrôle et fouille",
+    "Toujours fouiller la personne",
+    "Toujours appeler la police",
+    "Récupérer la marchandise par la force"], a:0,
+    e:"L'agent constate, invite, sécurise et transmet ; il ne se substitue pas aux forces de l'ordre. Appréhension, contrôle et fouille ne doivent pas être confondus." },
+  { t:"modalites", q:"À quelle condition l'appréhension peut-elle avoir lieu ?", o:[
+    "Seulement si l'on est certain que l'acte délictueux a été commis",
+    "Dès qu'un portique sonne",
+    "Dès qu'une personne paraît suspecte",
+    "Sur simple signalement d'un client"], a:0,
+    e:"L'appréhension ne doit se faire que si l'on est certain que l'acte délictueux a été commis. La priorité est la sécurité des personnes, la maîtrise de la situation et la traçabilité." },
+  { t:"modalites", q:"Peut-on obliger physiquement un client à suivre l'agent dans le local ?", o:[
+    "Non : c'est interdit ; en cas de refus, dialoguer puis appeler la police",
+    "Oui, par la contrainte si besoin",
+    "Oui, s'il a volé",
+    "Oui, en le tenant par le bras"], a:0,
+    e:"Il est interdit d'obliger le client à suivre l'agent. En cas de refus : tenter le dialogue, puis appeler la police. Ne jamais transformer l'invitation en contrainte physique." },
+  { t:"modalites", q:"Parmi ces actes, lequel est AUTORISÉ lors du contrôle ?", o:[
+    "Le contrôle visuel (prévu par le règlement intérieur)",
+    "La palpation",
+    "La fouille des poches et sacs",
+    "La contrainte pour obtenir une signature"], a:0,
+    e:"Autorisé : contrôle visuel et demande de vider volontairement poches/sacs. Interdits : palpation, fouille, et toute contrainte pour obtenir papiers, signature ou déplacement." },
+  { t:"modalites", q:"La remise de la pièce d'identité par la personne doit être :", o:[
+    "Absolument volontaire","Exigée systématiquement","Obtenue par la fouille","Imposée aux mineurs"], a:0,
+    e:"La remise de la pièce d'identité doit être absolument volontaire. Règle : demander, jamais arracher ; observer, jamais fouiller." },
+  { t:"modalites", q:"Comment l'agent doit-il s'adresser à la personne appréhendée, y compris un mineur ?", o:[
+    "Toujours la vouvoyer, quel que soit son âge",
+    "La tutoyer si c'est un mineur",
+    "Hausser le ton pour la calmer",
+    "Employer les mots « vol » et « voleur »"], a:0,
+    e:"Toujours vouvoyer, quel que soit l'âge, y compris un mineur. Insultes, menaces, coups et propos discriminants sont interdits ; éviter même les mots « vol » ou « voleur »." },
+  { t:"modalites", q:"Un mineur peut-il signer la lettre-plainte simplifiée ?", o:[
+    "Non, jamais : on fait signer une prise en charge par la personne civilement responsable",
+    "Oui, s'il reconnaît les faits",
+    "Oui, avec l'accord de l'agent",
+    "Oui, s'il a plus de 13 ans"], a:0,
+    e:"Ne jamais faire signer la lettre-plainte simplifiée par un mineur. On fait remplir et signer une prise en charge par la personne civilement responsable." },
+  { t:"modalites", q:"À qui un enfant appréhendé peut-il être confié ?", o:[
+    "À une personne juridiquement responsable (parent, grand-parent, frère/sœur majeur, tuteur légal)",
+    "À n'importe quel adulte présent",
+    "À un autre client du magasin",
+    "À un agent de sécurité"], a:0,
+    e:"L'enfant ne peut être confié qu'à une personne juridiquement responsable. En cas d'impossibilité : appel systématique aux forces de l'ordre." },
+  { t:"modalites", q:"Quelle est la durée maximale de sauvegarde des images de vidéosurveillance en magasin ?", o:[
+    "1 mois maximum (souvent 7 jours)",
+    "1 an",
+    "3 mois",
+    "48 heures"], a:0,
+    e:"Durée de sauvegarde : 1 mois maximum, souvent 7 jours. Le système doit être déclaré à la préfecture et le CSE informé ; le client n'est pas autorisé à voir directement ses images." },
+  { t:"modalites", q:"Une personne appréhendée demande à aller aux toilettes. L'agent accède à la demande :", o:[
+    "Si le trajet est sécurisé et si elle a accepté de restituer les objets dérobés",
+    "Dans tous les cas, sans condition",
+    "Jamais",
+    "Seulement si elle a payé"], a:0,
+    e:"On accède à la demande d'aller aux toilettes uniquement si le trajet est réalisable en sécurité et si la personne a accepté de restituer l'ensemble des objets dérobés." },
+  { t:"modalites", q:"La lettre-plainte simplifiée pour vol s'utilise :", o:[
+    "Quel que soit le montant du vol",
+    "Seulement au-dessus d'un certain montant",
+    "Seulement pour les majeurs",
+    "Seulement si la police se déplace"], a:0,
+    e:"La fiche de plainte simplifiée est un document officiel, à remplir avec soin (toutes les rubriques) et à utiliser quel que soit le montant du vol." },
+  { t:"modalites", q:"Comment doit être rédigé le compte rendu de l'appréhension ?", o:[
+    "De façon chronologique, factuelle et neutre, sans jugement",
+    "Librement, selon le ressenti de l'agent",
+    "En qualifiant la personne de « voleur »",
+    "Uniquement à l'oral"], a:0,
+    e:"Le compte rendu assure la traçabilité : chronologique (lieu, moment, observations, dialogue, objets, témoins, suites), factuel et neutre, sur le document propre au magasin." },
+  { t:"modalites", q:"Combien de personnes faut-il prévoir, au minimum, pour sécuriser l'intervention ?", o:[
+    "Au moins deux (un agent ou un cadre du magasin en appui)",
+    "Une seule suffit",
+    "Au moins quatre",
+    "Toute l'équipe systématiquement"], a:0,
+    e:"Prévoir au moins deux personnes : le second membre surveille les articles, prévient une fuite et contribue à la sécurité. Agent seul : appeler un responsable du magasin." },
+];
+
+/* ===================== ÉTAT ===================== */
+const app = document.getElementById("app");
+const progressRail = document.getElementById("progressRail");
+const progressFill = document.getElementById("progressFill");
+const UV_META = {
+  UV02: { name:"Environnement juridique" },
+  UV05: { name:"Incendie" },
+  UV06: { name:"Métiers & appréhension" },
+};
+// ordre d'affichage des UV (croissant)
+const UV_ORDER = [...new Set(Object.values(THEMES).map(t=>t.uv))].sort();
+
+let selected = new Set(Object.keys(THEMES)); // thèmes choisis
+let expandedUV = new Set([UV_ORDER[0]]);     // groupes dépliés (le 1er ouvert par défaut)
+let qCount = 10;
+let shuffleOpts = true;
+let session = null; // {questions, idx, answers:[], }
+
+/* ---- Thème clair/sombre ---- */
+const themeBtn = document.getElementById("themeBtn");
+const themeLbl = document.getElementById("themeLbl");
+function currentDark(){
+  const attr = document.documentElement.getAttribute("data-theme");
+  if(attr) return attr==="dark";
+  return window.matchMedia("(prefers-color-scheme: dark)").matches;
+}
+function syncThemeLabel(){ themeLbl.textContent = currentDark() ? "Clair" : "Sombre"; }
+themeBtn.addEventListener("click", ()=>{
+  const dark = currentDark();
+  document.documentElement.setAttribute("data-theme", dark ? "light" : "dark");
+  syncThemeLabel();
+});
+syncThemeLabel();
+
+/* ---- localStorage : meilleur score ---- */
+function loadBest(){ try{ return JSON.parse(localStorage.getItem("qcu_tfp_best")||"{}"); }catch(e){ return {}; } }
+function saveBest(o){ try{ localStorage.setItem("qcu_tfp_best", JSON.stringify(o)); }catch(e){} }
+
+/* ---- utilitaires ---- */
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function countFor(keys){ return BANK.filter(q=>keys.has(q.t)).length; }
+function esc(s){ return s.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])); }
+
+/* ===================== ÉCRAN DE DÉPART ===================== */
+function renderSetup(){
+  progressRail.hidden = true;
+  const best = loadBest();
+
+  // Groupes dépliables par UV
+  const groups = UV_ORDER.map(uv=>{
+    const keys = Object.keys(THEMES).filter(k=>THEMES[k].uv===uv);
+    const selCount = keys.filter(k=>selected.has(k)).length;
+    const qTotal = BANK.filter(q=>THEMES[q.t].uv===uv).length;
+    const open = expandedUV.has(uv);
+    const allOn = selCount===keys.length;
+
+    const tiles = keys.map(key=>{
+      const th = THEMES[key];
+      const on = selected.has(key);
+      const n = BANK.filter(q=>q.t===key).length;
+      return `<button class="theme-tile" data-theme-key="${key}" aria-pressed="${on}">
+        <div class="tt-top">
+          <span class="uv">${n} questions</span>
+          <span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></span>
+        </div>
+        <div class="tt-name">${th.name}</div>
+      </button>`;
+    }).join("");
+
+    return `<div class="uv-group">
+      <button class="uv-head" data-uv="${uv}" aria-expanded="${open}">
+        <span class="uv-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+        <span class="uv-head-txt">
+          <span class="uv-code">${uv} · ${UV_META[uv]?UV_META[uv].name:""}</span>
+          <span class="uv-sub">${keys.length} thème${keys.length>1?"s":""} · ${selCount} sélectionné${selCount>1?"s":""}</span>
+        </span>
+        <span class="uv-badge ${selCount>0?"on":""}">${selCount}/${keys.length}</span>
+      </button>
+      <div class="uv-body" ${open?"":"hidden"}>
+        <div class="uv-tools"><button class="uv-selectall" data-uv-all="${uv}">${allOn?"Tout retirer":"Tout sélectionner"}</button></div>
+        ${tiles}
+      </div>
+    </div>`;
+  }).join("");
+
+  const avail = countFor(selected);
+  const counts = [10,20,"max"];
+  const pills = counts.map(c=>{
+    const val = c==="max"?avail:c;
+    const label = c==="max"?"Tout":c;
+    const on = (c==="max" && qCount>=avail) || qCount===c;
+    const disabled = (typeof c==="number" && c>avail);
+    return `<button class="pill" data-count="${c}" aria-pressed="${on}" ${disabled?"disabled style='opacity:.4'":""}>${label}</button>`;
+  }).join("");
+
+  app.innerHTML = `
+    <section class="setup">
+      <div class="intro">
+        <span class="eyebrow">Révision · examen blanc</span>
+        <h1>Entraînement QCU</h1>
+        <p>Une seule bonne réponse par question. Choisissez vos thèmes, lancez une série et obtenez une correction détaillée à la fin. Questions tirées de vos fiches de révision CFPS.</p>
+      </div>
+
+      <div>
+        <div class="section-label">1 · Thèmes à réviser</div>
+        <div class="uv-list" id="uvList">${groups}</div>
+      </div>
+
+      <div>
+        <div class="section-label">2 · Nombre de questions</div>
+        <div class="pills" id="countPills">${pills}</div>
+      </div>
+
+      <div class="card" style="padding:4px 16px">
+        <div class="toggle-row">
+          <div>
+            <div style="font-weight:600">Mélanger l'ordre des réponses</div>
+            <div class="muted" style="font-size:.84rem">Évite de retenir la position de la bonne réponse</div>
+          </div>
+          <label class="switch"><input type="checkbox" id="shuffleOpt" ${shuffleOpts?"checked":""}><span class="slider"></span></label>
+        </div>
+      </div>
+
+      <div>
+        <button class="start-btn" id="startBtn">
+          Commencer · <span class="tnum" id="startCount">${Math.min(qCount,avail)}</span> questions
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+        ${best.last!=null?`<div class="best" style="margin-top:12px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4L12 17l-6.3 4.4L8 14 2 9.4h7.6z"/></svg> Meilleur score : <b class="tnum">&nbsp;${best.best}%</b></div>`:""}
+      </div>
+
+      <p class="footer-note">TFP APS — Agent de prévention et de sécurité · UV02 (environnement juridique) &amp; UV05 (incendie).<br>Support de révision, ne remplace pas les textes officiels ni le cours complet.</p>
+    </section>`;
+
+  // déplier / replier un UV
+  app.querySelectorAll("[data-uv]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const uv = btn.dataset.uv;
+      if(expandedUV.has(uv)) expandedUV.delete(uv); else expandedUV.add(uv);
+      renderSetup();
+    });
+  });
+  // tout sélectionner / retirer dans un UV
+  app.querySelectorAll("[data-uv-all]").forEach(btn=>{
+    btn.addEventListener("click", (e)=>{
+      e.stopPropagation();
+      const uv = btn.dataset.uvAll;
+      const keys = Object.keys(THEMES).filter(k=>THEMES[k].uv===uv);
+      const allOn = keys.every(k=>selected.has(k));
+      if(allOn){
+        // ne pas tout vider globalement
+        const remaining = [...selected].filter(k=>!keys.includes(k));
+        if(remaining.length>=1) keys.forEach(k=>selected.delete(k));
+      } else {
+        keys.forEach(k=>selected.add(k));
+      }
+      expandedUV.add(uv);
+      renderSetup();
+    });
+  });
+  // interactions thèmes
+  app.querySelectorAll("[data-theme-key]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const k = btn.dataset.themeKey;
+      if(selected.has(k)){ if(selected.size>1) selected.delete(k); }
+      else selected.add(k);
+      renderSetup();
+    });
+  });
+  // interactions count
+  app.querySelectorAll("[data-count]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const c = btn.dataset.count;
+      qCount = c==="max" ? countFor(selected) : Number(c);
+      renderSetup();
+    });
+  });
+  document.getElementById("shuffleOpt").addEventListener("change", e=>{ shuffleOpts = e.target.checked; });
+  document.getElementById("startBtn").addEventListener("click", startQuiz);
+}
+
+/* ===================== LANCEMENT DU QUIZ ===================== */
+function startQuiz(){
+  const pool = BANK.filter(q=>selected.has(q.t));
+  const n = Math.min(qCount, pool.length);
+  const chosen = shuffle(pool).slice(0, n).map(q=>{
+    let opts = q.o.map((text,i)=>({text, correct:i===q.a}));
+    if(shuffleOpts) opts = shuffle(opts);
+    return { ...q, opts };
+  });
+  session = { questions:chosen, idx:0, answers:[] };
+  progressRail.hidden = false;
+  renderQuestion();
+}
+
+/* ===================== UNE QUESTION ===================== */
+function renderQuestion(){
+  const s = session;
+  const q = s.questions[s.idx];
+  const th = THEMES[q.t];
+  progressFill.style.width = ((s.idx)/s.questions.length*100)+"%";
+
+  const opts = q.opts.map((o,i)=>{
+    const L = String.fromCharCode(65+i);
+    return `<button class="opt" data-opt="${i}">
+      <span class="letter">${L}</span>
+      <span class="otxt">${esc(o.text)}</span>
+      <svg class="mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="m-ok" d="M5 13l4 4L19 7"/></svg>
+    </button>`;
+  }).join("");
+
+  app.innerHTML = `
+    <section class="quiz">
+      <div class="q-meta">
+        <span class="q-tag">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3.2"/></svg>
+          ${th.uv} · ${th.short}
+        </span>
+        <span class="q-counter tnum">Question ${s.idx+1} / ${s.questions.length}</span>
+      </div>
+
+      <div class="card q-card">
+        <p class="q-text">${esc(q.q)}</p>
+        <p class="q-hint">Sélectionnez la bonne réponse.</p>
+        <div class="options" id="options">${opts}</div>
+        <div id="feedback"></div>
+      </div>
+
+      <button class="quit-link" id="quitBtn">Abandonner la série</button>
+    </section>`;
+
+  const optButtons = app.querySelectorAll(".opt");
+  optButtons.forEach(btn=>{
+    btn.addEventListener("click", ()=>answer(Number(btn.dataset.opt)));
+  });
+  document.getElementById("quitBtn").addEventListener("click", ()=>{
+    if(session.answers.length===0){ renderSetup(); }
+    else finish();
+  });
+}
+
+function answer(chosenIdx){
+  const s = session;
+  const q = s.questions[s.idx];
+  const optButtons = app.querySelectorAll(".opt");
+  const correctIdx = q.opts.findIndex(o=>o.correct);
+  const isCorrect = chosenIdx===correctIdx;
+
+  optButtons.forEach((btn,i)=>{
+    btn.disabled = true;
+    if(i===correctIdx) btn.classList.add("correct");
+    else if(i===chosenIdx) btn.classList.add("wrong");
+    else btn.classList.add("dim");
+  });
+
+  s.answers.push({ q, chosenIdx, correctIdx, isCorrect });
+
+  const fb = document.getElementById("feedback");
+  const last = s.idx===s.questions.length-1;
+  fb.innerHTML = `
+    <div class="explain ${isCorrect?"ok":"ko"}">
+      <div class="ex-head">
+        ${isCorrect
+          ? `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" stroke-width="2"/><path d="M8 12l2.5 2.5L16 9"/></svg> Bonne réponse`
+          : `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" stroke-width="2"/><path d="M15 9l-6 6M9 9l6 6"/></svg> Réponse incorrecte`}
+      </div>
+      <div>${esc(q.e)}</div>
+    </div>
+    <button class="next-btn" id="nextBtn" style="margin-top:14px">
+      ${last?"Voir mon résultat":"Question suivante"}
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </button>`;
+
+  progressFill.style.width = ((s.idx+1)/s.questions.length*100)+"%";
+  const nb = document.getElementById("nextBtn");
+  nb.addEventListener("click", ()=>{
+    if(last){ finish(); }
+    else { s.idx++; renderQuestion(); window.scrollTo({top:0, behavior:"smooth"}); }
+  });
+  nb.focus();
+}
+
+/* ===================== RÉSULTATS ===================== */
+function finish(){
+  progressRail.hidden = true;
+  const s = session;
+  const total = s.answers.length;
+  const good = s.answers.filter(a=>a.isCorrect).length;
+  const pct = total? Math.round(good/total*100) : 0;
+  const pass = pct>=70;
+
+  // meilleur score
+  const best = loadBest();
+  const newBest = Math.max(best.best||0, pct);
+  saveBest({ best:newBest, last:pct });
+
+  // ventilation par thème
+  const byTheme = {};
+  s.answers.forEach(a=>{
+    const k=a.q.t;
+    byTheme[k] = byTheme[k] || {good:0,total:0};
+    byTheme[k].total++; if(a.isCorrect) byTheme[k].good++;
+  });
+  const bdRows = Object.entries(byTheme).map(([k,v])=>{
+    const p = Math.round(v.good/v.total*100);
+    return `<div class="bd-row">
+      <span class="bd-name">${THEMES[k].short}</span>
+      <span class="bd-bar"><i style="width:${p}%"></i></span>
+      <span class="bd-score tnum">${v.good}/${v.total}</span>
+    </div>`;
+  }).join("");
+
+  // anneau
+  const R=66, C=2*Math.PI*R, off=C*(1-pct/100);
+
+  const reviewCards = s.answers.map((a,i)=>{
+    const correctText = a.q.opts[a.correctIdx].text;
+    const chosenText = a.q.opts[a.chosenIdx].text;
+    return `<div class="card rv-card">
+      <p class="rv-q">
+        <span class="ic">${a.isCorrect
+          ? `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--good)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" stroke-width="2"/><path d="M8 12l2.5 2.5L16 9"/></svg>`
+          : `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--bad)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" stroke-width="2"/><path d="M15 9l-6 6M9 9l6 6"/></svg>`}
+        </span>
+        <span>${i+1}. ${esc(a.q.q)}</span>
+      </p>
+      ${!a.isCorrect?`<div class="rv-line bad"><span class="lab">Votre choix</span><span class="val">${esc(chosenText)}</span></div>`:""}
+      <div class="rv-line good"><span class="lab">Réponse</span><span class="val">${esc(correctText)}</span></div>
+      <div class="rv-exp">${esc(a.q.e)}</div>
+    </div>`;
+  }).join("");
+
+  app.innerHTML = `
+    <section class="results">
+      <div class="card score-card">
+        <span class="eyebrow">Résultat de la série</span>
+        <div class="ring">
+          <svg width="150" height="150" viewBox="0 0 150 150">
+            <circle cx="75" cy="75" r="${R}" fill="none" stroke="var(--line)" stroke-width="12"/>
+            <circle cx="75" cy="75" r="${R}" fill="none" stroke="${pass?"var(--good)":"var(--flame)"}" stroke-width="12" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${off}"/>
+          </svg>
+          <div class="pct"><b class="tnum">${pct}%</b><span>${good}/${total} bonnes</span></div>
+        </div>
+        <div class="verdict ${pass?"pass":"fail"}">${pass?"Objectif atteint":"À retravailler"}</div>
+        <div class="score-sub">${pass?"Vous dépassez le seuil des 70 %. Continuez à varier les thèmes.":"Visez au moins 70 %. Revoyez la correction ci-dessous."}</div>
+      </div>
+
+      <div class="card breakdown">
+        <div class="section-label" style="margin-bottom:4px">Par thème</div>
+        ${bdRows}
+      </div>
+
+      <div class="actions">
+        <button class="start-btn" id="againBtn">
+          Nouvelle série
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+        </button>
+        <button class="next-btn" id="homeBtn" style="background:var(--surface-2);color:var(--ink);border:1px solid var(--line)">Changer de thèmes</button>
+      </div>
+
+      <h2 class="rv-title">Correction détaillée</h2>
+      <div class="review">${reviewCards}</div>
+
+      <button class="next-btn" id="homeBtn2" style="background:var(--surface-2);color:var(--ink);border:1px solid var(--line);margin-top:4px">Retour à l'accueil</button>
+    </section>`;
+
+  document.getElementById("againBtn").addEventListener("click", ()=>{ startQuiz(); window.scrollTo({top:0}); });
+  const home = ()=>{ renderSetup(); window.scrollTo({top:0}); };
+  document.getElementById("homeBtn").addEventListener("click", home);
+  document.getElementById("homeBtn2").addEventListener("click", home);
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+/* ===================== GO ===================== */
+renderSetup();
+</script>
