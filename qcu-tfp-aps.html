@@ -1119,17 +1119,19 @@ let session = null; // {questions, idx, answers:[], }
 const themeBtn = document.getElementById("themeBtn");
 const themeLbl = document.getElementById("themeLbl");
 function currentDark(){
-  const attr = document.documentElement.getAttribute("data-theme");
-  if(attr) return attr==="dark";
-  return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  return document.documentElement.getAttribute("data-theme")==="dark";
+}
+function applyTheme(mode){
+  document.documentElement.setAttribute("data-theme", mode);
+  try{ localStorage.setItem("qcu_tfp_theme", mode); }catch(e){}
+  syncThemeLabel();
 }
 function syncThemeLabel(){ themeLbl.textContent = currentDark() ? "Clair" : "Sombre"; }
-themeBtn.addEventListener("click", ()=>{
-  const dark = currentDark();
-  document.documentElement.setAttribute("data-theme", dark ? "light" : "dark");
-  syncThemeLabel();
-});
-syncThemeLabel();
+themeBtn.addEventListener("click", ()=>{ applyTheme(currentDark() ? "light" : "dark"); });
+// Par défaut : thème clair (blanc), ou le dernier choix mémorisé
+let startTheme = "light";
+try{ const saved = localStorage.getItem("qcu_tfp_theme"); if(saved==="dark"||saved==="light") startTheme = saved; }catch(e){}
+applyTheme(startTheme);
 
 /* ---- localStorage : meilleur score ---- */
 function loadBest(){ try{ return JSON.parse(localStorage.getItem("qcu_tfp_best")||"{}"); }catch(e){ return {}; } }
