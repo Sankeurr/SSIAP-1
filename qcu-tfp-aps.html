@@ -1185,7 +1185,7 @@ function renderSetup(){
   }).join("");
 
   const avail = countFor(selected);
-  const counts = [10,20,"max"];
+  const counts = [10,20,50,100,"max"];
   const pills = counts.map(c=>{
     const val = c==="max"?avail:c;
     const label = c==="max"?"Tout":c;
