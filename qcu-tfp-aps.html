@@ -275,6 +275,38 @@
   .actions{display:flex;flex-direction:column;gap:10px;margin-top:6px}
   .footer-note{margin-top:30px;font-size:.78rem;color:var(--ink-soft);text-align:center;line-height:1.6}
 
+  /* ---- Bouton vers la fiche des textes de loi ---- */
+  .ref-btn{width:100%;display:flex;align-items:center;gap:13px;background:var(--surface);border:1.5px solid var(--line);border-radius:13px;padding:14px 16px;cursor:pointer;color:var(--ink);text-align:left}
+  .ref-btn:hover{border-color:var(--accent);background:var(--surface-2)}
+  .ref-btn > svg:first-child{flex:none;color:var(--flame)}
+  .ref-btn span{flex:1;min-width:0;display:flex;flex-direction:column}
+  .ref-btn b{font-family:"Archivo";font-size:1rem}
+  .ref-btn small{color:var(--ink-soft);font-size:.82rem}
+  .ref-btn .chev{flex:none;color:var(--ink-soft)}
+
+  /* ---- Page des textes de loi ---- */
+  .ref-page{margin-top:18px;display:flex;flex-direction:column;gap:16px}
+  .ref-head h1{font-family:"Archivo";font-size:1.5rem;line-height:1.1;margin:.4rem 0 .4rem;text-wrap:balance}
+  .ref-head p{margin:0;color:var(--ink-soft);font-size:.92rem;max-width:60ch}
+  .ref-search{position:sticky;top:calc(env(safe-area-inset-top,0px) + 8px);z-index:5}
+  .ref-search input{width:100%;padding:12px 14px 12px 40px;border:1.5px solid var(--line);border-radius:11px;background:var(--surface);color:var(--ink);font-family:inherit;font-size:.95rem}
+  .ref-search{position:relative}
+  .ref-search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--ink-soft);pointer-events:none}
+  .law-group{border:1.5px solid var(--line);border-radius:14px;overflow:hidden;background:var(--surface)}
+  .law-gtitle{display:flex;align-items:center;gap:9px;padding:11px 15px;background:var(--surface-2);border-bottom:1px solid var(--line);font-family:"Archivo";font-weight:700;font-size:.98rem}
+  .law-gtitle .dot{flex:none;width:9px;height:9px;border-radius:50%;background:var(--flame)}
+  .law-row{display:flex;gap:13px;padding:11px 15px;align-items:baseline}
+  .law-row + .law-row{border-top:1px solid var(--line)}
+  .law-ref{flex:none;width:118px;font-weight:700;font-size:.86rem;color:var(--accent);font-variant-numeric:tabular-nums}
+  .law-body{flex:1;min-width:0}
+  .law-title{font-weight:600;font-size:.94rem}
+  .law-note{color:var(--ink-soft);font-size:.86rem;margin-top:1px}
+  .law-empty{text-align:center;color:var(--ink-soft);padding:30px 10px;font-size:.92rem}
+  @media (max-width:460px){
+    .law-row{flex-direction:column;gap:3px}
+    .law-ref{width:auto}
+  }
+
   :focus-visible{outline:2.5px solid var(--accent);outline-offset:2px}
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -315,6 +347,7 @@ const THEMES = {
   apprehension:{ uv:"UV02", name:"Conditions d'appréhension", short:"Appréhension" },
   filieres:   { uv:"UV06", name:"Filières métiers", short:"Filières métiers" },
   modalites:  { uv:"UV06", name:"Modalités d'appréhension (en exercice)", short:"Appréhension (exercice)" },
+  telesurv:   { uv:"UV10", name:"Télésurveillance & Vidéoprotection", short:"Télésurveillance" },
 };
 
 const BANK = [
@@ -929,6 +962,86 @@ const BANK = [
     "Au moins quatre",
     "Toute l'équipe systématiquement"], a:0,
     e:"Prévoir au moins deux personnes : le second membre surveille les articles, prévient une fuite et contribue à la sécurité. Agent seul : appeler un responsable du magasin." },
+
+  /* ---------------- TÉLÉSURVEILLANCE & VIDÉOPROTECTION (UV10) ---------------- */
+  { t:"telesurv", q:"Quelles sont les deux finalités de la vidéoprotection ?", o:[
+    "Dissuader les actes de malveillance et renforcer le sentiment de sécurité",
+    "Identifier et sanctionner les clients",
+    "Remplacer les agents de sécurité",
+    "Contrôler le rendement des salariés"], a:0,
+    e:"Les deux finalités : dissuader les actes de malveillance et renforcer le sentiment de sécurité. Le système protège les personnes et les biens." },
+  { t:"telesurv", q:"À partir de combien de places un parking ouvert au public a-t-il une obligation de vidéoprotection ?", o:[
+    "200 places (art. R.273-7 CSI)",
+    "100 places",
+    "500 places",
+    "50 places"], a:0,
+    e:"Les parkings ouverts au public d'au moins 200 places sont concernés par l'obligation (art. R.273-7 du Code de la sécurité intérieure)." },
+  { t:"telesurv", q:"Pour un lieu OUVERT au public, quel est le régime applicable ?", o:[
+    "Code de la sécurité intérieure (CSI) + autorisation préfectorale",
+    "Loi Informatique et Libertés + Code du travail",
+    "Code civil uniquement",
+    "Aucune autorisation nécessaire"], a:0,
+    e:"Le bon réflexe : lieu ouvert au public → CSI + Préfecture. Lieu NON ouvert au public (ex. bureaux) → loi Informatique et Libertés + Code du travail." },
+  { t:"telesurv", q:"Une caméra en magasin doit filmer :", o:[
+    "Un objet ou une zone précise (ex. la caisse, pas le caissier)",
+    "L'ensemble du personnel en permanence",
+    "Les zones de pause",
+    "Les locaux syndicaux"], a:0,
+    e:"Une caméra doit filmer une zone précise. Filmer un employé sur son poste est interdit (sauf cas justifié : caisse, stock de valeur) ; toilettes, zones de repos et locaux syndicaux : interdiction stricte." },
+  { t:"telesurv", q:"Quelle est la première des 4 étapes d'un projet de vidéoprotection ?", o:[
+    "La consultation des représentants du personnel",
+    "L'installation du système",
+    "La demande d'autorisation à la préfecture",
+    "L'information individuelle des salariés"], a:0,
+    e:"Ordre des 4 étapes : 1) consultation des représentants du personnel ; 2) autorisation préfectorale si lieu ouvert au public ; 3) information individuelle des personnes ; 4) installation." },
+  { t:"telesurv", q:"À quelle fréquence l'autorisation de vidéoprotection doit-elle être renouvelée ?", o:[
+    "Tous les 5 ans (et en cas de changement d'exploitant ou de modification)",
+    "Tous les ans",
+    "Tous les 10 ans",
+    "Jamais, elle est définitive"], a:0,
+    e:"Renouvellement tous les 5 ans, et également en cas de changement d'exploitant ou de modification du système." },
+  { t:"telesurv", q:"Quelle est la durée maximale de conservation des images ?", o:[
+    "1 mois","1 an","6 mois","48 heures"], a:0,
+    e:"Durée maximale : 1 mois (en pratique quelques jours). Si une procédure est en cours, les images sont extraites, consignées et conservées le temps de la procédure." },
+  { t:"telesurv", q:"Le registre de vidéoprotection est :", o:[
+    "Obligatoire : il assure la traçabilité du cycle de vie des images",
+    "Facultatif",
+    "Réservé à la police",
+    "Un simple cahier de consignes"], a:0,
+    e:"Le registre est obligatoire. Il contient les renseignements généraux (dispositif, caméras, responsables) et les pages de suivi (enregistrement, destruction, transmission au Parquet)." },
+  { t:"telesurv", q:"Dans la chaîne de télésurveillance, une alarme déclenchée :", o:[
+    "N'est pas une preuve d'intrusion : elle entraîne une vérification (levée de doute)",
+    "Prouve toujours une intrusion",
+    "Autorise une intervention armée",
+    "Dispense d'appeler les forces de l'ordre"], a:0,
+    e:"Une alarme n'est pas une preuve d'intrusion : elle déclenche une analyse / levée de doute et une réponse proportionnée. Chaîne : détection → transmission → analyse → alerte/intervention." },
+  { t:"telesurv", q:"À qui une personne filmée adresse-t-elle sa demande d'accès aux images ?", o:[
+    "Au responsable du système, en précisant date, heure et lieu approximatif",
+    "Directement à la CNIL dans tous les cas",
+    "Au maire de la commune",
+    "À n'importe quel agent de sécurité"], a:0,
+    e:"La demande s'adresse au responsable du système (exploitant / responsable de traitement), avec des éléments précis (date, heure, lieu approximatif) pour retrouver la séquence." },
+  { t:"telesurv", q:"Dans quel cas l'accès aux images peut-il être refusé ?", o:[
+    "Atteinte à la vie privée de tiers, à la sûreté de l'État, à la sécurité publique ou à une enquête en cours",
+    "Si la personne n'est pas cliente",
+    "Si la demande est écrite",
+    "Toujours, l'accès n'est jamais possible"], a:0,
+    e:"Le refus peut être justifié pour protéger la vie privée des tiers, la sûreté de l'État, la défense, la sécurité publique ou une enquête judiciaire en cours." },
+  { t:"telesurv", q:"En cas de refus d'accès, quelle est la voie de recours ?", o:[
+    "Saisir la CNIL ou la commission départementale de vidéoprotection (préfecture)",
+    "Porter plainte au commissariat",
+    "Saisir le tribunal de commerce",
+    "Aucun recours n'est possible"], a:0,
+    e:"En cas de refus, on peut saisir la CNIL ou la commission départementale de vidéoprotection (préfecture) pour les systèmes autorisés au titre du CSI." },
+  { t:"telesurv", q:"Quel article du Code de procédure pénale pose la liberté de la preuve ?", o:[
+    "L'article 427","L'article 53","L'article 73","L'article 803"], a:0,
+    e:"Article 427 CPP : liberté de la preuve ; le juge apprécie la loyauté et la pertinence. La preuve vidéo doit établir de façon fiable la date, l'heure et l'emplacement de la caméra." },
+  { t:"telesurv", q:"Quel est le rôle du multiplexeur dans la chaîne de vidéoprotection ?", o:[
+    "Gérer plusieurs caméras et l'affichage multi-écrans",
+    "Enregistrer et supprimer les images",
+    "Capter la scène",
+    "Transmettre l'alarme aux forces de l'ordre"], a:0,
+    e:"Trio à mémoriser : caméra = capter, multiplexeur = organiser (gère plusieurs caméras / multi-écrans), enregistreur = conserver (stockage et suppression automatique)." },
 ];
 
 /* ===================== ÉTAT ===================== */
@@ -939,6 +1052,7 @@ const UV_META = {
   UV02: { name:"Environnement juridique" },
   UV05: { name:"Incendie" },
   UV06: { name:"Métiers & appréhension" },
+  UV10: { name:"Télésurveillance & Vidéoprotection" },
 };
 // ordre d'affichage des UV (croissant)
 const UV_ORDER = [...new Set(Object.values(THEMES).map(t=>t.uv))].sort();
@@ -1062,7 +1176,13 @@ function renderSetup(){
         ${best.last!=null?`<div class="best" style="margin-top:12px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4L12 17l-6.3 4.4L8 14 2 9.4h7.6z"/></svg> Meilleur score : <b class="tnum">&nbsp;${best.best}%</b></div>`:""}
       </div>
 
-      <p class="footer-note">TFP APS — Agent de prévention et de sécurité · UV02 (environnement juridique) &amp; UV05 (incendie).<br>Support de révision, ne remplace pas les textes officiels ni le cours complet.</p>
+      <button class="ref-btn" id="refBtn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <span><b>Fiche des textes de loi</b><small>Tous les articles &amp; dates à mémoriser</small></span>
+        <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+
+      <p class="footer-note">TFP APS — Agent de prévention et de sécurité · UV02 (juridique) · UV05 (incendie) · UV06 (métiers) · UV10 (télésurveillance).<br>Support de révision, ne remplace pas les textes officiels ni le cours complet.</p>
     </section>`;
 
   // déplier / replier un UV
@@ -1110,6 +1230,7 @@ function renderSetup(){
   });
   document.getElementById("shuffleOpt").addEventListener("change", e=>{ shuffleOpts = e.target.checked; });
   document.getElementById("startBtn").addEventListener("click", startQuiz);
+  document.getElementById("refBtn").addEventListener("click", ()=>{ renderReference(); window.scrollTo({top:0}); });
 }
 
 /* ===================== LANCEMENT DU QUIZ ===================== */
@@ -1302,6 +1423,162 @@ function finish(){
   document.getElementById("homeBtn").addEventListener("click", home);
   document.getElementById("homeBtn2").addEventListener("click", home);
   window.scrollTo({top:0, behavior:"smooth"});
+}
+
+/* ===================== FICHE DES TEXTES DE LOI ===================== */
+const LAWS = [
+  { g:"Dates & repères à mémoriser", items:[
+    { ref:"1789", t:"DDHC", n:"Déclaration des droits de l'Homme et du citoyen" },
+    { ref:"1792", t:"La Marseillaise / Marianne", n:"Hymne de Rouget de Lisle ; Marianne au bonnet phrygien" },
+    { ref:"14 juil. 1789", t:"Fête nationale", n:"Prise de la Bastille (+ fête de la Fédération, 14 juillet 1790)" },
+    { ref:"1848", t:"Devise nationale", n:"« Liberté, Égalité, Fraternité »" },
+    { ref:"9 déc. 1905", t:"Séparation des Églises et de l'État", n:"Garantit la liberté de conscience et le libre exercice des cultes" },
+    { ref:"1948", t:"DUDH", n:"Déclaration universelle des droits de l'homme (art. 18 conscience, art. 13 aller et venir)" },
+    { ref:"1950", t:"CEDH", n:"Convention européenne des droits de l'homme" },
+    { ref:"4 oct. 1958", t:"Constitution", n:"Constitution de la Ve République (norme suprême)" },
+    { ref:"15 fév. 1985", t:"Convention collective", n:"Prévention-Sécurité (étendue par arrêté du 25 juillet 1985)" },
+    { ref:"21 jan. 1995", t:"Loi n° 95-73", n:"Vidéoprotection ; art. 10 : accès aux images" },
+    { ref:"10 juil. 2012", t:"Décret n° 2012-870", n:"Code de déontologie de la sécurité privée" },
+    { ref:"26 sep. 2016", t:"Accord qualifications", n:"Rattache les métiers repères à la convention collective" },
+    { ref:"2018", t:"Fraternité", n:"Reconnue valeur constitutionnelle" },
+    { ref:"1er mai 2022", t:"Réforme CNAPS", n:"Le directeur du CNAPS délivre les titres (fin des commissions régionales)" },
+  ]},
+  { g:"Constitution & DDHC", items:[
+    { ref:"Art. 1er Const.", t:"Forme de la République", n:"« La France est une République indivisible, laïque, démocratique et sociale »" },
+    { ref:"Art. 1 DDHC", t:"Liberté et égalité", n:"Les Hommes naissent et demeurent libres et égaux en droits" },
+    { ref:"Art. 4 DDHC", t:"Définition de la liberté", n:"Faire tout ce qui ne nuit pas à autrui" },
+    { ref:"Art. 5 DDHC", t:"Limite de la loi", n:"Ce qui n'est pas défendu par la loi ne peut être empêché" },
+    { ref:"Art. 7 DDHC", t:"Sûreté", n:"Nul ne peut être accusé, arrêté ou détenu hors des cas et formes prévus par la loi" },
+    { ref:"Art. 10 DDHC", t:"Liberté d'opinion", n:"Même religieuse, si elle ne trouble pas l'ordre public" },
+    { ref:"Art. 11 DDHC", t:"Liberté d'expression", n:"Libre communication des pensées et des opinions" },
+    { ref:"Art. 13 DDHC", t:"Contribution commune", n:"Répartie entre les citoyens selon leurs facultés" },
+  ]},
+  { g:"Code pénal — atteintes aux personnes", items:[
+    { ref:"Art. 221-1", t:"Meurtre", n:"Donner volontairement la mort — 30 ans de réclusion criminelle" },
+    { ref:"Art. 221-6", t:"Homicide involontaire", n:"3 ans / 45 000 € (5 ans / 75 000 € si faute délibérée)" },
+    { ref:"Art. 222-17", t:"Menace", n:"6 mois / 7 500 € ; menace de mort : 3 ans / 45 000 €" },
+    { ref:"Art. 223-1", t:"Mise en danger d'autrui", n:"1 an / 15 000 €" },
+    { ref:"Art. 223-3", t:"Délaissement", n:"Personne vulnérable — 5 ans / 75 000 €" },
+    { ref:"Art. 223-5", t:"Entrave aux secours", n:"7 ans / 100 000 €" },
+    { ref:"Art. 223-6", t:"Non-assistance / omission d'empêcher", n:"5 ans / 75 000 € (sans risque pour soi ou les tiers)" },
+    { ref:"Art. 224-1", t:"Arrestation / séquestration", n:"Sans ordre des autorités — 20 ans de réclusion criminelle" },
+    { ref:"Art. 224-2 à 224-5", t:"Séquestration aggravée", n:"Mutilation, mort, mineur de 15 ans, prise d'otage…" },
+    { ref:"Art. 225-1", t:"Non-discrimination", n:"Interdit le traitement défavorable fondé sur un critère prohibé" },
+    { ref:"Art. 226-1 / 226-2", t:"Atteinte à la vie privée", n:"Captation de paroles/image en lieu privé — 1 an / 45 000 €" },
+  ]},
+  { g:"Code pénal — biens & informatique", items:[
+    { ref:"Art. 311-1 / 311-3", t:"Vol simple", n:"Soustraction frauduleuse — 3 ans / 45 000 €" },
+    { ref:"Art. 311-2", t:"Soustraction d'énergie", n:"Assimilée au vol" },
+    { ref:"Art. 313-5", t:"Filouterie", n:"Aliments, chambre, carburant… sans pouvoir payer — 6 mois / 7 500 €" },
+    { ref:"Art. 322-1", t:"Dégradation d'un bien", n:"2 ans / 30 000 € (sauf dommage léger)" },
+    { ref:"Art. 323-1", t:"Accès frauduleux (STAD)", n:"Accès/maintien frauduleux — 2 ans / 30 000 €" },
+    { ref:"Art. 323-2", t:"Entrave d'un système", n:"Entraver/fausser le fonctionnement — 5 ans / 75 000 €" },
+    { ref:"Art. 323-3", t:"Atteinte aux données", n:"Introduire/supprimer/modifier des données — 5 ans / 150 000 €" },
+  ]},
+  { g:"Code pénal — responsabilité & faits justificatifs", items:[
+    { ref:"Art. 112-1", t:"Non-rétroactivité", n:"Loi plus sévère : avenir ; loi plus douce : application immédiate" },
+    { ref:"Art. 121-3", t:"Élément moral", n:"Intention ; exception : mise en danger délibérée, imprudence" },
+    { ref:"Art. 121-4", t:"Auteur", n:"Commet les faits ou tente un crime (ou délit prévu par la loi)" },
+    { ref:"Art. 121-6 / 121-7", t:"Complice", n:"Puni comme l'auteur de l'infraction" },
+    { ref:"Art. 122-1 à 122-7", t:"Irresponsabilité pénale", n:"Trouble psychique, contrainte, ordre de la loi, légitime défense, état de nécessité" },
+    { ref:"Art. 122-5", t:"Légitime défense", n:"Al. 1 : personnes ; al. 2 : biens (hors homicide volontaire)" },
+    { ref:"Art. 122-6", t:"Présomption de légitime défense", n:"Entrée de nuit par effraction ; vol/pillage avec violence" },
+    { ref:"Art. 122-7", t:"État de nécessité", n:"Danger actuel/imminent ; acte nécessaire et proportionné" },
+  ]},
+  { g:"Code pénal — autorité de l'État & justice", items:[
+    { ref:"Art. 410-1", t:"Intérêts fondamentaux de la Nation", n:"Indépendance, territoire, institutions, population, environnement…" },
+    { ref:"Art. 411-1 et s.", t:"Espionnage / trahison", n:"Atteintes aux intérêts fondamentaux" },
+    { ref:"Art. 421-1 à 421-6", t:"Terrorisme", n:"Actes de terrorisme" },
+    { ref:"Art. 431-3", t:"Attroupement", n:"Dispersion et sommations relèvent des forces de l'ordre" },
+    { ref:"Art. 433-5", t:"Outrage", n:"7 500 € (mission SP) ; 6 mois / 7 500 € (autorité publique)" },
+    { ref:"Art. 433-6 / 433-7", t:"Rébellion", n:"1 an / 15 000 € ; en réunion 2 ans / 30 000 €" },
+    { ref:"Art. 433-12", t:"Usurpation de fonctions", n:"3 ans / 45 000 €" },
+    { ref:"Art. 433-13", t:"Confusion avec une fonction publique", n:"1 an / 15 000 €" },
+    { ref:"Art. 434-1", t:"Atteinte à l'action de la justice", n:"Ne pas informer d'un crime évitable — 3 ans / 45 000 €" },
+  ]},
+  { g:"Code de procédure pénale", items:[
+    { ref:"Art. 53", t:"Infraction flagrante", n:"4 cas : actuelle, vient de se commettre, clameur publique, indices apparents" },
+    { ref:"Art. 55", t:"Préservation des indices", n:"Préserver les lieux et les traces" },
+    { ref:"Art. 73", t:"Droit d'appréhender", n:"Crime/délit flagrant puni d'emprisonnement → conduire devant l'OPJ" },
+    { ref:"Art. 427", t:"Liberté de la preuve", n:"Le juge apprécie la loyauté et la pertinence (preuve vidéo)" },
+    { ref:"Art. 803", t:"Menottage", n:"Seulement si dangerosité pour soi/autrui ou risque de fuite" },
+  ]},
+  { g:"Code civil", items:[
+    { ref:"Art. 9", t:"Respect de la vie privée", n:"« Chacun a droit au respect de sa vie privée »" },
+    { ref:"Art. 16", t:"Dignité de la personne", n:"Primauté de la personne, interdit l'atteinte à sa dignité" },
+    { ref:"Art. 544", t:"Propriété", n:"Jouir et disposer de la manière la plus absolue (sauf usage prohibé)" },
+    { ref:"Art. 545", t:"Expropriation", n:"Nul contraint de céder sauf utilité publique et juste indemnité" },
+    { ref:"Art. 546", t:"Droit d'accession", n:"Sur ce que produit la chose et ce qui s'y unit" },
+    { ref:"Art. 647", t:"Droit de clore", n:"Tout propriétaire peut clore sa propriété" },
+  ]},
+  { g:"Code de la sécurité intérieure (Livre VI & déontologie)", items:[
+    { ref:"Art. L.611-1", t:"Champ des activités privées", n:"Surveillance, gardiennage, transport de fonds, protection des personnes…" },
+    { ref:"Art. L.613-2 / L.613-3", t:"Palpation & bagages", n:"Palpation de sécurité et contrôle du contenu des bagages" },
+    { ref:"Art. L.613-13", t:"Vidéoprotection", n:"Opérateurs privés de vidéoprotection" },
+    { ref:"Art. R.631-10", t:"Alerte sans délai", n:"Aviser sans délai la police / la gendarmerie" },
+    { ref:"Art. R.631-27", t:"Déontologie", n:"Respect, dignité, tact, diplomatie et courtoisie" },
+    { ref:"Art. L.634-4", t:"Sanctions disciplinaires", n:"Avertissement, blâme, interdiction temporaire (≤ 7 ans)" },
+    { ref:"Art. L.634-11", t:"Commission de discipline", n:"Saisie pour l'interdiction temporaire d'exercer" },
+    { ref:"Art. R.4227-39", t:"Exercices d'évacuation", n:"Code du travail — essais et exercices au moins tous les 6 mois" },
+  ]},
+  { g:"Vidéoprotection, données & travail", items:[
+    { ref:"Art. R.273-7 CSI", t:"Parkings ouverts au public", n:"Obligation à partir de 200 places" },
+    { ref:"Art. L.1332-1 / -2", t:"Établissements sensibles (Défense)", n:"Code de la défense" },
+    { ref:"Loi 30/12/1982", t:"Transports collectifs", n:"Vidéoprotection des transports" },
+    { ref:"Loi n° 95-73 (art. 10)", t:"Accès aux images", n:"Loi du 21 janvier 1995 ; conservation ≤ 1 mois" },
+    { ref:"Art. L.432-2-1", t:"Information du CSE", n:"Code du travail — consultation avant tout contrôle des salariés" },
+  ]},
+];
+
+function renderReference(filter){
+  progressRail.hidden = true;
+  const q = (filter||"").trim().toLowerCase();
+  const match = (it)=> !q || (it.ref+" "+it.t+" "+it.n).toLowerCase().includes(q);
+
+  const groupsHtml = LAWS.map(grp=>{
+    const rows = grp.items.filter(match);
+    if(!rows.length) return "";
+    return `<div class="law-group">
+      <div class="law-gtitle"><span class="dot"></span>${esc(grp.g)}</div>
+      ${rows.map(it=>`<div class="law-row">
+        <span class="law-ref">${esc(it.ref)}</span>
+        <span class="law-body"><span class="law-title">${esc(it.t)}</span><span class="law-note">${esc(it.n)}</span></span>
+      </div>`).join("")}
+    </div>`;
+  }).join("");
+
+  const total = LAWS.reduce((s,g)=>s+g.items.length,0);
+
+  app.innerHTML = `
+    <section class="ref-page">
+      <button class="quit-link" id="refBack" style="align-self:flex-start;margin:0">← Retour à l'accueil</button>
+      <div class="ref-head">
+        <span class="eyebrow">Mémo juridique</span>
+        <h1>Textes de loi à apprendre</h1>
+        <p>Tous les articles, lois et dates cités dans vos fiches CFPS, regroupés par code. Utilisez la recherche pour filtrer (numéro d'article, mot-clé ou peine).</p>
+      </div>
+      <div class="ref-search">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input type="text" id="refInput" placeholder="Rechercher un article, une date, un mot-clé…" value="${esc(filter||"")}" autocomplete="off">
+      </div>
+      <div id="refResults">${groupsHtml || `<div class="law-empty">Aucun texte ne correspond à « ${esc(filter||"")} ».</div>`}</div>
+      <p class="footer-note">${total} références au total · Support de révision, ne remplace pas les textes officiels en vigueur.</p>
+    </section>`;
+
+  document.getElementById("refBack").addEventListener("click", ()=>{ renderSetup(); window.scrollTo({top:0}); });
+  const input = document.getElementById("refInput");
+  input.addEventListener("input", (e)=>{
+    const val = e.target.value;
+    const results = document.getElementById("refResults");
+    const qq = val.trim().toLowerCase();
+    const m = (it)=> !qq || (it.ref+" "+it.t+" "+it.n).toLowerCase().includes(qq);
+    const html = LAWS.map(grp=>{
+      const rows = grp.items.filter(m);
+      if(!rows.length) return "";
+      return `<div class="law-group"><div class="law-gtitle"><span class="dot"></span>${esc(grp.g)}</div>${rows.map(it=>`<div class="law-row"><span class="law-ref">${esc(it.ref)}</span><span class="law-body"><span class="law-title">${esc(it.t)}</span><span class="law-note">${esc(it.n)}</span></span></div>`).join("")}</div>`;
+    }).join("");
+    results.innerHTML = html || `<div class="law-empty">Aucun texte ne correspond à « ${esc(val)} ».</div>`;
+  });
 }
 
 /* ===================== GO ===================== */
