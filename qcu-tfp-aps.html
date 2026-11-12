@@ -180,8 +180,8 @@
     font-variant-numeric:tabular-nums;transition:border-color .15s, background .15s;
   }
   .pill[aria-pressed="true"]{border-color:var(--flame);background:var(--flame);color:#fff}
-  :root[data-theme="dark"] .pill[aria-pressed="true"],
   @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .pill[aria-pressed="true"]{color:#0c1118}}
+  :root[data-theme="dark"] .pill[aria-pressed="true"]{color:#0c1118}
 
   .toggle-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 2px}
   .switch{position:relative;width:46px;height:26px;flex:none}
