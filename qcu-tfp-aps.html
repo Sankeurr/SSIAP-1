@@ -400,6 +400,8 @@ const THEMES = {
   filieres:   { uv:"UV06", name:"Filières métiers", short:"Filières métiers" },
   modalites:  { uv:"UV06", name:"Modalités d'appréhension (en exercice)", short:"Appréhension (exercice)" },
   telesurv:   { uv:"UV10", name:"Télésurveillance & Vidéoprotection", short:"Télésurveillance" },
+  accueil:    { uv:"UV08", name:"Accueil & contrôle d'accès", short:"Accueil & contrôle" },
+  communication:{ uv:"UV08", name:"Techniques d'information & communication", short:"Communication" },
 };
 
 const BANK = [
@@ -1094,6 +1096,166 @@ const BANK = [
     "Capter la scène",
     "Transmettre l'alarme aux forces de l'ordre"], a:0,
     e:"Trio à mémoriser : caméra = capter, multiplexeur = organiser (gère plusieurs caméras / multi-écrans), enregistreur = conserver (stockage et suppression automatique)." },
+
+  /* ---------------- ACCUEIL & CONTRÔLE D'ACCÈS (UV08) ---------------- */
+  { t:"accueil", q:"Que représentent l'accueil et le contrôle d'accès dans la chaîne de sécurité ?", o:[
+    "Le premier maillon de la chaîne de sécurité",
+    "Une tâche purement administrative",
+    "Le dernier recours en cas d'intrusion",
+    "Une mission réservée à la police"], a:0,
+    e:"L'accueil et le contrôle d'accès sont le premier maillon de la chaîne de sécurité. L'APS y agit dans le cadre strict des consignes et ne dispose d'aucun pouvoir coercitif." },
+  { t:"accueil", q:"Comment définit-on le contrôle d'accès ?", o:[
+    "Subordonner l'entrée d'un site ou de locaux à une autorisation d'accès",
+    "Fouiller toute personne qui entre",
+    "Contrôler l'identité de chaque visiteur",
+    "Interdire l'accès à tous les visiteurs"], a:0,
+    e:"Le contrôle d'accès consiste à subordonner l'entrée d'un site à une autorisation. Toute pénétration frauduleuse du périmètre de sécurité est une intrusion." },
+  { t:"accueil", q:"Un « point sensible » est défini comme :", o:[
+    "Le point le plus convoité par les voleurs ou les espions",
+    "Un point où existe un danger permanent",
+    "Un point dont l'arrêt handicape gravement l'activité",
+    "Un point sans intérêt pour la sécurité"], a:0,
+    e:"Sensible = le plus convoité (voleurs/espions). Dangereux = danger permanent inhérent à sa fonction. Vulnérable = dont la destruction ou l'arrêt handicape gravement l'activité." },
+  { t:"accueil", q:"L'APS peut-il procéder à un contrôle d'identité ?", o:[
+    "Non : il n'est pas assermenté ; il peut seulement inviter à justifier son identité",
+    "Oui, comme un policier",
+    "Oui, avec la carte professionnelle",
+    "Oui, pour tout visiteur"], a:0,
+    e:"L'APS n'est pas assermenté : le contrôle d'identité lui est interdit. Il peut inviter la personne à justifier son identité ou sa qualité par un document officiel, sans contrainte." },
+  { t:"accueil", q:"La palpation de sécurité a pour objectif :", o:[
+    "La recherche par le toucher d'armes ou d'objets dangereux",
+    "La fouille complète des poches",
+    "Le contrôle des papiers d'identité",
+    "La saisie des objets personnels"], a:0,
+    e:"La palpation recherche par le toucher des armes ou objets dangereux, strictement limitée à cet objectif. La personne peut la refuser : l'accès au site lui est alors interdit." },
+  { t:"accueil", q:"En lieu ouvert au public, quel article encadre la palpation de sécurité par l'APS agréé ?", o:[
+    "L'article L. 613-2 du CSI",
+    "L'article 73 du CPP",
+    "L'article 9 du Code civil",
+    "L'article 225-1 du Code pénal"], a:0,
+    e:"Art. L. 613-2 CSI : sur arrêté préfectoral et en circonstances particulières, l'APS agréé peut palper et faire ouvrir un sac, avec consentement. Conditions : carte pro, même sexe que la personne, habilitation employeur, agrément préfet." },
+  { t:"accueil", q:"La fouille d'un bagage n'est possible que :", o:[
+    "Avec le consentement du propriétaire",
+    "Sur décision de l'APS seul",
+    "En cas de doute, sans accord",
+    "Si la personne est pressée"], a:0,
+    e:"La fouille exige le consentement du propriétaire. L'inspection visuelle, elle, est possible si une consigne la prévoit. En cas de refus : ne pas contraindre, refuser l'accès selon les règles affichées." },
+  { t:"accueil", q:"Le contrôle d'un véhicule par l'APS :", o:[
+    "Est en principe interdit, sauf consignes ; il se limite à un contrôle visuel (ne rien toucher)",
+    "Permet de fouiller le coffre d'autorité",
+    "Autorise la saisie des objets",
+    "Est obligatoire à chaque passage"], a:0,
+    e:"Le contrôle du véhicule est en principe interdit, sauf si les consignes le prévoient : l'APS peut demander l'ouverture du coffre et opère un contrôle visuel sans rien toucher. En cas de refus : bloquer l'entrée et prévenir le responsable, jamais de fouille d'autorité." },
+  { t:"accueil", q:"En combien d'exemplaires le bon de livraison est-il établi au minimum ?", o:[
+    "3 exemplaires","2 exemplaires","1 exemplaire","4 exemplaires"], a:0,
+    e:"Au moins 3 exemplaires : le n°1 reste la souche et justifie la sortie ; le n°2 revient signé par le destinataire ; le n°3 est conservé par le destinataire." },
+  { t:"accueil", q:"En garde statique, à quelle fréquence la relève est-elle recommandée ?", o:[
+    "Toutes les 2 heures","Toutes les 4 heures","Toutes les 30 minutes","Une fois par jour"], a:0,
+    e:"Relève toutes les 2 heures pour éviter la fatigue excessive, avec alternance des temps de garde et un moyen de liaison efficace. L'accoutumance et le long stationnement baissent l'attention." },
+  { t:"accueil", q:"Combien de temps les données d'un badge de contrôle d'accès sont-elles conservées ?", o:[
+    "Suppression 3 mois après l'enregistrement",
+    "1 an minimum",
+    "5 ans",
+    "Indéfiniment"], a:0,
+    e:"Données d'accès : suppression 3 mois après enregistrement. Le suivi du temps de travail se conserve 5 ans. Les mentions ethniques, syndicales, politiques ou religieuses sont interdites dans le fichier." },
+  { t:"accueil", q:"Un sas simple se caractérise par :", o:[
+    "Deux portes successives qui ne peuvent pas être ouvertes en même temps",
+    "Une seule porte à tambour",
+    "Une barrière coulissante",
+    "Un portique détecteur uniquement"], a:0,
+    e:"Le sas simple a deux portes successives jamais ouvertes simultanément, à commande électrique extérieure, avec détecteur de métal et/ou caméra possibles." },
+  { t:"accueil", q:"Face à une personne qui refuse de justifier son identité ou sa qualité, l'APS :", o:[
+    "N'emploie aucune force ; l'accès peut être refusé",
+    "Retient la personne",
+    "Fouille ses affaires",
+    "Confisque ses papiers"], a:0,
+    e:"Pas de force : en cas de refus, l'accès peut simplement être refusé. L'APS garde sang-froid et diplomatie, renseigne la main courante et rend compte ; il n'use jamais de pouvoirs coercitifs." },
+  { t:"accueil", q:"En centre commercial, sur quoi repose l'inspection visuelle des bagages ?", o:[
+    "Le Plan Vigipirate ou une base contractuelle, avec affichage à l'entrée",
+    "Le pouvoir de police de l'APS",
+    "Une décision du maire",
+    "Le libre arbitre de l'agent"], a:0,
+    e:"Le fondement est le Plan Vigipirate ou une base contractuelle, avec affichage à l'entrée. Aucune contrainte : la personne accepte de plein gré, ou refuse et l'accès lui est interdit." },
+
+  /* ---------------- TECHNIQUES D'INFORMATION & COMMUNICATION (UV08) ---------------- */
+  { t:"communication", q:"Que recouvre la règle des « 4 × 10 » à l'accueil ?", o:[
+    "10 premières secondes, 10 premiers gestes, 10 cm du visage, 10 premiers mots",
+    "10 minutes, 10 questions, 10 documents, 10 visiteurs",
+    "10 règles, 10 consignes, 10 badges, 10 issues",
+    "10 mètres, 10 caméras, 10 rondes, 10 alarmes"], a:0,
+    e:"La règle des 4×10 : les 10 premières secondes (regarder), les 10 premiers gestes (se lever), les 10 cm du visage (sourire) et les 10 premiers mots (saluer aimablement). La première impression est déterminante." },
+  { t:"communication", q:"Que signifie la méthode EPATER à l'accueil ?", o:[
+    "Écouter, Penser (risque d'incompréhension), Accueil d'abord, Traiter chacun en personne, Expliquer, Reformuler",
+    "Empêcher, Prévenir, Alerter, Transmettre, Évacuer, Rendre compte",
+    "Écouter, Protéger, Agir, Téléphoner, Enregistrer, Répondre",
+    "Entrer, Patienter, Analyser, Tracer, Évaluer, Réagir"], a:0,
+    e:"EPATER : Écouter jusqu'au bout · Penser qu'on risque de ne pas être compris · Accueil d'abord, technique ensuite · Traiter chaque usager comme une personne à part entière · Expliquer les raisons · Reformuler ce qu'on a compris." },
+  { t:"communication", q:"Quelles sont les trois formes de la communication ?", o:[
+    "Verbale, para-verbale et non verbale",
+    "Écrite, orale et gestuelle",
+    "Directe, indirecte et différée",
+    "Visuelle, sonore et tactile"], a:0,
+    e:"Verbal = les mots et le vocabulaire ; para-verbal = la voix (volume, débit, ton, intonation, diction) ; non verbal = regard, visage, sourire, posture, gestes, mains, distance." },
+  { t:"communication", q:"Selon Mehrabian (cité dans le support), quelle part de l'impact revient au non-verbal ?", o:[
+    "55 %","7 %","38 %","100 %"], a:0,
+    e:"Le support attribue 55 % de l'impact au non-verbal selon Mehrabian. À retenir surtout : les signaux non verbaux influencent fortement la compréhension." },
+  { t:"communication", q:"À quelle sonnerie faut-il décrocher au plus tard lors d'un accueil téléphonique ?", o:[
+    "À la 3e sonnerie","À la 1re sonnerie","À la 5e sonnerie","Peu importe"], a:0,
+    e:"Décrocher au plus tard à la 3e sonnerie, dire bonjour, se présenter clairement et lentement, identifier le correspondant. Au téléphone, le sourire « s'entend » : la voix remplace le visage." },
+  { t:"communication", q:"Face à un visiteur agressif ou mécontent, quelle est la bonne attitude ?", o:[
+    "Écouter sans couper la parole, ne pas prendre la colère pour soi, reformuler puis proposer une solution",
+    "Hausser le ton pour s'imposer",
+    "Ignorer la personne",
+    "Le faire sortir par la force"], a:0,
+    e:"Écouter attentivement sans couper, rester maître de ses émotions, montrer que le problème est compris, reformuler positivement puis proposer une solution." },
+  { t:"communication", q:"Quelle est la finalité du plan d'intervention (vs plan d'évacuation) ?", o:[
+    "Faciliter l'intervention des secours ; il est implanté à chaque entrée du bâtiment",
+    "Faciliter l'évacuation du public à chaque étage",
+    "Indiquer les horaires d'ouverture",
+    "Localiser les caméras"], a:0,
+    e:"Plan d'INTERVENTION = secours / entrées (à chaque entrée du bâtiment). Plan d'ÉVACUATION = public / étages (à chaque étage et à proximité des issues)." },
+  { t:"communication", q:"Sur le réseau radio, à quoi sert la fréquence « Travail » ?", o:[
+    "Aux messages opérationnels : rondes, interventions, échanges agent ↔ PC",
+    "Aux seuls messages urgents",
+    "Aux conversations privées entre agents",
+    "À tester le matériel uniquement"], a:0,
+    e:"Travail = messages opérationnels (rondes, interventions, agent ↔ PC). Dégagement = messages non opérationnels / canal de repli pour un message long. Secours = message urgent." },
+  { t:"communication", q:"Quelles sont les trois parties d'un message radio ?", o:[
+    "L'entrée, le contenu et la fin",
+    "L'appel, l'alerte et l'ordre",
+    "Le code, le canal et l'accusé",
+    "La question, la réponse et la trace"], a:0,
+    e:"1) Entrée (destinataire → émetteur → « Parlez ») ; 2) Contenu (faits précis, lieu, actions) ; 3) Fin (accusé de réception, consigne, puis « Terminé »)." },
+  { t:"communication", q:"Que recouvre la méthode QQFVD du compte rendu radio ?", o:[
+    "Qui ? Que vois-je ? Que fais-je ? Que prévois-je ? Que demandé-je ?",
+    "Quand ? Quoi ? Faut-il ? Voir ? Décider ?",
+    "Qui ? Quoi ? Où ? Quand ? Comment ?",
+    "Quitter, Questionner, Fuir, Vérifier, Décrire"], a:0,
+    e:"QQFVD : Qui ? (indicatif, destinataire) · Que vois-je ? (situation à l'instant T) · Que fais-je ? (actions engagées) · Que prévois-je ? (évolution) · Que demandé-je ? (renforts). Rendre compte = faits + actions + anticipation + besoins." },
+  { t:"communication", q:"Que signifie le terme radio « COLLATIONNEZ » ?", o:[
+    "Répétez la transmission en termes identiques",
+    "Je suspends ma transmission",
+    "Fin de transmission",
+    "J'épelle le mot qui précède"], a:0,
+    e:"COLLATIONNEZ = répétez la transmission en termes identiques (pour vérifier la bonne réception). ATTENDEZ = je suspends ; REÇU-TERMINÉ = fin de transmission / accusé de réception." },
+  { t:"communication", q:"En cas de danger imminent sur le réseau radio, que demande-t-on ?", o:[
+    "La priorité par « URGENT PRIORITÉ RADIO »",
+    "Un simple « Parlez »",
+    "De changer de fréquence",
+    "De couper la radio"], a:0,
+    e:"En danger imminent, on demande la priorité par « URGENT PRIORITÉ RADIO ». Pour un message long, on interrompt toutes les 10 à 20 secondes en relâchant l'alternat, et on parle lentement près du micro sans crier." },
+  { t:"communication", q:"À quoi sert l'indicatif radio attribué à chaque station ?", o:[
+    "Identifier la station sans révéler les noms ni les emplacements à des tiers",
+    "Indiquer la fréquence utilisée",
+    "Donner l'heure du message",
+    "Signaler une urgence"], a:0,
+    e:"L'indicatif est un mot conventionnel (avec ou sans chiffre) qui facilite l'identification et évite de révéler les noms ou emplacements des correspondants à des tiers." },
+  { t:"communication", q:"Quand l'alarme « travailleur isolé en danger » se déclenche-t-elle (perte de verticalité) ?", o:[
+    "En position horizontale ou inclinaison > 60° pendant plus de 7 secondes",
+    "Dès que l'agent s'assoit",
+    "Après 1 heure d'immobilité",
+    "Uniquement sur appui manuel"], a:0,
+    e:"L'alarme PTI « travailleur isolé » se déclenche en position horizontale ou inclinaison supérieure à 60° pendant plus de 7 secondes (selon le matériel). Un appel de secours silencieux est aussi possible par pression d'un bouton 3 secondes." },
 ];
 
 /* ===================== ÉTAT ===================== */
@@ -1104,6 +1266,7 @@ const UV_META = {
   UV02: { name:"Environnement juridique" },
   UV05: { name:"Incendie" },
   UV06: { name:"Métiers & appréhension" },
+  UV08: { name:"Accueil, communication & contrôle d'accès" },
   UV10: { name:"Télésurveillance & Vidéoprotection" },
 };
 // ordre d'affichage des UV (croissant)
@@ -1581,6 +1744,9 @@ const LAWS = [
     { ref:"Loi 30/12/1982", t:"Transports collectifs", n:"Vidéoprotection des transports" },
     { ref:"Loi n° 95-73 (art. 10)", t:"Accès aux images", n:"Loi du 21 janvier 1995 ; conservation ≤ 1 mois" },
     { ref:"Art. L.432-2-1", t:"Information du CSE", n:"Code du travail — consultation avant tout contrôle des salariés" },
+    { ref:"Art. L.1121-1", t:"Proportionnalité", n:"Code du travail — restrictions justifiées et proportionnées à la tâche" },
+    { ref:"Norme simplifiée n°42", t:"Contrôle d'accès (CNIL)", n:"Accès des salariés/visiteurs, horaires, restauration ; pas de suivi des déplacements internes" },
+    { ref:"Données d'accès", t:"Conservation", n:"Badge : suppression 3 mois après enregistrement ; suivi du temps de travail : 5 ans" },
   ]},
 ];
 
