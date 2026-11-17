@@ -121,9 +121,44 @@
   }
   .ghost-btn:hover{background:rgba(255,255,255,.15)}
 
+  /* ---- Barre de navigation ---- */
+  .navbar{max-width:720px;margin:0 auto;display:flex;gap:6px;overflow-x:auto;
+    padding-left:max(16px, env(safe-area-inset-left,0px));
+    padding-right:max(16px, env(safe-area-inset-right,0px));
+    padding-bottom:8px;scrollbar-width:none;}
+  .navbar::-webkit-scrollbar{display:none}
+  .nav-tab{flex:none;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;
+    background:rgba(255,255,255,.07);color:#cdd7e6;border:1px solid rgba(255,255,255,.12);
+    border-radius:999px;padding:7px 14px;font-size:.84rem;font-weight:600;cursor:pointer;font-family:inherit;
+    transition:background .15s, color .15s;}
+  .nav-tab:hover{background:rgba(255,255,255,.14);color:#fff}
+  .nav-tab[aria-current="true"]{background:var(--flame);border-color:var(--flame);color:#fff}
+  .nav-tab svg{flex:none}
+
   /* progress bar under header during quiz */
   .progress-rail{height:4px;background:rgba(255,255,255,.12);width:100%}
   .progress-fill{height:100%;background:var(--flame);width:0;transition:width .3s ease}
+
+  /* ---- Fiches de révision simplifiées ---- */
+  .sheets{margin-top:20px;display:flex;flex-direction:column;gap:16px}
+  .sheets-head h1{font-family:var(--font-serif);font-weight:700;font-size:1.6rem;line-height:1.1;margin:.3rem 0 .4rem}
+  .sheets-head .eyebrow{color:var(--accent)}
+  .sheets-head p{margin:0;color:var(--ink-soft);font-size:.92rem;max-width:60ch}
+  .sheet-uv{display:flex;flex-direction:column;gap:9px}
+  .sheet-uvtitle{font-size:.76rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--flame);margin:6px 2px 0}
+  .sheet-card{border:1.5px solid var(--line);border-radius:14px;background:var(--surface);overflow:hidden;box-shadow:var(--shadow)}
+  .sheet-btn{width:100%;display:flex;align-items:center;gap:11px;padding:14px 15px;background:none;border:none;cursor:pointer;color:var(--ink);text-align:left;font-family:inherit}
+  .sheet-btn:hover{background:var(--surface-2)}
+  .sheet-btn .sc-chevron{flex:none;color:var(--flame);transition:transform .2s ease}
+  .sheet-btn[aria-expanded="true"] .sc-chevron{transform:rotate(90deg)}
+  .sheet-btn .sc-name{flex:1;min-width:0;font-family:var(--font-serif);font-weight:700;font-size:1.04rem}
+  .sheet-body{padding:2px 16px 16px;border-top:1px solid var(--line)}
+  .sheet-body ul{margin:12px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px}
+  .sheet-body li{display:flex;gap:10px;font-size:.92rem;line-height:1.5}
+  .sheet-body li::before{content:"";flex:none;width:7px;height:7px;border-radius:50%;background:var(--flame);margin-top:8px}
+  .sheet-body li b{font-weight:700}
+  .sheet-key{margin-top:13px;border-left:3px solid var(--accent);background:var(--surface-2);border-radius:0 10px 10px 0;padding:10px 13px;font-size:.88rem}
+  .sheet-key b{color:var(--accent);font-family:"Archivo",sans-serif}
 
   /* ---- generic ---- */
   .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
@@ -378,6 +413,24 @@
       <span id="themeLbl">Sombre</span>
     </button>
   </div>
+  <nav class="navbar" id="navbar" aria-label="Navigation principale">
+    <button class="nav-tab" data-view="train" aria-current="true">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg>
+      Entraînement
+    </button>
+    <button class="nav-tab" data-view="dl">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      Dates &amp; Lois
+    </button>
+    <button class="nav-tab" data-view="laws">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      Textes de loi
+    </button>
+    <button class="nav-tab" data-view="sheets">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg>
+      Fiches
+    </button>
+  </nav>
   <div class="progress-rail" id="progressRail" hidden><div class="progress-fill" id="progressFill"></div></div>
 </header>
 
@@ -1297,17 +1350,36 @@ try{ const saved = localStorage.getItem("qcu_tfp_theme"); if(saved==="dark"||sav
 applyTheme(startTheme);
 
 /* ---- localStorage : meilleur score ---- */
-function loadBest(){ try{ return JSON.parse(localStorage.getItem("qcu_tfp_best")||"{}"); }catch(e){ return {}; } }
-function saveBest(o){ try{ localStorage.setItem("qcu_tfp_best", JSON.stringify(o)); }catch(e){} }
+function loadBest(key){ try{ return JSON.parse(localStorage.getItem(key||"qcu_tfp_best")||"{}"); }catch(e){ return {}; } }
+function saveBest(o,key){ try{ localStorage.setItem(key||"qcu_tfp_best", JSON.stringify(o)); }catch(e){} }
 
 /* ---- utilitaires ---- */
 function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
 function countFor(keys){ return BANK.filter(q=>keys.has(q.t)).length; }
 function esc(s){ return s.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])); }
 
+/* ===================== NAVIGATION ===================== */
+function setActiveNav(view){
+  document.querySelectorAll(".nav-tab").forEach(t=>{
+    if(t.dataset.view===view) t.setAttribute("aria-current","true");
+    else t.removeAttribute("aria-current");
+  });
+}
+document.querySelectorAll(".nav-tab").forEach(tab=>{
+  tab.addEventListener("click", ()=>{
+    const v = tab.dataset.view;
+    if(v==="train") renderSetup();
+    else if(v==="dl") renderDL();
+    else if(v==="laws") renderReference();
+    else if(v==="sheets") renderSheets();
+    window.scrollTo({top:0});
+  });
+});
+
 /* ===================== ÉCRAN DE DÉPART ===================== */
 function renderSetup(){
   progressRail.hidden = true;
+  setActiveNav("train");
   const best = loadBest();
 
   // Groupes dépliables par UV
@@ -1395,7 +1467,7 @@ function renderSetup(){
 
       <button class="ref-btn" id="refBtn">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-        <span><b>Fiche des textes de loi</b><small>Tous les articles &amp; dates à mémoriser</small></span>
+        <span><b>Consulter les textes de loi</b><small>Tous les articles &amp; dates à mémoriser</small></span>
         <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
       </button>
 
@@ -1451,24 +1523,33 @@ function renderSetup(){
 }
 
 /* ===================== LANCEMENT DU QUIZ ===================== */
-function startQuiz(){
-  const pool = BANK.filter(q=>selected.has(q.t));
-  const n = Math.min(qCount, pool.length);
+// Moteur générique : lance une série à partir d'un pool de questions
+function startSession(pool, opts){
+  const n = Math.min(opts.count||pool.length, pool.length);
   const chosen = shuffle(pool).slice(0, n).map(q=>{
-    let opts = q.o.map((text,i)=>({text, correct:i===q.a}));
-    if(shuffleOpts) opts = shuffle(opts);
-    return { ...q, opts };
+    let o = q.o.map((text,i)=>({text, correct:i===q.a}));
+    if(shuffleOpts) o = shuffle(o);
+    return { ...q, opts:o };
   });
-  session = { questions:chosen, idx:0, answers:[] };
+  session = {
+    questions:chosen, idx:0, answers:[],
+    bestKey: opts.bestKey || "qcu_tfp_best",
+    backTo: opts.backTo || renderSetup,
+    restart: opts.restart || startQuiz,
+  };
   progressRail.hidden = false;
   renderQuestion();
+}
+function startQuiz(){
+  const pool = BANK.filter(q=>selected.has(q.t));
+  startSession(pool, { count:qCount, bestKey:"qcu_tfp_best", backTo:renderSetup, restart:startQuiz });
 }
 
 /* ===================== UNE QUESTION ===================== */
 function renderQuestion(){
   const s = session;
   const q = s.questions[s.idx];
-  const th = THEMES[q.t];
+  const th = THEMES[q.t] || { uv:q.uv||"", short:q.cat||"Dates & Lois" };
   progressFill.style.width = ((s.idx)/s.questions.length*100)+"%";
 
   const opts = q.opts.map((o,i)=>{
@@ -1485,7 +1566,7 @@ function renderQuestion(){
       <div class="q-meta">
         <span class="q-tag">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3.2"/></svg>
-          ${th.uv} · ${th.short}
+          ${th.uv?th.uv+" · ":""}${th.short}
         </span>
         <span class="q-counter tnum">Question ${s.idx+1} / ${s.questions.length}</span>
       </div>
@@ -1505,7 +1586,7 @@ function renderQuestion(){
     btn.addEventListener("click", ()=>answer(Number(btn.dataset.opt)));
   });
   document.getElementById("quitBtn").addEventListener("click", ()=>{
-    if(session.answers.length===0){ renderSetup(); }
+    if(session.answers.length===0){ (session.backTo||renderSetup)(); }
     else finish();
   });
 }
@@ -1560,10 +1641,11 @@ function finish(){
   const pct = total? Math.round(good/total*100) : 0;
   const pass = pct>=70;
 
-  // meilleur score
-  const best = loadBest();
+  // meilleur score (par mode)
+  const bestKey = s.bestKey || "qcu_tfp_best";
+  const best = loadBest(bestKey);
   const newBest = Math.max(best.best||0, pct);
-  saveBest({ best:newBest, last:pct });
+  saveBest({ best:newBest, last:pct }, bestKey);
 
   // ventilation par thème
   const byTheme = {};
@@ -1574,8 +1656,9 @@ function finish(){
   });
   const bdRows = Object.entries(byTheme).map(([k,v])=>{
     const p = Math.round(v.good/v.total*100);
+    const label = THEMES[k] ? THEMES[k].short : "Dates & Lois";
     return `<div class="bd-row">
-      <span class="bd-name">${THEMES[k].short}</span>
+      <span class="bd-name">${label}</span>
       <span class="bd-bar"><i style="width:${p}%"></i></span>
       <span class="bd-score tnum">${v.good}/${v.total}</span>
     </div>`;
@@ -1626,17 +1709,19 @@ function finish(){
           Nouvelle série
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
         </button>
-        <button class="next-btn" id="homeBtn" style="background:var(--surface-2);color:var(--ink);border:1px solid var(--line)">Changer de thèmes</button>
+        <button class="next-btn" id="homeBtn" style="background:var(--surface-2);color:var(--ink);border:1px solid var(--line)">Retour aux réglages</button>
       </div>
 
       <h2 class="rv-title">Correction détaillée</h2>
       <div class="review">${reviewCards}</div>
 
-      <button class="next-btn" id="homeBtn2" style="background:var(--surface-2);color:var(--ink);border:1px solid var(--line);margin-top:4px">Retour à l'accueil</button>
+      <button class="next-btn" id="homeBtn2" style="background:var(--surface-2);color:var(--ink);border:1px solid var(--line);margin-top:4px">Retour aux réglages</button>
     </section>`;
 
-  document.getElementById("againBtn").addEventListener("click", ()=>{ startQuiz(); window.scrollTo({top:0}); });
-  const home = ()=>{ renderSetup(); window.scrollTo({top:0}); };
+  const restart = s.restart || startQuiz;
+  const backTo = s.backTo || renderSetup;
+  document.getElementById("againBtn").addEventListener("click", ()=>{ restart(); window.scrollTo({top:0}); });
+  const home = ()=>{ backTo(); window.scrollTo({top:0}); };
   document.getElementById("homeBtn").addEventListener("click", home);
   document.getElementById("homeBtn2").addEventListener("click", home);
   window.scrollTo({top:0, behavior:"smooth"});
@@ -1800,6 +1885,7 @@ function buildLawGroups(filter){
 
 function renderReference(filter){
   progressRail.hidden = true;
+  setActiveNav("laws");
   const total = LAWS.reduce((s,g)=>s+g.items.length,0);
 
   app.innerHTML = `
@@ -1866,6 +1952,254 @@ function renderReference(filter){
     const val = e.target.value;
     const results = document.getElementById("refResults");
     results.innerHTML = buildLawGroups(val) || `<div class="law-empty">Aucun texte ne correspond à « ${esc(val)} ».</div>`;
+  });
+}
+
+/* ===================== QCU DATES & LOIS ===================== */
+const DL_BANK = [
+  // --- Dates ---
+  { cat:"Dates", q:"De quand date la Constitution de la Ve République ?", o:["4 octobre 1958","14 juillet 1789","9 décembre 1905","1er mai 2022"], a:0, e:"Constitution du 4 octobre 1958, norme juridique suprême ; les principes fondamentaux figurent à l'article 1er." },
+  { cat:"Dates", q:"De quand date la Déclaration des droits de l'Homme et du citoyen (DDHC) ?", o:["1789","1848","1905","1958"], a:0, e:"DDHC de 1789. La devise reprend la liberté et l'égalité qui en sont issues." },
+  { cat:"Dates", q:"En quelle année la devise « Liberté, Égalité, Fraternité » a-t-elle été adoptée ?", o:["1848","1789","1792","1905"], a:0, e:"La devise nationale est adoptée en 1848 ; la fraternité est reconnue valeur constitutionnelle en 2018." },
+  { cat:"Dates", q:"De quand date la loi de séparation des Églises et de l'État ?", o:["9 décembre 1905","1789","1848","1958"], a:0, e:"Loi du 9 décembre 1905 : liberté de conscience et libre exercice des cultes, sous réserve de l'ordre public." },
+  { cat:"Dates", q:"La Déclaration universelle des droits de l'homme (DUDH) date de :", o:["1948","1950","1905","1958"], a:0, e:"DUDH de 1948. La Convention européenne des droits de l'homme (CEDH), elle, date de 1950." },
+  { cat:"Dates", q:"La Convention collective nationale « Prévention-Sécurité » date du :", o:["15 février 1985","4 octobre 1958","21 janvier 1995","10 juillet 2012"], a:0, e:"Convention collective du 15 février 1985 (étendue par arrêté du 25 juillet 1985)." },
+  { cat:"Dates", q:"De quand date la loi encadrant la vidéoprotection (n° 95-73) ?", o:["21 janvier 1995","9 décembre 1905","15 février 1985","26 septembre 2016"], a:0, e:"Loi n° 95-73 du 21 janvier 1995 ; son article 10 encadre l'accès aux images." },
+  { cat:"Dates", q:"Le code de déontologie de la sécurité privée est issu du décret du :", o:["10 juillet 2012","1er mai 2022","21 janvier 1995","26 septembre 2016"], a:0, e:"Décret n° 2012-870 du 10 juillet 2012, intégré depuis au Livre VI du CSI." },
+  { cat:"Dates", q:"L'accord relatif aux qualifications professionnelles date du :", o:["26 septembre 2016","15 février 1985","10 juillet 2012","1er mai 2022"], a:0, e:"Accord du 26 septembre 2016 (attention à la coquille « 2006 » du support) ; il rattache les métiers à la convention collective." },
+  { cat:"Dates", q:"Depuis quelle date le directeur du CNAPS délivre-t-il les titres (réforme) ?", o:["1er mai 2022","10 juillet 2012","26 septembre 2016","21 janvier 1995"], a:0, e:"Depuis le 1er mai 2022 : retenir « directeur du CNAPS » et non « commission régionale d'agrément et de contrôle »." },
+  { cat:"Dates", q:"En quelle année la fraternité est-elle devenue une valeur constitutionnelle ?", o:["2018","1848","1789","1958"], a:0, e:"La fraternité est reconnue à valeur constitutionnelle en 2018." },
+  { cat:"Dates", q:"La Marseillaise a été composée (par Rouget de Lisle) en :", o:["1792","1789","1848","1905"], a:0, e:"Hymne composé par Rouget de Lisle dans la nuit du 25 au 26 avril 1792 ; Marianne apparaît aussi en 1792." },
+  { cat:"Dates", q:"Que fête-t-on le 14 juillet ?", o:["La prise de la Bastille (1789)","La signature de la Constitution de 1958","L'adoption de la devise (1848)","La loi de 1905"], a:0, e:"Fête nationale : prise de la Bastille le 14 juillet 1789 et fête de la Fédération le 14 juillet 1790." },
+
+  // --- Lois / articles ---
+  { cat:"Lois", q:"Quel article du Code pénal encadre la légitime défense ?", o:["Art. 122-5","Art. 122-7","Art. 221-1","Art. 311-3"], a:0, e:"Art. 122-5 : défense nécessaire, simultanée et proportionnée face à une atteinte injustifiée, réelle et actuelle." },
+  { cat:"Lois", q:"Quel article définit l'état de nécessité ?", o:["Art. 122-7","Art. 122-5","Art. 122-6","Art. 223-6"], a:0, e:"Art. 122-7 : agir pour sauvegarder un intérêt supérieur face à un danger actuel ou imminent, de façon nécessaire et proportionnée." },
+  { cat:"Lois", q:"La non-assistance à personne en péril relève de quel article ?", o:["Art. 223-6","Art. 221-1","Art. 224-1","Art. 225-1"], a:0, e:"Art. 223-6 : non-assistance / omission d'empêcher, sans risque pour soi ou les tiers — 5 ans et 75 000 €." },
+  { cat:"Lois", q:"Le meurtre est prévu par l'article :", o:["Art. 221-1","Art. 222-17","Art. 311-1","Art. 224-1"], a:0, e:"Art. 221-1 : donner volontairement la mort à autrui — 30 ans de réclusion criminelle." },
+  { cat:"Lois", q:"La séquestration (arrestation/détention illégale) est prévue par l'article :", o:["Art. 224-1","Art. 221-1","Art. 226-1","Art. 311-3"], a:0, e:"Art. 224-1 : arrêter, enlever, détenir ou séquestrer sans ordre des autorités — 20 ans de réclusion criminelle." },
+  { cat:"Lois", q:"Quel article du Code pénal interdit la discrimination ?", o:["Art. 225-1","Art. 221-1","Art. 122-5","Art. 311-3"], a:0, e:"Art. 225-1 : interdit le traitement défavorable fondé sur un critère prohibé (origine, sexe, religion, handicap…)." },
+  { cat:"Lois", q:"Le vol simple est prévu par l'article :", o:["Art. 311-3","Art. 313-5","Art. 322-1","Art. 224-1"], a:0, e:"Vol (art. 311-1 / 311-3) : soustraction frauduleuse d'une chose d'autrui — 3 ans et 45 000 €." },
+  { cat:"Lois", q:"Quel article du CPP définit l'infraction flagrante ?", o:["Art. 53 CPP","Art. 73 CPP","Art. 55 CPP","Art. 803 CPP"], a:0, e:"Art. 53 CPP : 4 cas — elle se commet actuellement, vient de se commettre, clameur publique, objets/traces/indices apparents." },
+  { cat:"Lois", q:"Quel article du CPP fonde le droit d'appréhender ?", o:["Art. 73 CPP","Art. 53 CPP","Art. 427 CPP","Art. 122-5"], a:0, e:"Art. 73 CPP : crime flagrant ou délit flagrant puni d'emprisonnement → conduire l'auteur devant l'OPJ le plus proche." },
+  { cat:"Lois", q:"Quel article impose de préserver les lieux et les indices ?", o:["Art. 55 CPP","Art. 53 CPP","Art. 73 CPP","Art. 803 CPP"], a:0, e:"Art. 55 CPP : préserver les lieux, les traces et les indices avant l'arrivée des forces de l'ordre." },
+  { cat:"Lois", q:"Le menottage est encadré par quel article du CPP ?", o:["Art. 803 CPP","Art. 73 CPP","Art. 53 CPP","Art. 427 CPP"], a:0, e:"Art. 803 CPP : menottes seulement si la personne est dangereuse (pour elle-même ou autrui) ou susceptible de fuir." },
+  { cat:"Lois", q:"Quel article pose la liberté de la preuve (utile pour la preuve vidéo) ?", o:["Art. 427 CPP","Art. 53 CPP","Art. 9 Code civil","Art. L.611-1 CSI"], a:0, e:"Art. 427 CPP : liberté de la preuve ; le juge apprécie la loyauté et la pertinence." },
+  { cat:"Lois", q:"Quel article du Code civil protège la vie privée ?", o:["Art. 9","Art. 16","Art. 544","Art. 647"], a:0, e:"Art. 9 du Code civil : « Chacun a droit au respect de sa vie privée »." },
+  { cat:"Lois", q:"Quel article du Code civil fonde le droit de propriété (usus, fructus, abusus) ?", o:["Art. 544","Art. 9","Art. 16","Art. 226-1"], a:0, e:"Art. 544 : jouir et disposer de la manière la plus absolue, sauf usage prohibé par les lois et règlements." },
+  { cat:"Lois", q:"La captation d'image ou de paroles en lieu privé sans consentement est prévue par :", o:["Art. 226-1 / 226-2","Art. 311-3","Art. 224-1","Art. 433-5"], a:0, e:"Art. 226-1 / 226-2 du Code pénal — 1 an d'emprisonnement et 45 000 € d'amende." },
+  { cat:"Lois", q:"Quel article du CSI définit le champ des activités privées de sécurité ?", o:["Art. L.611-1","Art. L.613-2","Art. R.631-27","Art. L.634-4"], a:0, e:"Art. L.611-1 du CSI : grandes familles d'activités ; principe « activité privée ≠ service public »." },
+  { cat:"Lois", q:"La palpation de sécurité en lieu ouvert au public repose sur l'article :", o:["Art. L.613-2 CSI","Art. 73 CPP","Art. 9 Code civil","Art. 225-1"], a:0, e:"Art. L.613-2 CSI : sur arrêté préfectoral, l'APS agréé (carte pro, même sexe, habilité, agréé préfet) peut palper avec consentement." },
+  { cat:"Lois", q:"Le code de déontologie de l'APS figure à quel article du CSI ?", o:["Art. R.631-27","Art. L.611-1","Art. 225-1","Art. L.634-4"], a:0, e:"Art. R.631-27 du CSI : respect et dignité, tact, diplomatie et courtoisie ; familiarité et discrimination interdites." },
+  { cat:"Lois", q:"L'outrage et la rébellion sont prévus par les articles :", o:["433-5 et 433-6","221-1 et 222-17","311-3 et 313-5","122-5 et 122-7"], a:0, e:"Outrage : art. 433-5. Rébellion : art. 433-6 / 433-7 (1 an et 15 000 €, en réunion 2 ans et 30 000 €)." },
+];
+
+let dlCount = 20;
+function startDL(count){
+  dlCount = count;
+  const c = count==="max" ? DL_BANK.length : count;
+  startSession(DL_BANK, { count:c, bestKey:"qcu_tfp_dl_best", backTo:renderDL, restart:()=>startDL(count) });
+}
+function renderDL(){
+  progressRail.hidden = true;
+  setActiveNav("dl");
+  const best = loadBest("qcu_tfp_dl_best");
+  const total = DL_BANK.length;
+  const nbDates = DL_BANK.filter(q=>q.cat==="Dates").length;
+  const nbLois = DL_BANK.filter(q=>q.cat==="Lois").length;
+  const pills = [10,20,"max"].map(c=>{
+    const on = (c==="max" && dlCount==="max") || dlCount===c;
+    const label = c==="max" ? "Tout" : c;
+    return `<button class="pill" data-dl="${c}" aria-pressed="${on}">${label}</button>`;
+  }).join("");
+
+  app.innerHTML = `
+    <section class="setup">
+      <div class="intro">
+        <span class="eyebrow">QCU ciblé</span>
+        <h1>Dates &amp; Lois</h1>
+        <p>Une série spéciale pour ancrer les repères tombant le plus souvent à l'examen : ${nbDates} questions sur les dates et ${nbLois} sur les articles de loi. Une seule bonne réponse par question.</p>
+      </div>
+
+      <div>
+        <div class="section-label">Nombre de questions</div>
+        <div class="pills" id="dlPills">${pills}</div>
+      </div>
+
+      <div class="card" style="padding:4px 16px">
+        <div class="toggle-row">
+          <div>
+            <div style="font-weight:600">Mélanger l'ordre des réponses</div>
+            <div class="muted" style="font-size:.84rem">Évite de retenir la position de la bonne réponse</div>
+          </div>
+          <label class="switch"><input type="checkbox" id="dlShuffle" ${shuffleOpts?"checked":""}><span class="slider"></span></label>
+        </div>
+      </div>
+
+      <div>
+        <button class="start-btn" id="dlStart">
+          Commencer · <span class="tnum">${dlCount==="max"?total:Math.min(dlCount,total)}</span> questions
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+        ${best.last!=null?`<div class="best" style="margin-top:12px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4L12 17l-6.3 4.4L8 14 2 9.4h7.6z"/></svg> Meilleur score : <b class="tnum">&nbsp;${best.best}%</b></div>`:""}
+      </div>
+
+      <p class="footer-note">Repères juridiques et chronologiques du TFP APS · ${total} questions au total.</p>
+    </section>`;
+
+  app.querySelectorAll("[data-dl]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const c = btn.dataset.dl;
+      dlCount = c==="max" ? "max" : Number(c);
+      renderDL();
+    });
+  });
+  document.getElementById("dlShuffle").addEventListener("change", e=>{ shuffleOpts = e.target.checked; });
+  document.getElementById("dlStart").addEventListener("click", ()=>startDL(dlCount));
+}
+
+/* ===================== FICHES DE RÉVISION SIMPLIFIÉES ===================== */
+const SHEETS = [
+  { uv:"UV02", title:"Principes de la République", pts:[
+    "Constitution du <b>4 octobre 1958</b> (Ve République), norme suprême ; art. 1er : « République <b>indivisible, laïque, démocratique et sociale</b> ».",
+    "Devise <b>Liberté, Égalité, Fraternité</b> (1848) ; DDHC de 1789 ; fraternité valeur constitutionnelle en 2018.",
+    "<b>Laïcité</b> = neutralité de l'État + liberté de conscience (loi du 9 décembre 1905).",
+    "Symboles : drapeau tricolore, Marseillaise (Rouget de Lisle, 1792), Marianne (bonnet phrygien), 14 Juillet, coq, faisceau de licteur.",
+    "<b>État de droit</b> : hiérarchie des normes, égalité devant la loi, séparation des pouvoirs (législatif / exécutif / judiciaire).",
+    "<b>Ordre public</b> : tranquillité, sécurité, salubrité (+ dignité, ajoutée par le Conseil d'État)." ],
+    key:"Ne pas confondre valeurs (idéaux partagés) et principes (règles d'organisation de la République)." },
+  { uv:"UV02", title:"Code pénal", pts:[
+    "Responsabilité <b>civile</b> = réparer un dommage ; <b>pénale</b> = sanctionner une infraction au nom de la société.",
+    "3 éléments de l'infraction : <b>légal, matériel, moral</b>.",
+    "Classification : contravention (tribunal de police) · délit (tribunal correctionnel) · crime (cour d'assises).",
+    "<b>Légitime défense</b> (art. 122-5) et <b>état de nécessité</b> (art. 122-7) : nécessaire, proportionné.",
+    "Repères : non-assistance 223-6 (5 ans/75 000 €), meurtre 221-1 (30 ans), vol 311-3 (3 ans/45 000 €), séquestration 224-1 (20 ans).",
+    "Tentative : crime toujours punissable, délit si la loi le prévoit, contravention jamais." ],
+    key:"En sécurité privée : observer, protéger, alerter — ne jamais se substituer aux forces de l'ordre." },
+  { uv:"UV02", title:"Livre VI · CNAPS · Carte pro", pts:[
+    "Le <b>Livre VI du CSI</b> (art. L.611-1) encadre les activités privées de sécurité ; aucune prérogative de puissance publique.",
+    "<b>CNAPS</b> = établissement public : délivre les titres, contrôle, discipline. Depuis le <b>1er mai 2022</b>, c'est le directeur du CNAPS.",
+    "<b>Carte pro</b> : valable 5 ans, renouvellement 3 mois avant (stage MAC) ; français ≥ B1 pour l'étranger concerné.",
+    "Sanctions disciplinaires : avertissement, blâme, interdiction temporaire ≤ 7 ans.",
+    "Ne pas confondre carte CNAPS (n° d'enregistrement) et carte d'entreprise (remise par l'employeur).",
+    "Convention collective Prévention-Sécurité du 15 février 1985 ; pause 20 min après 6 h." ],
+    key:"Une carte valide n'autorise ni à intervenir dans un conflit du travail ni à surveiller les opinions." },
+  { uv:"UV02", title:"Conditions d'appréhension", pts:[
+    "L'APS a les <b>droits d'un citoyen</b>, pas ceux d'un OPJ.",
+    "<b>Art. 53 CPP</b> : infraction flagrante (actuelle / vient de se commettre / clameur publique / indices apparents).",
+    "<b>Art. 73 CPP</b> : appréhender un crime flagrant OU délit flagrant <b>puni d'emprisonnement</b> → conduire devant l'OPJ.",
+    "Peut : appréhender, force strictement nécessaire, palpation (L.613-2/3), contrôle des bagages. Ne peut pas : arrêter, fouiller, exiger une identité.",
+    "<b>Art. 803</b> : menottage si dangerosité ou fuite ; <b>art. 55</b> : préserver lieux et indices.",
+    "Mineur : appel obligatoire au responsable légal ou aux forces de l'ordre." ],
+    key:"Appréhender n'est pas fouiller ni contrôler ; aviser sans délai (R.631-10) et remettre à l'OPJ." },
+  { uv:"UV02", title:"Respect des libertés publiques", pts:[
+    "Vie privée : <b>art. 9 du Code civil</b> ; captation image/paroles en lieu privé : art. 226-1/226-2 (1 an/45 000 €).",
+    "Propriété : <b>usus, fructus, abusus</b> ; art. 544 à 647 du Code civil.",
+    "Séquestration : art. 224-1 (20 ans) ; homicide involontaire : art. 221-6 (3 ans/45 000 €).",
+    "<b>CNIL</b> : protège les données personnelles (informer, contrôler, conseiller, sanctionner).",
+    "Vidéo-protection (voie publique / lieux ouverts) vs vidéo-surveillance (lieux non ouverts) ; conservation ≤ 1 mois.",
+    "Les juridictions civiles tranchent les litiges ; l'APS protège, constate et alerte — il ne juge pas." ],
+    key:"Respecter la vie privée, les biens et les libertés : aucune atteinte injustifiée." },
+  { uv:"UV02", title:"Code de déontologie", pts:[
+    "Issu du <b>décret n° 2012-870 du 10 juillet 2012</b>, intégré au Livre VI du CSI.",
+    "Le <b>secret professionnel</b> est le premier des devoirs de l'agent.",
+    "Respect des lois, dignité (même hors service), respect du public, sobriété (alcool et drogue interdits).",
+    "Aucune violence sauf légitime défense ; pas de port d'arme sauf exception ; ne pas se prévaloir de l'autorité publique.",
+    "Carte pro présentée au CNAPS, aux clients et aux autorités ; informer l'employeur (suspension/retrait, condamnation).",
+    "<b>Marchandage</b> : 3 critères (transfert du lien de subordination, but lucratif, violation des droits)." ],
+    key:"Déontologie = règles et devoirs de la profession : respect, dignité, loyauté, confidentialité." },
+  { uv:"UV05", title:"Incendie", pts:[
+    "<b>Triangle du feu</b> : combustible + comburant (oxygène ~21 %) + énergie d'activation ; retirer un élément = extinction.",
+    "Modes d'extinction : refroidissement, étouffement, coupure d'alimentation, inhibition.",
+    "Propagation : convection, conduction, rayonnement, projection.",
+    "Classes : A (solides/braises), B (liquides/gras), C (gaz), D (métaux), F (cuisson). <b>Eau interdite</b> sur D, F et batteries.",
+    "<b>Asphyxie</b> = 1re cause de mortalité (~80 %) ; 5 dangers de la fumée.",
+    "Extincteurs : CO₂ à moins d'1 m (étouffement) ; parcours ≤ 15 m, entre extincteurs ≤ 30 m, poignée à 1,20 m.",
+    "Évacuation : guide-file (conduit au rassemblement), serre-file (fouille les locaux) ; exercices tous les 6 mois ; éclairage de sécurité ≥ 1 h." ],
+    key:"Priorité absolue = sauvetage et évacuation des personnes ; protéger, alerter, évacuer sans s'exposer." },
+  { uv:"UV06", title:"Filières métiers", pts:[
+    "<b>6 filières</b> : Surveillance, Distribution, Télésurveillance, Incendie, Aéroportuaire, Nucléaire.",
+    "Le TFP APS prépare surtout à la <b>Surveillance</b> ; accord qualifications du 26 septembre 2016.",
+    "Distribution : pré-vol, vidéo, arrière-caisse (uniforme obligatoire pour l'arrière-caisse, pas le pré-vol).",
+    "Incendie = <b>SSIAP</b> : SSIAP 1 (agent + PC sécurité), SSIAP 2 (chef d'équipe, dirige le poste), SSIAP 3 (chef de service).",
+    "Chef de poste : coordonne sans pouvoir hiérarchique ; cynophile : le chien est l'auxiliaire du conducteur (ASCCI, 315 h)." ],
+    key:"Une filière est un ensemble de métiers ; un métier repère est une fonction précise." },
+  { uv:"UV06", title:"Modalités d'appréhension (en exercice)", pts:[
+    "Ne pas confondre <b>appréhension, contrôle et fouille</b> ; appréhender seulement si l'on est certain de l'acte délictueux.",
+    "Approche de côté, calme, polie et ferme ; interdit d'obliger à suivre (dialogue puis police).",
+    "Autorisé : contrôle visuel. Interdits : palpation, fouille, contrainte. Remise d'identité <b>volontaire</b>.",
+    "Toujours vouvoyer (même un mineur) ; mineur : prise en charge par la personne civilement responsable (jamais signer la plainte).",
+    "Vidéosurveillance : déclarée en préfecture, conservation ≤ 1 mois ; ne jamais laisser la personne seule ni fermer à clé.",
+    "Compte rendu factuel, chronologique et neutre." ],
+    key:"Refus de suivre ≠ droit de fouiller : dialogue, sécurisation, puis forces de l'ordre." },
+  { uv:"UV08", title:"Accueil & contrôle d'accès", pts:[
+    "Premier <b>maillon de la chaîne de sécurité</b> ; l'APS n'a aucun pouvoir coercitif.",
+    "Contrôle d'accès = subordonner l'entrée à une autorisation ; toute pénétration frauduleuse = <b>intrusion</b>.",
+    "Points : dangereux (danger permanent), sensible (convoité), vulnérable (arrêt handicape l'activité).",
+    "Pas de contrôle d'identité (non assermenté) ; palpation en lieu ouvert = <b>art. L.613-2 CSI</b> (carte pro, même sexe, agrément préfet).",
+    "Fouille = consentement du propriétaire ; véhicule : contrôle visuel seulement, jamais de fouille d'autorité.",
+    "Garde statique : relève toutes les 2 h ; données d'accès conservées 3 mois." ],
+    key:"En cas de refus : pas de force, l'accès peut être refusé ; rendre compte et renseigner la main courante." },
+  { uv:"UV08", title:"Techniques d'information & communication", pts:[
+    "<b>Règle des 4×10</b> : 10 secondes, 10 gestes, 10 cm du visage, 10 premiers mots ; méthode <b>EPATER</b>.",
+    "3 formes : verbal (mots), para-verbal (voix), non verbal (gestes/posture) ; non-verbal = 55 % (Mehrabian).",
+    "Accueil téléphonique : décrocher au plus tard à la 3e sonnerie ; le sourire « s'entend ».",
+    "Visiteur agressif : écouter, ne pas prendre pour soi, reformuler, proposer une solution.",
+    "Plan d'<b>intervention</b> (secours, à chaque entrée) vs plan d'<b>évacuation</b> (public, chaque étage et issues).",
+    "Radio : fréquences Travail / Dégagement / Secours ; message = entrée + contenu + fin ; compte rendu <b>QQFVD</b> ; « URGENT PRIORITÉ RADIO »." ],
+    key:"Écouter, reformuler pour valider la compréhension, rester factuel et suivre la chaîne hiérarchique." },
+  { uv:"UV10", title:"Télésurveillance & Vidéoprotection", pts:[
+    "2 finalités : <b>dissuader</b> et <b>renforcer le sentiment de sécurité</b>.",
+    "Lieu ouvert au public → CSI + préfecture ; lieu non ouvert → Informatique et Libertés + Code du travail.",
+    "Parkings ≥ 200 places (art. R.273-7 CSI) ; autorisation renouvelée tous les 5 ans ; conservation des images ≤ 1 mois.",
+    "Chaîne : détection → transmission → analyse / levée de doute → alerte / intervention (une alarme n'est pas une preuve).",
+    "Matériel : caméra = capter, multiplexeur = organiser, enregistreur = conserver ; art. 427 CPP (liberté de la preuve).",
+    "Droit d'accès aux images : demande au responsable (date/heure/lieu) ; recours CNIL / commission départementale." ],
+    key:"Interdit de filmer : un employé à son poste (sauf cas justifié), les toilettes, les zones de pause, les locaux syndicaux." },
+];
+
+let openSheet = null; // titre de la fiche ouverte
+function renderSheets(){
+  progressRail.hidden = true;
+  setActiveNav("sheets");
+  const uvs = [...new Set(SHEETS.map(s=>s.uv))].sort();
+  const groups = uvs.map(uv=>{
+    const cards = SHEETS.filter(s=>s.uv===uv).map(s=>{
+      const open = openSheet===s.title;
+      return `<div class="sheet-card">
+        <button class="sheet-btn" data-sheet="${esc(s.title)}" aria-expanded="${open}">
+          <span class="sc-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+          <span class="sc-name">${esc(s.title)}</span>
+        </button>
+        ${open?`<div class="sheet-body">
+          <ul>${s.pts.map(p=>`<li><span>${p}</span></li>`).join("")}</ul>
+          <div class="sheet-key"><b>À retenir&nbsp;:</b> ${esc(s.key)}</div>
+        </div>`:""}
+      </div>`;
+    }).join("");
+    return `<div class="sheet-uv">
+      <div class="sheet-uvtitle">${uv} · ${UV_META[uv]?UV_META[uv].name:""}</div>
+      ${cards}
+    </div>`;
+  }).join("");
+
+  app.innerHTML = `
+    <section class="sheets">
+      <div class="sheets-head">
+        <span class="eyebrow">Révision express</span>
+        <h1>Fiches simplifiées</h1>
+        <p>L'essentiel à retenir pour chaque module et sous-module. Touchez une fiche pour la dérouler, puis entraînez-vous avec les QCU.</p>
+      </div>
+      ${groups}
+      <p class="footer-note">${SHEETS.length} fiches · synthèse des supports CFPS, à compléter par le cours complet.</p>
+    </section>`;
+
+  app.querySelectorAll("[data-sheet]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const t = btn.dataset.sheet;
+      openSheet = (openSheet===t) ? null : t;
+      renderSheets();
+    });
   });
 }
 
