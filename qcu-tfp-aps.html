@@ -504,6 +504,7 @@ const THEMES = {
   telesurv:   { uv:"UV10", name:"Télésurveillance & Vidéoprotection", short:"Télésurveillance" },
   accueil:    { uv:"UV08", name:"Accueil & contrôle d'accès", short:"Accueil & contrôle" },
   communication:{ uv:"UV08", name:"Techniques d'information & communication", short:"Communication" },
+  strategique:{ uv:"UV04", name:"Module stratégique (transmission)", short:"Module stratégique" },
 };
 
 const BANK = [
@@ -1358,6 +1359,95 @@ const BANK = [
     "Après 1 heure d'immobilité",
     "Uniquement sur appui manuel"], a:0,
     e:"L'alarme PTI « travailleur isolé » se déclenche en position horizontale ou inclinaison supérieure à 60° pendant plus de 7 secondes (selon le matériel). Un appel de secours silencieux est aussi possible par pression d'un bouton 3 secondes." },
+
+  /* ---------------- MODULE STRATÉGIQUE — TRANSMISSION (UV04) ---------------- */
+  { t:"strategique", q:"Qu'est-ce qu'une consigne ?", o:[
+    "Une instruction formelle (écrite) qui fixe les mesures permanentes et la conduite à tenir",
+    "Une simple recommandation orale",
+    "Un avis personnel de l'agent",
+    "Une loi du Code pénal"], a:0,
+    e:"Une consigne est une instruction écrite et formelle : elle indique les mesures à respecter en permanence et les conduites à tenir si un événement survient. Elle vise la sauvegarde des personnes et des biens." },
+  { t:"strategique", q:"Quelle est la finalité première d'une consigne ?", o:[
+    "Prévenir les dangers (puis limiter les conséquences si le risque se réalise)",
+    "Sanctionner le personnel",
+    "Remplacer le règlement intérieur",
+    "Informer la presse"], a:0,
+    e:"Une consigne sert d'abord à prévenir ; si le risque se réalise, elle permet d'en limiter les effets et de protéger les personnes et les biens." },
+  { t:"strategique", q:"L'APS peut-il réinterpréter une consigne selon ses préférences ?", o:[
+    "Non : il doit la respecter et veiller à son application",
+    "Oui, s'il la juge inadaptée",
+    "Oui, en l'absence du chef de poste",
+    "Oui, pour gagner du temps"], a:0,
+    e:"La consigne doit être respectée ; l'APS ne la réinterprète pas selon ses préférences. Il doit la connaître, veiller à son respect et à son application." },
+  { t:"strategique", q:"Quels sont les grands types de consignes à mémoriser ?", o:[
+    "Générales, particulières, spéciales, temporaires/ponctuelles",
+    "Orales, écrites, radio, téléphoniques",
+    "Civiles, pénales, administratives",
+    "Vigipirate, incendie, intrusion, technique"], a:0,
+    e:"Types : générales (tout le site), particulières (zones/locaux), spéciales (une catégorie de personnel) et temporaires/ponctuelles (durée limitée)." },
+  { t:"strategique", q:"Une consigne « spéciale » concerne :", o:[
+    "Une catégorie de personnel (APS, chef de poste, secouristes…)",
+    "Tout le site de façon permanente",
+    "Une situation exceptionnelle et rare",
+    "Uniquement les visiteurs"], a:0,
+    e:"Attention au piège : « spéciale » ne veut pas dire « exceptionnelle ». Elle vise un personnel déterminé. La consigne générale, elle, est permanente et concerne tout le site." },
+  { t:"strategique", q:"Quelles sont les trois voies de transmission pour remonter une information ?", o:[
+    "L'oral, la main courante et le rapport",
+    "La radio, le mail et le SMS",
+    "Le registre, le plan et l'affiche",
+    "L'alerte, la ronde et la relève"], a:0,
+    e:"Oral = immédiat (de vive voix, téléphone, radio) ; main courante = chronologie du service ; rapport = développement précis et formel (incident/accident grave)." },
+  { t:"strategique", q:"Que recouvre le compte rendu oral « JE SUIS, JE VOIS, JE FAIS, JE DEMANDE » ?",o:[
+    "Se situer, décrire ce qu'on voit, dire ce qu'on fait, demander des moyens",
+    "Les quatre classes de feu",
+    "Les étapes de l'évacuation",
+    "Les parties d'un message radio"], a:0,
+    e:"Compte rendu oral : JE SUIS (qui/où) · JE VOIS (la situation) · JE FAIS (les actions) · JE DEMANDE (renforts/consignes). Rendre compte = transmettre des faits, pas une opinion." },
+  { t:"strategique", q:"La main courante est :", o:[
+    "Le journal officiel et chronologique du poste",
+    "Un brouillon personnel de l'agent",
+    "Un document publicitaire",
+    "Le règlement intérieur de l'entreprise"], a:0,
+    e:"La main courante est le journal officiel du poste : prise/fin de service, matériel et consignes, rondes, événements et interventions, avec nom, fonction, date et signature ; pages numérotées et paraphées." },
+  { t:"strategique", q:"Comment rédige-t-on correctement une main courante ?", o:[
+    "À l'encre indélébile (de préférence noire) ; en cas d'erreur, rayer proprement sans correcteur blanc",
+    "Au crayon, pour pouvoir gommer",
+    "Au correcteur blanc sur les erreurs",
+    "En arrachant la page fautive"], a:0,
+    e:"Rédaction courte, lisible, objective et chronologique, à l'encre indélébile. En cas d'erreur : rayer proprement et inscrire la correction ; jamais de correcteur blanc, ne pas écrire à l'avance ni arracher de page." },
+  { t:"strategique", q:"Selon le support, comment porte-t-on les faits de sécurité incendie sur la main courante ?", o:[
+    "En rouge","En vert","En les soulignant","Sur une page à part"], a:0,
+    e:"Le support indique de porter les faits de sécurité incendie en rouge sur la main courante." },
+  { t:"strategique", q:"Que recouvre la grille QQCOQP ?", o:[
+    "Qui ? Quoi ? Comment ? Où / par où ? Quand ? Pourquoi ?",
+    "Qui ? Quand ? Combien ? Où ? Quel ? Pourquoi ?",
+    "Quoi ? Quand ? Comment ? Où ? Qui ? Preuve ?",
+    "Qualifier, Quantifier, Classer, Observer, Qualité, Preuve"], a:0,
+    e:"QQCOQP = Qui ? Quoi ? Comment ? Où / par où ? Quand ? Pourquoi ? C'est la grille de questions à ne pas oublier dans un compte rendu (heure précise à 4 chiffres, localisation essentielle)." },
+  { t:"strategique", q:"Que recouvre le canevas de compte rendu SOCA ?", o:[
+    "Situation, Observation, Causes/conséquences, Actions",
+    "Sécurité, Ordre, Contrôle, Alerte",
+    "Signaler, Observer, Communiquer, Agir",
+    "Surveillance, Organisation, Consignes, Accueil"], a:0,
+    e:"SOCA est une trame de compte rendu : Situation (où/quand) · Observation (quoi/comment/qui, sans supposition) · Causes/conséquences (pourquoi, cause apparente) · Actions (mesures prises, alerte, suite)." },
+  { t:"strategique", q:"Quelles qualités un rapport doit-il réunir ?", o:[
+    "Objectif, impartial, complet, précis et méthodique (en français, avec copie conservée)",
+    "Court, imagé et personnel",
+    "Confidentiel et oral",
+    "Signé uniquement par le client"], a:0,
+    e:"Le rapport doit être objectif, impartial, complet, précis et méthodique ; rédigé en français, une copie est conservée, et la transmission suit la voie hiérarchique. Ne pas confondre compte rendu et commentaire." },
+  { t:"strategique", q:"Quelle est la différence entre le disque dur et la mémoire vive (RAM) ?", o:[
+    "Le disque dur = stockage durable ; la mémoire vive = espace de travail pendant l'utilisation",
+    "Ce sont deux mots pour la même chose",
+    "La mémoire vive conserve les données éteint",
+    "Le disque dur sert à afficher l'image"], a:0,
+    e:"Hardware = éléments physiques, software = système et programmes. Piège fréquent : le disque dur assure le stockage durable, alors que la mémoire vive n'est que l'espace de travail pendant l'utilisation." },
+  { t:"strategique", q:"Qu'est-ce qu'un « logiciel métier » en service de sécurité ?", o:[
+    "Une application adaptée au service : main courante, registres, consignes, clés, contrôles de ronde",
+    "Le système d'exploitation de l'ordinateur",
+    "Un composant physique de l'unité centrale",
+    "Un réseau radio"], a:0,
+    e:"Le logiciel métier est une application conçue pour les besoins du service de sécurité (main courante électronique souvent reliée à un contrôleur de ronde, registres, consignes, clés) : saisie, sauvegarde, accès sécurisé et traçabilité." },
 ];
 
 /* ===================== ÉTAT ===================== */
@@ -1368,6 +1458,7 @@ const UV_META = {
   UV02: { name:"Environnement juridique" },
   UV05: { name:"Incendie" },
   UV06: { name:"Métiers & appréhension" },
+  UV04: { name:"Module stratégique (transmission)" },
   UV08: { name:"Accueil, communication & contrôle d'accès" },
   UV10: { name:"Télésurveillance & Vidéoprotection" },
 };
@@ -2176,6 +2267,15 @@ const SHEETS = [
     "Carte pro présentée au CNAPS, aux clients et aux autorités ; informer l'employeur (suspension/retrait, condamnation).",
     "<b>Marchandage</b> : 3 critères (transfert du lien de subordination, but lucratif, violation des droits)." ],
     key:"Déontologie = règles et devoirs de la profession : respect, dignité, loyauté, confidentialité." },
+  { uv:"UV04", title:"Module stratégique (transmission)", pts:[
+    "<b>Consigne</b> = instruction écrite et formelle : mesures permanentes + conduite à tenir ; l'APS la respecte sans la réinterpréter.",
+    "4 types : <b>générales</b> (tout le site) · <b>particulières</b> (zones/locaux) · <b>spéciales</b> (une catégorie de personnel) · <b>temporaires/ponctuelles</b> (durée limitée).",
+    "Remonter l'info par 3 voies : <b>oral</b> (immédiat) · <b>main courante</b> (chronologie) · <b>rapport</b> (incident grave).",
+    "Compte rendu oral : <b>JE SUIS · JE VOIS · JE FAIS · JE DEMANDE</b>.",
+    "<b>Main courante</b> = journal officiel du poste : encre indélébile (noire), rayer proprement (jamais de blanc), faits incendie en rouge.",
+    "Rédiger avec <b>QQCOQP</b> (Qui, Quoi, Comment, Où, Quand, Pourquoi) et la trame <b>SOCA</b> (Situation, Observation, Causes, Actions).",
+    "Outils : hardware (physique) vs software ; disque dur (stockage) ≠ mémoire vive (travail) ; logiciel métier = main courante, registres, rondes." ],
+    key:"Rendre compte = des faits, pas une opinion : factuel, chronologique, précis et exploitable par la hiérarchie." },
   { uv:"UV05", title:"Incendie", pts:[
     "<b>Triangle du feu</b> : combustible + comburant (oxygène ~21 %) + énergie d'activation ; retirer un élément = extinction.",
     "Modes d'extinction : refroidissement, étouffement, coupure d'alimentation, inhibition.",
