@@ -233,7 +233,7 @@
   .section-label{font-size:.8rem;font-weight:700;letter-spacing:.04em;color:var(--ink-soft);text-transform:uppercase;margin-bottom:2px}
 
   /* ---- Compteurs d'accueil ---- */
-  .home-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .home-stats{display:grid;grid-template-columns:1fr;gap:10px}
   .hs-tile{display:flex;align-items:center;gap:12px;background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:14px 15px;box-shadow:var(--shadow)}
   .hs-tile .hs-n{font-family:"Archivo",sans-serif;font-weight:800;font-size:1.9rem;line-height:1;color:var(--flame)}
   .hs-tile .hs-l{font-size:.8rem;color:var(--ink-soft);line-height:1.3}
@@ -2213,11 +2213,7 @@ function renderSetup(){
       <div class="home-stats">
         <div class="hs-tile">
           <span class="hs-n tnum">${BANK.length}</span>
-          <span class="hs-l">questions en banque<br><b>préparation</b></span>
-        </div>
-        <div class="hs-tile">
-          <span class="hs-n tnum">${examTotal()}</span>
-          <span class="hs-l">questions<br><b>mode examen</b></span>
+          <span class="hs-l">questions<br><b>au total dans la banque</b></span>
         </div>
       </div>
 
