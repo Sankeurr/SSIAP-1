@@ -194,6 +194,19 @@
   .exam-start:hover{filter:brightness(1.05)}
   .exam-note{font-size:.84rem;color:var(--ink-soft);background:var(--surface-2);border-left:3px solid var(--amber);border-radius:0 10px 10px 0;padding:10px 13px}
 
+  /* ---- Historique ---- */
+  .hist-list{display:flex;flex-direction:column;gap:9px}
+  .hist-row{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--surface);border:1.5px solid var(--line);border-radius:13px;padding:12px 14px;box-shadow:var(--shadow)}
+  .hr-main{display:flex;flex-direction:column;min-width:0}
+  .hr-mode{font-family:"Archivo",sans-serif;font-weight:700;font-size:.98rem}
+  .hr-date{font-size:.8rem;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+  .hr-stats{display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex:none}
+  .hr-pct{font-family:"Archivo",sans-serif;font-weight:800;font-size:1.15rem;font-variant-numeric:tabular-nums}
+  .hr-pct.ok{color:var(--good)}
+  .hr-pct.ko{color:var(--flame)}
+  .hr-detail{font-size:.8rem;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+  .hr-detail .hr-err{color:var(--bad);font-weight:700}
+
   /* progress bar under header during quiz */
   .progress-rail{height:4px;background:rgba(255,255,255,.12);width:100%}
   .progress-fill{height:100%;background:var(--flame);width:0;transition:width .3s ease}
@@ -281,9 +294,9 @@
     font-variant-numeric:tabular-nums;transition:border-color .15s, background .15s;
   }
   .pill[aria-pressed="true"]{border-color:var(--flame);background:var(--flame);color:#fff}
-  .exam-link{display:inline-flex;align-items:center;gap:7px;background:var(--navy);color:var(--navy-ink);border:1.5px solid var(--navy);border-radius:999px;padding:8px 15px;font-size:.9rem;font-weight:700;font-family:"Archivo",sans-serif;cursor:pointer;margin-left:auto}
-  .exam-link:hover{filter:brightness(1.15)}
-  .exam-link svg{flex:none}
+  .exam-cta{width:100%;display:flex;align-items:center;justify-content:center;gap:9px;background:var(--navy);color:var(--navy-ink);border:1.5px solid var(--navy);border-radius:13px;padding:14px;font-size:1rem;font-weight:700;font-family:"Archivo",sans-serif;cursor:pointer}
+  .exam-cta:hover{filter:brightness(1.15)}
+  .exam-cta svg{flex:none}
   @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .pill[aria-pressed="true"]{color:#0c1118}}
   :root[data-theme="dark"] .pill[aria-pressed="true"]{color:#0c1118}
 
@@ -513,6 +526,11 @@
     <button class="drawer-item" data-view="revisions">
       <span class="di-ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
       <span class="di-txt"><b>Révisions</b><small>Lois &amp; dates, puis chaque module</small></span>
+    </button>
+    <div class="drawer-group">Suivi</div>
+    <button class="drawer-item" data-view="history">
+      <span class="di-ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l3 2"/></svg></span>
+      <span class="di-txt"><b>Historique</b><small>Vos scores et erreurs (sur cet appareil)</small></span>
     </button>
   </nav>
   <div class="drawer-foot">TFP APS — Agent de prévention et de sécurité</div>
@@ -2106,13 +2124,25 @@ applyTheme(startTheme);
 function loadBest(key){ try{ return JSON.parse(localStorage.getItem(key||"qcu_tfp_best")||"{}"); }catch(e){ return {}; } }
 function saveBest(o,key){ try{ localStorage.setItem(key||"qcu_tfp_best", JSON.stringify(o)); }catch(e){} }
 
+/* ---- Historique (logs), propre à chaque appareil (localStorage) ---- */
+const HIST_KEY = "qcu_tfp_history";
+function loadHistory(){ try{ const a = JSON.parse(localStorage.getItem(HIST_KEY)||"[]"); return Array.isArray(a)?a:[]; }catch(e){ return []; } }
+function logAttempt(entry){
+  try{
+    const list = loadHistory();
+    list.unshift(entry);                 // plus récent en premier
+    localStorage.setItem(HIST_KEY, JSON.stringify(list.slice(0,200)));
+  }catch(e){}
+}
+function clearHistory(){ try{ localStorage.removeItem(HIST_KEY); }catch(e){} }
+
 /* ---- utilitaires ---- */
 function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
 function countFor(keys){ return BANK.filter(q=>keys.has(q.t)).length; }
 function esc(s){ return s.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])); }
 
 /* ===================== NAVIGATION ===================== */
-const SECTION_LABELS = { train:"Entraînement", exam:"Examen blanc", dl:"QCU Dates & Lois", revisions:"Révisions" };
+const SECTION_LABELS = { train:"Entraînement", exam:"Examen blanc", dl:"QCU Dates & Lois", revisions:"Révisions", history:"Historique" };
 const sectionLbl = document.getElementById("sectionLbl");
 function setActiveNav(view){
   document.querySelectorAll(".drawer-item").forEach(t=>{
@@ -2126,6 +2156,7 @@ function navTo(view){
   else if(view==="exam") renderExam();
   else if(view==="dl") renderDL();
   else if(view==="revisions") renderRevisions();
+  else if(view==="history") renderHistory();
   window.scrollTo({top:0});
 }
 
@@ -2193,14 +2224,6 @@ function renderSetup(){
   }).join("");
 
   const avail = countFor(selected);
-  const counts = [10];
-  const pills = counts.map(c=>{
-    const val = c==="max"?avail:c;
-    const label = c==="max"?"Tout":c;
-    const on = (c==="max" && qCount>=avail) || qCount===c;
-    const disabled = (typeof c==="number" && c>avail);
-    return `<button class="pill" data-count="${c}" aria-pressed="${on}" ${disabled?"disabled style='opacity:.4'":""}>${label}</button>`;
-  }).join("");
 
   app.innerHTML = `
     <section class="setup">
@@ -2222,11 +2245,6 @@ function renderSetup(){
         <div class="uv-list" id="uvList">${groups}</div>
       </div>
 
-      <div>
-        <div class="section-label">2 · Nombre de questions</div>
-        <div class="pills" id="countPills">${pills}<button class="exam-link" id="toExam">Mode Examen <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
-      </div>
-
       <div class="card" style="padding:4px 16px">
         <div class="toggle-row">
           <div>
@@ -2238,9 +2256,13 @@ function renderSetup(){
       </div>
 
       <div>
-        <button class="start-btn" id="startBtn">
-          Commencer · <span class="tnum" id="startCount">${Math.min(qCount,avail)}</span> questions
+        <button class="start-btn" id="startBtn" ${avail===0?"disabled":""}>
+          Réviser les thèmes choisis · <span class="tnum">${avail}</span> questions
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+        <button class="exam-cta" id="toExam" style="margin-top:10px">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          Passer un examen blanc
         </button>
         ${best.last!=null?`<div class="best" style="margin-top:12px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4L12 17l-6.3 4.4L8 14 2 9.4h7.6z"/></svg> Meilleur score : <b class="tnum">&nbsp;${best.best}%</b></div>`:""}
       </div>
@@ -2289,16 +2311,8 @@ function renderSetup(){
       renderSetup();
     });
   });
-  // interactions count
-  app.querySelectorAll("[data-count]").forEach(btn=>{
-    btn.addEventListener("click", ()=>{
-      const c = btn.dataset.count;
-      qCount = c==="max" ? countFor(selected) : Number(c);
-      renderSetup();
-    });
-  });
   document.getElementById("shuffleOpt").addEventListener("change", e=>{ shuffleOpts = e.target.checked; });
-  document.getElementById("startBtn").addEventListener("click", startQuiz);
+  document.getElementById("startBtn").addEventListener("click", ()=>{ if(countFor(selected)>0) startQuiz(); });
   document.getElementById("toExam").addEventListener("click", ()=>{ renderExam(); window.scrollTo({top:0}); });
   document.getElementById("refBtn").addEventListener("click", ()=>{ renderReference(); window.scrollTo({top:0}); });
 }
@@ -2319,13 +2333,14 @@ function startSession(pool, opts){
     backTo: opts.backTo || renderSetup,
     restart: opts.restart || startQuiz,
     examMode: !!opts.examMode,
+    modeLabel: opts.modeLabel || "Entraînement",
   };
   progressRail.hidden = false;
   renderQuestion();
 }
 function startQuiz(){
   const pool = BANK.filter(q=>selected.has(q.t));
-  startSession(pool, { count:qCount, bestKey:"qcu_tfp_best", backTo:renderSetup, restart:startQuiz });
+  startSession(pool, { count:pool.length, bestKey:"qcu_tfp_best", backTo:renderSetup, restart:startQuiz, modeLabel:"Entraînement" });
 }
 
 /* ===================== UNE QUESTION ===================== */
@@ -2429,6 +2444,9 @@ function finish(){
   const best = loadBest(bestKey);
   const newBest = Math.max(best.best||0, pct);
   saveBest({ best:newBest, last:pct }, bestKey);
+
+  // historique de cet appareil
+  logAttempt({ t: Date.now(), mode: s.modeLabel || "Entraînement", total, good, err: total-good, pct });
 
   // ventilation par thème
   const byTheme = {};
@@ -2790,7 +2808,7 @@ let dlCount = 20;
 function startDL(count){
   dlCount = count;
   const c = count==="max" ? DL_BANK.length : count;
-  startSession(DL_BANK, { count:c, bestKey:"qcu_tfp_dl_best", backTo:renderDL, restart:()=>startDL(count) });
+  startSession(DL_BANK, { count:c, bestKey:"qcu_tfp_dl_best", backTo:renderDL, restart:()=>startDL(count), modeLabel:"Dates & Lois" });
 }
 function renderDL(){
   progressRail.hidden = true;
@@ -3094,7 +3112,7 @@ function startExam(){
     list = list.concat(shuffle(pool).slice(0, b.count));
   });
   startSession(list, { count:list.length, ordered:true, examMode:true,
-    bestKey:"qcu_tfp_exam_best", backTo:renderExam, restart:startExam });
+    bestKey:"qcu_tfp_exam_best", backTo:renderExam, restart:startExam, modeLabel:"Examen blanc" });
 }
 function renderExam(){
   progressRail.hidden = true;
@@ -3145,6 +3163,71 @@ function renderExam(){
     </section>`;
 
   document.getElementById("examStart").addEventListener("click", ()=>{ startExam(); window.scrollTo({top:0}); });
+}
+
+/* ===================== HISTORIQUE (logs par appareil) ===================== */
+let histConfirmClear = false;
+function fmtDate(ts){
+  try{
+    const d = new Date(ts);
+    return d.toLocaleDateString("fr-FR",{day:"2-digit",month:"2-digit",year:"2-digit"}) + " · " +
+           d.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"});
+  }catch(e){ return ""; }
+}
+function renderHistory(){
+  progressRail.hidden = true;
+  setActiveNav("history");
+  const list = loadHistory();
+  const n = list.length;
+  const totalErr = list.reduce((s,e)=>s+(e.err||0),0);
+  const totalQ = list.reduce((s,e)=>s+(e.total||0),0);
+  const avg = n ? Math.round(list.reduce((s,e)=>s+(e.pct||0),0)/n) : 0;
+
+  const rows = list.map(e=>{
+    const pass = (e.pct||0)>=70;
+    return `<div class="hist-row">
+      <div class="hr-main">
+        <span class="hr-mode">${esc(e.mode||"Entraînement")}</span>
+        <span class="hr-date">${fmtDate(e.t)}</span>
+      </div>
+      <div class="hr-stats">
+        <span class="hr-pct ${pass?"ok":"ko"}">${e.pct}%</span>
+        <span class="hr-detail"><b class="hr-err">${e.err}</b> erreur${e.err>1?"s":""} · ${e.good}/${e.total}</span>
+      </div>
+    </div>`;
+  }).join("");
+
+  app.innerHTML = `
+    <section class="sheets">
+      <div class="sheets-head">
+        <span class="eyebrow">Suivi</span>
+        <h1>Historique</h1>
+        <p>Le détail de vos séries terminées, avec le nombre d'erreurs. Ces données restent <b>sur cet appareil uniquement</b> (téléphone ou ordinateur) et ne sont partagées avec personne.</p>
+      </div>
+
+      ${n ? `
+      <div class="home-stats" style="grid-template-columns:1fr 1fr 1fr">
+        <div class="hs-tile"><span class="hs-n tnum">${n}</span><span class="hs-l">série${n>1?"s":""}<br><b>réalisée${n>1?"s":""}</b></span></div>
+        <div class="hs-tile"><span class="hs-n tnum">${avg}%</span><span class="hs-l">score<br><b>moyen</b></span></div>
+        <div class="hs-tile"><span class="hs-n tnum">${totalErr}</span><span class="hs-l">erreurs<br><b>au total</b></span></div>
+      </div>
+      <div class="hist-list">${rows}</div>
+      <button class="next-btn" id="histClear" style="background:var(--surface-2);color:var(--bad);border:1px solid var(--line)">
+        ${histConfirmClear ? "Confirmer l'effacement de l'historique" : "Effacer l'historique"}
+      </button>
+      <p class="footer-note">${totalQ} questions répondues au total sur cet appareil.</p>
+      ` : `
+      <div class="law-empty">Aucune série terminée pour l'instant.<br>Lancez un entraînement ou un examen : vos résultats s'afficheront ici.</div>
+      `}
+    </section>`;
+
+  const clearBtn = document.getElementById("histClear");
+  if(clearBtn){
+    clearBtn.addEventListener("click", ()=>{
+      if(!histConfirmClear){ histConfirmClear = true; renderHistory(); return; }
+      clearHistory(); histConfirmClear = false; renderHistory();
+    });
+  }
 }
 
 /* ===================== GO ===================== */
