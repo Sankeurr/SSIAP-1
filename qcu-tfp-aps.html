@@ -506,6 +506,8 @@ const THEMES = {
   communication:{ uv:"UV08", name:"Techniques d'information & communication", short:"Communication" },
   strategique:{ uv:"UV04", name:"Module stratégique (transmission)", short:"Module stratégique" },
   terrorisme: { uv:"UV07", name:"Prévention des risques terroristes", short:"Risques terroristes" },
+  secourir:   { uv:"UV07", name:"Secourir (secourisme tactique)", short:"Secourir" },
+  palpation:  { uv:"UV09", name:"Palpation & contrôle visuel des sacs", short:"Palpation & sacs" },
 };
 
 const BANK = [
@@ -1544,6 +1546,219 @@ const BANK = [
     "Manipuler les dispositifs suspects pour les neutraliser",
     "Décider seul de l'évacuation générale de la ville"], a:0,
     e:"Rôle de l'APS : prévenir et dissuader, appliquer les procédures du site, protéger, alerter et rendre compte. Ne pas se substituer aux forces de l'ordre, ne pas poursuivre ni manipuler un dispositif suspect. Fil rouge : ne pas se mettre en danger, ne pas manipuler, ne pas improviser." },
+
+  /* -------- Risques terroristes : compléments (intervention) -------- */
+  { t:"terrorisme", q:"Que recouvre le sigle PMS dans la prévention des risques terroristes ?", o:[
+    "Plan de Mise en Sûreté",
+    "Point de Mise en Sécurité",
+    "Protocole Médical de Secours",
+    "Périmètre de Mise en Surveillance"], a:0,
+    e:"Le PMS (Plan de Mise en Sûreté) prévoit notamment les missions des personnels, des zones de confinement, les coordonnées des forces de sécurité intérieure, les missions selon les périodes et la reprise d'activité." },
+  { t:"terrorisme", q:"Quelle est la première étape de la méthode de contrôle d'accès en 6 étapes ?", o:[
+    "L'identification (la personne s'identifie)",
+    "La fouille",
+    "La palpation",
+    "L'autorisation"], a:0,
+    e:"Les 6 étapes : Identification → Authentification → Motivation → Autorisation → Fouille → Palpation. En cas de refus de coopérer, l'accès au périmètre peut être refusé." },
+  { t:"terrorisme", q:"Comment se nomment les trois cercles de sécurisation d'une zone ?", o:[
+    "PSI (Z1), PSR (Z2), PSE (Z3)",
+    "Rouge, orange, vert",
+    "Interne, médian, externe",
+    "Alpha, bravo, charlie"], a:0,
+    e:"Z1 = PSI (périmètre de sécurité immédiat / zone d'exclusion) · Z2 = PSR (périmètre de sécurité rapproché / zone de travail) · Z3 = PSE (périmètre de sécurité éloigné / zone contrôlée, accueil des victimes et secours)." },
+  { t:"terrorisme", q:"Que désigne le PSI (Z1) ?", o:[
+    "Le périmètre de sécurité immédiat : zone de danger et d'exclusion",
+    "Le périmètre de stockage du matériel",
+    "La zone d'accueil des témoins",
+    "Le poste de secours improvisé"], a:0,
+    e:"PSI = périmètre de sécurité immédiat (Z1) : zone de danger et d'intervention, zone d'exclusion. Le PSR (Z2) est la zone de travail, le PSE (Z3) la zone contrôlée d'accueil." },
+  { t:"terrorisme", q:"Quel est le bon réflexe immédiat en cas d'explosion ?", o:[
+    "Se jeter au sol face contre terre, protéger la tête, mains sur les oreilles, bouche ouverte",
+    "Courir vers la sortie la plus proche sans se protéger",
+    "Rester debout pour observer",
+    "Se placer derrière une fenêtre"], a:0,
+    e:"En cas d'explosion : se jeter au sol face contre terre, fermer les yeux, mains sur les oreilles, protéger la tête avec les coudes, ouvrir la bouche ; rester abrité quelques instants car une 2e explosion (sur-attentat) est possible." },
+  { t:"terrorisme", q:"Faut-il déclencher l'alarme incendie pour prévenir d'un attentat ?", o:[
+    "Non : cela peut provoquer un regroupement et exposer les personnes",
+    "Oui, c'est le moyen le plus rapide",
+    "Oui, pour forcer l'évacuation",
+    "Oui, uniquement la nuit"], a:0,
+    e:"Le support indique de ne pas déclencher l'alarme incendie pour prévenir d'un attentat : le regroupement expose les personnes. En cas de déclenchement, ne quitter la pièce qu'en présence de signes évidents d'incendie." },
+  { t:"terrorisme", q:"À l'arrivée des forces de l'ordre pendant une attaque, que faire ?", o:[
+    "Ne pas courir vers elles, mains levées et ouvertes, mouvements lents",
+    "Courir vers elles pour être protégé",
+    "Garder les mains dans les poches",
+    "Filmer l'intervention"], a:0,
+    e:"À l'arrivée des forces de l'ordre : ne pas courir vers elles, aucun mouvement brusque, mains levées et ouvertes (visibles), signaler les blessés et leur emplacement." },
+  { t:"terrorisme", q:"En cas de prise d'otages, quelle attitude adopter ?", o:[
+    "Faire ce qui est demandé, ne pas jouer au héros, mémoriser les ravisseurs ; à l'assaut, se jeter au sol mains sur la tête",
+    "Tenter de s'échapper immédiatement",
+    "Négocier directement avec les ravisseurs",
+    "Argumenter pour les raisonner"], a:0,
+    e:"Prise d'otages : ne pas jouer au héros, faire ce qui est demandé, parler seulement si nécessaire, mémoriser visages et signes distinctifs, répondre oui/non aux autorités ; au déclenchement de l'assaut, se jeter au sol, mains sur la tête." },
+
+  /* ---------------- SECOURIR — SECOURISME TACTIQUE (UV07.3) ---------------- */
+  { t:"secourir", q:"Que vise le secourisme tactique ?", o:[
+    "Faire face aux blessures par armes à feu, armes blanches et effets d'explosion",
+    "Remplacer le SAMU",
+    "Soigner les maladies chroniques",
+    "Former au maniement des armes"], a:0,
+    e:"Le secourisme tactique associe comportement tactique et gestes qui préservent la vie, face aux blessures par armes à feu, armes blanches et explosions, en tenant compte de la menace qui peut réapparaître." },
+  { t:"secourir", q:"Quelles sont les trois phases de soins du secourisme tactique ?", o:[
+    "Soins sous menace directe · sous menace indirecte · évacuation",
+    "Alerte · protection · secours",
+    "Tri · soin · transport",
+    "Avant · pendant · après"], a:0,
+    e:"3 phases : sous la menace directe (attaque en cours) · sous la menace indirecte (menace supprimée mais pouvant refaire surface) · évacuation (soins pendant que la victime quitte le lieu)." },
+  { t:"secourir", q:"Comment reconnaît-on une hémorragie artérielle ?", o:[
+    "Sang rouge vermeil qui gicle par saccades",
+    "Sang rouge sombre qui s'écoule en nappe",
+    "Saignement léger type coupure de rasage",
+    "Écoulement interne invisible"], a:0,
+    e:"Artérielle = sang rouge vermeil, gicle par saccades. Veineuse = sang rouge sombre, s'écoule en nappe. Capillaire = saignement léger sans gravité." },
+  { t:"secourir", q:"Quelle est la progression pour contrôler une hémorragie externe ?", o:[
+    "1. Compression directe → 2. point de compression → 3. garrot si échec",
+    "1. Garrot → 2. compression → 3. pansement",
+    "1. Alerter → 2. attendre → 3. garrot",
+    "1. Point de compression → 2. garrot → 3. compression"], a:0,
+    e:"Progression : compression directe, puis point de compression, puis garrot en cas d'échec. Ne jamais attendre les signes de saignement abondant (pâleur, pouls et respiration rapides) pour agir." },
+  { t:"secourir", q:"Le garrot doit être utilisé :", o:[
+    "En dernier recours (ou d'emblée s'il y a de nombreuses victimes), sur un membre",
+    "Systématiquement sur toute plaie",
+    "Sur le cou ou le thorax",
+    "Uniquement par un médecin"], a:0,
+    e:"Le garrot est un dernier recours (compression inefficace/impossible) ou un choix d'emblée en cas de nombreuses victimes, pour libérer le secouriste. Il interrompt totalement la circulation en aval et se pose sur un membre." },
+  { t:"secourir", q:"Quels sont les risques d'un garrot très serré laissé trop longtemps ?", o:[
+    "Paralysie au-delà de 2 h ; après 4 à 6 h, gangrène, troubles rénaux et décès",
+    "Aucun risque particulier",
+    "Une simple douleur passagère",
+    "Une baisse de tension temporaire"], a:0,
+    e:"Risques : paralysie au-delà de 2 heures ; après 4 à 6 heures, gangrène, troubles rénaux et décès. D'où la règle du dernier recours (sauf nombreuses victimes)." },
+  { t:"secourir", q:"Dans quelle position place-t-on une victime inconsciente qui respire (sans traumatisme) ?", o:[
+    "Sur le côté (position la plus stable possible)",
+    "Assise contre un mur",
+    "Allongée sur le dos, jambes fléchies",
+    "Debout, soutenue"], a:0,
+    e:"Inconsciente qui respire : la mettre sur le côté (PLS), dans la position la plus stable possible, pour libérer les voies aériennes." },
+  { t:"secourir", q:"Quelle position pour une victime consciente avec une plaie grave au thorax et une gêne respiratoire ?", o:[
+    "Position demi-assise (ou assise) pour l'aider à respirer",
+    "Allongée tête basse",
+    "Sur le ventre",
+    "Debout"], a:0,
+    e:"Plaie grave du thorax avec gêne respiratoire : exceptionnellement position demi-assise / assise (ex. adossée à un arbre) pour faciliter la respiration. Dans les autres cas d'hémorragie : allonger, tête basse." },
+  { t:"secourir", q:"Quelle position pour une victime consciente avec une plaie à l'abdomen ?", o:[
+    "Allongée sur le dos, jambes fléchies, pour soulager la douleur",
+    "Sur le côté",
+    "Assise",
+    "Tête vers le bas"], a:0,
+    e:"Plaie abdominale, victime consciente : allonger sur le dos, jambes fléchies, pour soulager la douleur. Pour une plaie au cou : compression manuelle sur la plaie." },
+  { t:"secourir", q:"Comment considérer toute victime d'une explosion ?", o:[
+    "Blessée, brûlée, blastée et bouleversée — comme un blessé grave",
+    "Légèrement choquée, sans gravité",
+    "Guérie si elle marche",
+    "À évacuer en dernier"], a:0,
+    e:"Considérer toute victime d'explosion comme blessée, brûlée, blastée et bouleversée. Un blessé blasté est un blessé grave, même si le blast n'est que possible (chercher baisse d'audition, otorragie, toux sanglante…)." },
+  { t:"secourir", q:"Que décrit le « blast primaire » ?", o:[
+    "L'onde de souffle percute la victime : dommages internes et ostéo-musculaires",
+    "L'onde projette des objets : plaies",
+    "L'onde projette la victime : fractures",
+    "Les flammes et fumées : brûlures"], a:0,
+    e:"Blast primaire : l'onde percute la victime (dommages internes). Secondaire : projection d'objets (plaies). Tertiaire : la victime est projetée (fractures). Quaternaire : flammes, fumées (brûlures, intoxications)." },
+  { t:"secourir", q:"Qu'est-ce qui justifie un dégagement d'urgence ?", o:[
+    "Un danger réel, vital, immédiat et non contrôlable, ou l'impossibilité de faire les gestes d'urgence sur place",
+    "Le simple confort de la victime",
+    "L'arrivée de la presse",
+    "Le besoin de libérer le passage"], a:0,
+    e:"Le dégagement d'urgence déplace la victime vers un lieu sûr quand il existe un danger vital immédiat non contrôlable, ou quand sa position empêche les gestes d'urgence. Il ne se réduit pas à déplacer une victime sans motif." },
+  { t:"secourir", q:"Quel est le but du triage en situation à nombreuses victimes ?", o:[
+    "Sauver le maximum de victimes (selon gravité, priorité de traitement et d'évacuation)",
+    "Traiter les victimes dans l'ordre d'arrivée",
+    "Évacuer d'abord les blessés légers",
+    "Soigner uniquement les plus graves"], a:0,
+    e:"Le triage prend en compte la gravité, la priorité des traitements et la priorité d'évacuation ; son but est de sauver le maximum de victimes. Les degrés de priorité fixent l'ordre de traitement et d'évacuation." },
+  { t:"secourir", q:"Nombreuses victimes : plaie hémorragique à la jambe. Quelle conduite valide le support ?", o:[
+    "Poser un garrot puis allonger : cela arrête l'hémorragie et libère le secouriste pour les autres",
+    "Faire une compression manuelle prolongée sur place",
+    "Attendre les secours sans agir",
+    "Évacuer la victime immédiatement seul"], a:0,
+    e:"En situation à nombreuses victimes, poser un garrot sur la plaie hémorragique de la jambe puis allonger : l'hémorragie est stoppée et le secouriste est libéré pour prendre en charge les autres victimes." },
+  { t:"secourir", q:"Quels numéros de secours le support rappelle-t-il (régulation après explosion) ?", o:[
+    "Le 15 et le 112",
+    "Le 17 et le 18",
+    "Le 115 et le 119",
+    "Le 112 uniquement"], a:0,
+    e:"Le compte rendu aux secours (trame JE SUIS / JE VOIS / J'AI FAIT) se fait en sécurité, le plus tôt possible, par téléphone ; le support mentionne la régulation avec les secours (15 / 112) après une explosion." },
+
+  /* ---------------- PALPATION & CONTRÔLE VISUEL DES SACS (UV09) ---------------- */
+  { t:"palpation", q:"Quels sont les trois niveaux de contrôle à distinguer ?", o:[
+    "Palpation de sécurité · inspection visuelle · fouille",
+    "Contrôle, interpellation, rétention",
+    "Observation, détection, signalement",
+    "Vigilance, alerte, intervention"], a:0,
+    e:"Palpation (contact sur le corps) · inspection visuelle (le propriétaire ouvre, pas de mains dans le sac) · fouille (recherche manuelle dans le sac). L'APS n'a aucun pouvoir général de fouille." },
+  { t:"palpation", q:"Quelles sont les deux conditions essentielles d'une palpation de sécurité ?", o:[
+    "Le consentement exprès et un agent du même sexe",
+    "Un mandat et deux témoins",
+    "La présence d'un médecin",
+    "L'accord de l'employeur uniquement"], a:0,
+    e:"La palpation exige le consentement exprès de la personne et un agent du même sexe. C'est un contact extérieur sur les vêtements pour détecter un objet dangereux ou interdit, jamais une fouille au corps." },
+  { t:"palpation", q:"Qu'est-ce qui distingue l'inspection visuelle de la fouille d'un sac ?", o:[
+    "En inspection, le propriétaire ouvre et montre ; l'APS ne met pas les mains dans le sac",
+    "Ce sont deux mots pour la même action",
+    "L'inspection autorise à vider le sac",
+    "La fouille se fait sans consentement"], a:0,
+    e:"Inspection visuelle : le propriétaire ouvre et présente le contenu, l'APS observe sans mettre les mains dans le sac ni le vider. La fouille (recherche manuelle intérieure) est un acte distinct qui exige le consentement du propriétaire." },
+  { t:"palpation", q:"Un consentement donné pour l'inspection visuelle vaut-il consentement à la fouille ?", o:[
+    "Non : la fouille exige un consentement spécifique et distinct",
+    "Oui, automatiquement",
+    "Oui, si un objet est suspect",
+    "Oui, en événementiel"], a:0,
+    e:"Piège fréquent : inspection ≠ fouille. Un consentement donné pour l'inspection ne vaut pas consentement à la fouille ; il faut un accord spécifique et clair pour tout contrôle manuel à l'intérieur du sac." },
+  { t:"palpation", q:"Quel article du CSI encadre la palpation en événementiel (> 300 spectateurs) ?", o:[
+    "L'article L. 613-3","L'article L. 613-1","L'article L. 226-1","L'article 73 du CPP"], a:0,
+    e:"Art. L. 613-3 CSI : accès à une manifestation sportive, récréative ou culturelle de plus de 300 spectateurs — APS qualifié et agréé, sous contrôle d'un OPJ, consentement exprès, même sexe ; inspection visuelle et fouille des bagages avec consentement du propriétaire." },
+  { t:"palpation", q:"À partir de combien de spectateurs s'applique le régime événementiel de l'article L. 613-3 ?", o:[
+    "Plus de 300 spectateurs","Plus de 100 spectateurs","Plus de 1 000 spectateurs","Plus de 500 spectateurs"], a:0,
+    e:"Le seuil de plus de 300 spectateurs déclenche le régime de l'article L. 613-3. Mais il ne rend pas la palpation automatique : consentement exprès, même sexe, qualification/agrément et contrôle OPJ restent requis." },
+  { t:"palpation", q:"En dehors de l'événementiel, dans quel cadre l'APS peut-il palper (menaces graves) ?", o:[
+    "Art. L. 613-2 : circonstances particulières constatées par arrêté préfectoral, ou périmètre de protection L. 226-1",
+    "Librement, dès qu'il a un doute",
+    "Sur simple demande du client",
+    "Jamais, en aucun cas"], a:0,
+    e:"Art. L. 613-2 CSI : en cas de menaces graves pour la sécurité publique (circonstances constatées par arrêté préfectoral) ou dans un périmètre de protection (art. L. 226-1), palpation possible avec consentement exprès et agent du même sexe." },
+  { t:"palpation", q:"La possession d'un billet ou l'acceptation du règlement intérieur suffit-elle à autoriser la palpation ?", o:[
+    "Non : elle conditionne l'accès mais ne supprime pas le consentement exprès",
+    "Oui, le billet vaut consentement",
+    "Oui, pour les abonnés",
+    "Oui, si c'est affiché à l'entrée"], a:0,
+    e:"La détention d'un billet ou l'acceptation du règlement informe le public et peut conditionner l'accès, mais ne supprime pas la règle du consentement exprès pour la palpation." },
+  { t:"palpation", q:"Comment réalise-t-on techniquement une palpation sûre ?", o:[
+    "Du haut vers le bas, par petites pressions successives, en évitant le glissement des mains",
+    "Du bas vers le haut, en glissant les mains",
+    "En vidant d'abord les poches de la personne",
+    "En une seule passe rapide sur le dos"], a:0,
+    e:"Progresser du haut vers le bas par petites pressions successives (éviter le glissement, qui augmente le risque de coupure) ; zones prioritaires : ceinture, aisselles, creux lombaire. La palpation est faite par une seule personne, le reste de l'équipe surveille." },
+  { t:"palpation", q:"Que fait l'APS si une personne refuse la palpation ?", o:[
+    "Il ne la laisse pas entrer dans la zone sécurisée ; il n'emploie aucune contrainte",
+    "Il la palpe de force",
+    "Il la retient jusqu'à l'arrivée de la police",
+    "Il la laisse entrer quand même"], a:0,
+    e:"En cas de refus : ne pas contraindre physiquement ; l'accès à la zone sécurisée est refusé, on explique calmement et on appelle le responsable selon la procédure." },
+  { t:"palpation", q:"Que fait l'APS qui découvre une arme lors d'un contrôle ?", o:[
+    "Il ne la saisit pas : il protège, isole la personne du flux, alerte et rend compte",
+    "Il devient OPJ et procède à la fouille",
+    "Il confisque l'arme et interroge la personne",
+    "Il poursuit la personne si elle fuit"], a:0,
+    e:"L'APS ne devient pas OPJ parce qu'il découvre une arme : il ne manipule pas l'objet, protège, isole du flux, refuse l'accès, alerte le second échelon et les forces de l'ordre, et rend compte. Il n'effectue pas de fouille judiciaire." },
+  { t:"palpation", q:"Qui délivre l'agrément du membre du service d'ordre (palpation événementielle) ?", o:[
+    "Le directeur du CNAPS","Le préfet seul","Le maire","L'organisateur"], a:0,
+    e:"L'agrément du membre du service d'ordre est délivré par le directeur du CNAPS (durée de trois ans selon le support) ; la demande est présentée par l'organisateur. Faire pratiquer ces contrôles par des personnes non agréées expose à une contravention de 5e classe (R. 617-2)." },
+  { t:"palpation", q:"Quels sont « les 5 mots qui tombent » à l'examen sur ce thème ?", o:[
+    "Consentement exprès · même sexe · agrément · OPJ · inspection ≠ fouille",
+    "Palpation · fouille · arme · police · alerte",
+    "Billet · badge · consigne · refus · sortie",
+    "Vigipirate · périmètre · menace · attentat · secours"], a:0,
+    e:"Les 5 mots-clés : consentement exprès · même sexe · agrément · OPJ · inspection ≠ fouille. Ce sont les marqueurs à retrouver dans les questions sur la palpation et le contrôle des sacs." },
 ];
 
 /* ===================== ÉTAT ===================== */
@@ -1555,8 +1770,9 @@ const UV_META = {
   UV05: { name:"Incendie" },
   UV06: { name:"Métiers & appréhension" },
   UV04: { name:"Module stratégique (transmission)" },
-  UV07: { name:"Prévention des risques terroristes" },
+  UV07: { name:"Risques terroristes & secourir" },
   UV08: { name:"Accueil, communication & contrôle d'accès" },
+  UV09: { name:"Palpation & contrôle des sacs" },
   UV10: { name:"Télésurveillance & Vidéoprotection" },
 };
 // ordre d'affichage des UV (croissant)
@@ -2075,7 +2291,10 @@ const LAWS = [
   ]},
   { g:"Code de la sécurité intérieure (Livre VI & déontologie)", items:[
     { ref:"Art. L.611-1", t:"Champ des activités privées", n:"Surveillance, gardiennage, transport de fonds, protection des personnes…" },
-    { ref:"Art. L.613-2 / L.613-3", t:"Palpation & bagages", n:"Palpation de sécurité et contrôle du contenu des bagages" },
+    { ref:"Art. L.613-1", t:"Lieux de mission", n:"Missions dans les bâtiments/lieux gardés ; voie publique sur autorisation préfectorale" },
+    { ref:"Art. L.613-2", t:"Palpation (menaces/périmètre)", n:"Consentement exprès, même sexe ; arrêté préfectoral ou périmètre L.226-1" },
+    { ref:"Art. L.613-3", t:"Palpation événementielle", n:"Manifestation > 300 spectateurs : agrément + contrôle OPJ ; inspection/fouille des bagages" },
+    { ref:"Art. L.226-1", t:"Périmètre de protection", n:"Institué par arrêté préfectoral motivé (périmètre, accès, durée, mesures)" },
     { ref:"Art. L.613-13", t:"Vidéoprotection", n:"Opérateurs privés de vidéoprotection" },
     { ref:"Art. R.631-10", t:"Alerte sans délai", n:"Aviser sans délai la police / la gendarmerie" },
     { ref:"Art. R.631-27", t:"Déontologie", n:"Respect, dignité, tact, diplomatie et courtoisie" },
@@ -2408,8 +2627,20 @@ const SHEETS = [
     "Chaîne de réaction : <b>Observer → Protéger → Alerter → Rendre compte</b> ; l'agent ne profile pas, il signale des faits.",
     "<b>Objet suspect / EEI</b> : ne pas toucher, déplacer ni recouvrir ; pas de radio/téléphone à proximité ; périmètre ≈ 100 m (objet) / 200 m (véhicule).",
     "Attaque = <b>SAFE</b> : S'échapper · Alerter · se mettre à l'abri (F) · Évaluer/suivre. Priorité à la survie ; mains visibles devant les forces de l'ordre.",
-    "<b>NRBC</b> (nucléaire, radiologique, biologique, chimique) et plans : PIRATOX, PIRATE-MER, ORSAN ; coordination = autorités." ],
+    "<b>NRBC</b> (nucléaire, radiologique, biologique, chimique) et plans : PIRATOX, PIRATE-MER, ORSAN ; coordination = autorités.",
+    "<b>PMS</b> (Plan de Mise en Sûreté) ; contrôle d'accès en 6 étapes : Identification · Authentification · Motivation · Autorisation · Fouille · Palpation.",
+    "Sécuriser = <b>3 cercles</b> : PSI (Z1, exclusion) · PSR (Z2, travail) · PSE (Z3, accueil) ; anticiper le <b>sur-attentat</b>.",
+    "Explosion : se jeter au sol, protéger la tête, bouche ouverte ; ne pas déclencher l'alarme incendie pour un attentat ; mains levées devant les FSI." ],
     key:"Ne pas se mettre en danger, ne pas manipuler, ne pas improviser : prévenir, protéger, alerter — sans se substituer aux forces de l'ordre." },
+  { uv:"UV07", title:"Secourir (secourisme tactique)", pts:[
+    "Face aux blessures par <b>armes à feu, armes blanches et explosions</b> ; 3 phases : sous menace directe · sous menace indirecte · évacuation.",
+    "Hémorragie <b>artérielle</b> = sang rouge vermeil en saccades ; <b>veineuse</b> = rouge sombre en nappe.",
+    "Contrôle d'une hémorragie : <b>compression directe → point de compression → garrot si échec</b> ; ne jamais attendre les signes de choc.",
+    "<b>Garrot</b> = dernier recours (ou d'emblée si nombreuses victimes), sur un membre ; risques : paralysie > 2 h, gangrène/décès 4–6 h.",
+    "Positions : inconsciente qui respire → <b>sur le côté</b> ; thorax + gêne → <b>demi-assise</b> ; abdomen → dos jambes fléchies.",
+    "Victime d'explosion = blessée, brûlée, <b>blastée</b> et bouleversée (blessé grave). Blast : primaire (interne) · secondaire (projection d'objets) · tertiaire (projection de la victime) · quaternaire (brûlures).",
+    "<b>Triage</b> : sauver le maximum de victimes ; alerte secours 15 / 112 (trame JE SUIS / JE VOIS / J'AI FAIT)." ],
+    key:"Adapter le geste à la menace et au nombre de victimes : se protéger, stopper les hémorragies, trier, alerter." },
   { uv:"UV08", title:"Accueil & contrôle d'accès", pts:[
     "Premier <b>maillon de la chaîne de sécurité</b> ; l'APS n'a aucun pouvoir coercitif.",
     "Contrôle d'accès = subordonner l'entrée à une autorisation ; toute pénétration frauduleuse = <b>intrusion</b>.",
@@ -2426,6 +2657,15 @@ const SHEETS = [
     "Plan d'<b>intervention</b> (secours, à chaque entrée) vs plan d'<b>évacuation</b> (public, chaque étage et issues).",
     "Radio : fréquences Travail / Dégagement / Secours ; message = entrée + contenu + fin ; compte rendu <b>QQFVD</b> ; « URGENT PRIORITÉ RADIO »." ],
     key:"Écouter, reformuler pour valider la compréhension, rester factuel et suivre la chaîne hiérarchique." },
+  { uv:"UV09", title:"Palpation & contrôle visuel des sacs", pts:[
+    "3 niveaux : <b>palpation</b> (contact sur le corps) · <b>inspection visuelle</b> (le propriétaire ouvre, pas de mains dans le sac) · <b>fouille</b> (recherche manuelle, consentement du propriétaire).",
+    "Palpation : <b>consentement exprès</b> + agent du <b>même sexe</b> ; jamais une fouille au corps.",
+    "Inspection ≠ fouille : un accord pour l'inspection ne vaut pas accord pour la fouille.",
+    "Cadre : <b>L. 613-1</b> (lieux gardés) · <b>L. 613-2</b> (menaces graves / périmètre L. 226-1) · <b>L. 613-3</b> (événementiel > 300 spectateurs, agrément + OPJ).",
+    "Technique : prévenir, du <b>haut vers le bas</b>, petites pressions, éviter le glissement ; zones : ceinture, aisselles, creux lombaire.",
+    "Refus ou découverte d'arme : <b>pas de contrainte</b>, accès refusé, isoler, alerter, rendre compte — l'APS n'est pas OPJ.",
+    "Agrément délivré par le <b>directeur du CNAPS</b> (3 ans) ; non-respect → contravention de 5e classe (R. 617-2)." ],
+    key:"Les 5 mots qui tombent : consentement exprès · même sexe · agrément · OPJ · inspection ≠ fouille." },
   { uv:"UV10", title:"Télésurveillance & Vidéoprotection", pts:[
     "2 finalités : <b>dissuader</b> et <b>renforcer le sentiment de sécurité</b>.",
     "Lieu ouvert au public → CSI + préfecture ; lieu non ouvert → Informatique et Libertés + Code du travail.",
