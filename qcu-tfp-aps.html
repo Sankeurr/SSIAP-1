@@ -522,7 +522,7 @@
 
 <script>
 /* ===================== BANQUE DE QUESTIONS ===================== *
- * Issues des fiches de révision CFPS fournies.
+ * Issues des fiches de révision fournies.
  * Chaque question : une seule bonne réponse (QCU).
  * answer = index de la bonne réponse dans options (avant mélange).
  * ============================================================== */
@@ -2207,7 +2207,7 @@ function renderSetup(){
       <div class="intro">
         <span class="eyebrow">Révision · examen blanc</span>
         <h1>Entraînement QCU</h1>
-        <p>Une seule bonne réponse par question. Choisissez vos thèmes, lancez une série et obtenez une correction détaillée à la fin. Questions tirées de vos fiches de révision CFPS.</p>
+        <p>Une seule bonne réponse par question. Choisissez vos thèmes, lancez une série et obtenez une correction détaillée à la fin. Questions tirées de vos fiches de révision.</p>
       </div>
 
       <div class="home-stats">
@@ -2686,7 +2686,7 @@ function renderReference(filter){
       <div class="ref-head">
         <span class="eyebrow">Mémo juridique</span>
         <h1>Textes de loi à apprendre</h1>
-        <p>Les articles, lois et dates de vos fiches CFPS, classés par ordre de priorité d'examen. Le Code de procédure pénale (appréhension) vient en premier.</p>
+        <p>Les articles, lois et dates de vos fiches, classés par ordre de priorité d'examen. Le Code de procédure pénale (appréhension) vient en premier.</p>
       </div>
 
       <div class="feat">
@@ -3051,7 +3051,7 @@ function renderRevisions(){
       <div class="sheet-uvtitle">Modules &amp; sous-modules</div>
       ${groups}
 
-      <p class="footer-note">${SHEETS.length} fiches · ${nbLois} références de loi · synthèse des supports CFPS, à compléter par le cours complet.</p>
+      <p class="footer-note">${SHEETS.length} fiches · ${nbLois} références de loi · synthèse des supports de cours, à compléter par le cours complet.</p>
     </section>`;
 
   document.getElementById("toLaws").addEventListener("click", ()=>{ renderReference(); window.scrollTo({top:0}); });
