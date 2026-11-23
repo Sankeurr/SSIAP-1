@@ -505,6 +505,7 @@ const THEMES = {
   accueil:    { uv:"UV08", name:"Accueil & contrôle d'accès", short:"Accueil & contrôle" },
   communication:{ uv:"UV08", name:"Techniques d'information & communication", short:"Communication" },
   strategique:{ uv:"UV04", name:"Module stratégique (transmission)", short:"Module stratégique" },
+  terrorisme: { uv:"UV07", name:"Prévention des risques terroristes", short:"Risques terroristes" },
 };
 
 const BANK = [
@@ -1448,6 +1449,101 @@ const BANK = [
     "Un composant physique de l'unité centrale",
     "Un réseau radio"], a:0,
     e:"Le logiciel métier est une application conçue pour les besoins du service de sécurité (main courante électronique souvent reliée à un contrôleur de ronde, registres, consignes, clés) : saisie, sauvegarde, accès sécurisé et traçabilité." },
+
+  /* ---------------- PRÉVENTION DES RISQUES TERRORISTES (UV07) ---------------- */
+  { t:"terrorisme", q:"Quel est le but du terrorisme ?", o:[
+    "Troubler gravement l'ordre public par l'intimidation ou la terreur",
+    "Obtenir une rançon",
+    "Commettre un simple vol",
+    "Régler un conflit privé"], a:0,
+    e:"Le terrorisme vise à troubler gravement l'ordre public par l'intimidation ou la terreur. La revendication et la dimension idéologique/politique le distinguent du crime de droit commun." },
+  { t:"terrorisme", q:"Comment l'agent de sécurité doit-il repérer une menace ?", o:[
+    "En signalant des faits, comportements et anomalies observables (sans profiler les personnes)",
+    "En ciblant les personnes selon leur apparence ou leur religion",
+    "En interpellant tout individu suspect",
+    "En diffusant l'alerte sur les réseaux sociaux"], a:0,
+    e:"L'agent ne profile pas : il signale des faits et anomalies observables. Une anomalie n'est pas une preuve : on observe, on vérifie sans s'exposer, puis on transmet." },
+  { t:"terrorisme", q:"Qu'est-ce que le plan VIGIPIRATE ?", o:[
+    "Un plan gouvernemental permanent de vigilance et de protection, sous l'autorité du Premier ministre",
+    "Une loi du Code pénal",
+    "Une brigade de police spécialisée",
+    "Un logiciel de télésurveillance"], a:0,
+    e:"VIGIPIRATE est un plan gouvernemental permanent, placé sous l'autorité du Premier ministre, associant l'État, les collectivités, les opérateurs et les citoyens. Il s'applique en France et aux intérêts français à l'étranger." },
+  { t:"terrorisme", q:"Quels sont les trois niveaux du plan VIGIPIRATE ?", o:[
+    "Vigilance · Vigilance renforcée · Alerte attentat",
+    "Vert · Orange · Rouge",
+    "Faible · Moyen · Élevé",
+    "Normal · Crise · Guerre"], a:0,
+    e:"Vigilance (niveau initial, mesures permanentes) · Vigilance renforcée (protection accrue) · Alerte attentat (niveau sommital)." },
+  { t:"terrorisme", q:"Le niveau « Alerte attentat » est activable pour :", o:[
+    "12 jours renouvelables, sur décision du Premier ministre",
+    "24 heures non renouvelables",
+    "1 mois fixe",
+    "Une durée illimitée"], a:0,
+    e:"« Alerte attentat » est le niveau sommital, activable pour 12 jours renouvelables sur décision du Premier ministre." },
+  { t:"terrorisme", q:"Que signale le logo VIGIPIRATE dans l'espace public ?", o:[
+    "La mise en œuvre de mesures temporaires (palpation, contrôle des sacs…)",
+    "La présence d'une bombe",
+    "L'interdiction totale d'accès",
+    "Une zone militaire"], a:0,
+    e:"Le logo signale la mise en œuvre de mesures de vigilance/protection temporaires dans l'espace public, par exemple palpation de sécurité ou contrôle des sacs." },
+  { t:"terrorisme", q:"Face à un objet ou colis suspect, que doit faire l'agent ?", o:[
+    "Observer sans toucher, ne pas déplacer ni recouvrir, établir un périmètre et alerter",
+    "L'ouvrir pour vérifier son contenu",
+    "Le déplacer dans un local isolé",
+    "Le recouvrir d'une couverture"], a:0,
+    e:"Objet suspect : observer sans toucher, déplacer ni recouvrir ; établir un périmètre strict, éloigner le public et informer immédiatement le responsable sécurité ou les forces de l'ordre." },
+  { t:"terrorisme", q:"Que signifie l'acronyme EEI ?", o:[
+    "Engin explosif improvisé",
+    "Équipe d'escorte et d'intervention",
+    "Enregistrement électronique interne",
+    "État d'exposition immédiat"], a:0,
+    e:"EEI = engin explosif improvisé. Règle : ne pas manipuler, isoler, alerter ; ne pas utiliser radio ou téléphone à proximité (risque de déclenchement)." },
+  { t:"terrorisme", q:"Quel repère de distance d'éloignement le support enseigne-t-il ?", o:[
+    "Environ 100 m pour un objet, 200 m pour un véhicule",
+    "10 m pour un objet, 20 m pour un véhicule",
+    "50 m dans tous les cas",
+    "500 m pour un objet, 1 km pour un véhicule"], a:0,
+    e:"Repère du support : environ 100 m pour un objet, 200 m pour un véhicule, à adapter aux ordres des autorités et à la situation. Toujours s'écarter par les sorties opposées." },
+  { t:"terrorisme", q:"Près d'un engin explosif suspecté, pourquoi ne pas utiliser radio ni téléphone ?", o:[
+    "Les ondes peuvent provoquer un déclenchement",
+    "Cela dérange les autres agents",
+    "C'est interdit par le règlement intérieur",
+    "La batterie se décharge trop vite"], a:0,
+    e:"À ne jamais faire près d'un EEI : manipuler/déplacer/recouvrir, provoquer vibration, bruit ou chaleur, et utiliser une radio/téléphone juste à proximité, car les ondes peuvent déclencher l'engin." },
+  { t:"terrorisme", q:"En cas d'attaque en cours, que recouvre le réflexe « SAFE » ?", o:[
+    "S'échapper · Alerter · se mettre à l'abri (F) · Évaluer/suivre",
+    "Surveiller · Appréhender · Fouiller · Éloigner",
+    "Signaler · Attendre · Filmer · Évacuer",
+    "Sécuriser · Agir · Frapper · Encadrer"], a:0,
+    e:"SAFE : S'échapper (fuir par une issue sûre, ne pas revenir) · Alerter (une fois en sécurité) · se mettre à l'abri / « F » (barricader, couper sonneries et lumières, silence) · Évaluer / suivre (attendre les instructions, mains visibles)." },
+  { t:"terrorisme", q:"Lors d'une attaque, quelle est la priorité absolue ?", o:[
+    "La survie : s'échapper si possible, sinon se mettre à l'abri",
+    "Neutraliser l'agresseur",
+    "Filmer la scène pour la preuve",
+    "Rassembler le public au centre"], a:0,
+    e:"Priorité à la survie : s'échapper si possible ; sinon se mettre à l'abri ; alerter dès que cela peut être fait sans se mettre en danger ; suivre les forces de l'ordre. Mains visibles lors de leur intervention." },
+  { t:"terrorisme", q:"Que recouvre l'acronyme NRBC ?", o:[
+    "Nucléaire, Radiologique, Biologique, Chimique",
+    "Niveau de Risque Basé sur le Contexte",
+    "Nouvelle Réglementation des Bâtiments Classés",
+    "Numéro de Référence du Bureau Central"], a:0,
+    e:"NRBC = Nucléaire, Radiologique, Biologique, Chimique : menaces nécessitant protection et consignes spécialisées. Face à une menace chimique : ne pas toucher ni respirer, s'éloigner de la source, se mettre à l'abri." },
+  { t:"terrorisme", q:"Quel article du Code pénal définit l'attentat ?", o:[
+    "L'article 412-1","L'article 421-1","L'article 410-1","L'article 421-2-1"], a:0,
+    e:"Art. 412-1 CP : attentat = un ou plusieurs actes de violence pouvant mettre en péril les institutions de la République ou l'intégrité du territoire. L'art. 421-1 vise les actes de terrorisme." },
+  { t:"terrorisme", q:"Que recouvre le sigle AMT (art. 421-2-1 CP) ?", o:[
+    "Association de malfaiteurs en relation avec une entreprise terroriste",
+    "Alerte de menace terroriste",
+    "Agent de maîtrise terrain",
+    "Analyse des menaces techniques"], a:0,
+    e:"AMT = association de malfaiteurs terroriste (art. 421-2-1 CP) : groupement ou entente en vue de préparer un acte, caractérisée par des faits matériels." },
+  { t:"terrorisme", q:"Quelle est la bonne attitude de l'agent face au risque terroriste ?", o:[
+    "Prévenir, protéger, alerter et rendre compte, sans se substituer aux forces de l'ordre",
+    "Poursuivre et interpeller l'auteur présumé",
+    "Manipuler les dispositifs suspects pour les neutraliser",
+    "Décider seul de l'évacuation générale de la ville"], a:0,
+    e:"Rôle de l'APS : prévenir et dissuader, appliquer les procédures du site, protéger, alerter et rendre compte. Ne pas se substituer aux forces de l'ordre, ne pas poursuivre ni manipuler un dispositif suspect. Fil rouge : ne pas se mettre en danger, ne pas manipuler, ne pas improviser." },
 ];
 
 /* ===================== ÉTAT ===================== */
@@ -1459,6 +1555,7 @@ const UV_META = {
   UV05: { name:"Incendie" },
   UV06: { name:"Métiers & appréhension" },
   UV04: { name:"Module stratégique (transmission)" },
+  UV07: { name:"Prévention des risques terroristes" },
   UV08: { name:"Accueil, communication & contrôle d'accès" },
   UV10: { name:"Télésurveillance & Vidéoprotection" },
 };
@@ -1949,7 +2046,11 @@ const LAWS = [
   { g:"Code pénal — autorité de l'État & justice", items:[
     { ref:"Art. 410-1", t:"Intérêts fondamentaux de la Nation", n:"Indépendance, territoire, institutions, population, environnement…" },
     { ref:"Art. 411-1 et s.", t:"Espionnage / trahison", n:"Atteintes aux intérêts fondamentaux" },
-    { ref:"Art. 421-1 à 421-6", t:"Terrorisme", n:"Actes de terrorisme" },
+    { ref:"Art. 412-1", t:"Attentat", n:"Violence pouvant mettre en péril les institutions ou le territoire" },
+    { ref:"Art. 412-2", t:"Complot", n:"Résolution entre plusieurs personnes de commettre un attentat" },
+    { ref:"Art. 421-1 à 421-6", t:"Terrorisme", n:"Actes de terrorisme, substances dangereuses, financement" },
+    { ref:"Art. 421-2-1", t:"AMT", n:"Association de malfaiteurs liée à une entreprise terroriste" },
+    { ref:"Lois 2006-64 / 2016-731 / 2017-1510", t:"Lutte antiterroriste", n:"Contrôles, sécurité intérieure et lutte contre le terrorisme" },
     { ref:"Art. 431-3", t:"Attroupement", n:"Dispersion et sommations relèvent des forces de l'ordre" },
     { ref:"Art. 433-5", t:"Outrage", n:"7 500 € (mission SP) ; 6 mois / 7 500 € (autorité publique)" },
     { ref:"Art. 433-6 / 433-7", t:"Rébellion", n:"1 an / 15 000 € ; en réunion 2 ans / 30 000 €" },
@@ -2300,6 +2401,15 @@ const SHEETS = [
     "Vidéosurveillance : déclarée en préfecture, conservation ≤ 1 mois ; ne jamais laisser la personne seule ni fermer à clé.",
     "Compte rendu factuel, chronologique et neutre." ],
     key:"Refus de suivre ≠ droit de fouiller : dialogue, sécurisation, puis forces de l'ordre." },
+  { uv:"UV07", title:"Prévention des risques terroristes", pts:[
+    "<b>Terrorisme</b> = troubler gravement l'ordre public par l'intimidation ou la terreur (dimension idéologique/politique).",
+    "Articles clés : <b>412-1</b> (attentat), 412-2 (complot), <b>421-1</b> (actes de terrorisme), <b>421-2-1</b> (AMT).",
+    "<b>VIGIPIRATE</b> : plan permanent du Premier ministre. 3 niveaux : Vigilance · Vigilance renforcée · <b>Alerte attentat</b> (12 jours renouvelables).",
+    "Chaîne de réaction : <b>Observer → Protéger → Alerter → Rendre compte</b> ; l'agent ne profile pas, il signale des faits.",
+    "<b>Objet suspect / EEI</b> : ne pas toucher, déplacer ni recouvrir ; pas de radio/téléphone à proximité ; périmètre ≈ 100 m (objet) / 200 m (véhicule).",
+    "Attaque = <b>SAFE</b> : S'échapper · Alerter · se mettre à l'abri (F) · Évaluer/suivre. Priorité à la survie ; mains visibles devant les forces de l'ordre.",
+    "<b>NRBC</b> (nucléaire, radiologique, biologique, chimique) et plans : PIRATOX, PIRATE-MER, ORSAN ; coordination = autorités." ],
+    key:"Ne pas se mettre en danger, ne pas manipuler, ne pas improviser : prévenir, protéger, alerter — sans se substituer aux forces de l'ordre." },
   { uv:"UV08", title:"Accueil & contrôle d'accès", pts:[
     "Premier <b>maillon de la chaîne de sécurité</b> ; l'APS n'a aucun pouvoir coercitif.",
     "Contrôle d'accès = subordonner l'entrée à une autorisation ; toute pénétration frauduleuse = <b>intrusion</b>.",
