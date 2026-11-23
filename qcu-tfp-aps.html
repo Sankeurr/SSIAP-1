@@ -274,6 +274,9 @@
     font-variant-numeric:tabular-nums;transition:border-color .15s, background .15s;
   }
   .pill[aria-pressed="true"]{border-color:var(--flame);background:var(--flame);color:#fff}
+  .exam-link{display:inline-flex;align-items:center;gap:7px;background:var(--navy);color:var(--navy-ink);border:1.5px solid var(--navy);border-radius:999px;padding:8px 15px;font-size:.9rem;font-weight:700;font-family:"Archivo",sans-serif;cursor:pointer;margin-left:auto}
+  .exam-link:hover{filter:brightness(1.15)}
+  .exam-link svg{flex:none}
   @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .pill[aria-pressed="true"]{color:#0c1118}}
   :root[data-theme="dark"] .pill[aria-pressed="true"]{color:#0c1118}
 
@@ -2183,7 +2186,7 @@ function renderSetup(){
   }).join("");
 
   const avail = countFor(selected);
-  const counts = [10,15];
+  const counts = [10];
   const pills = counts.map(c=>{
     const val = c==="max"?avail:c;
     const label = c==="max"?"Tout":c;
@@ -2207,7 +2210,7 @@ function renderSetup(){
 
       <div>
         <div class="section-label">2 · Nombre de questions</div>
-        <div class="pills" id="countPills">${pills}</div>
+        <div class="pills" id="countPills">${pills}<button class="exam-link" id="toExam">Mode Examen <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
       </div>
 
       <div class="card" style="padding:4px 16px">
@@ -2282,6 +2285,7 @@ function renderSetup(){
   });
   document.getElementById("shuffleOpt").addEventListener("change", e=>{ shuffleOpts = e.target.checked; });
   document.getElementById("startBtn").addEventListener("click", startQuiz);
+  document.getElementById("toExam").addEventListener("click", ()=>{ renderExam(); window.scrollTo({top:0}); });
   document.getElementById("refBtn").addEventListener("click", ()=>{ renderReference(); window.scrollTo({top:0}); });
 }
 
