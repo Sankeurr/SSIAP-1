@@ -173,6 +173,27 @@
   .rev-portal .rp-txt small{color:#c3cfe0;font-size:.84rem;margin-top:2px}
   .rev-portal .rp-chev{flex:none;color:#aebbd0}
 
+  /* ---- Mode Examen ---- */
+  .exam{margin-top:18px;display:flex;flex-direction:column;gap:16px}
+  .exam-head h1{font-family:var(--font-serif);font-weight:700;font-size:1.6rem;line-height:1.1;margin:.3rem 0 .4rem}
+  .exam-head .eyebrow{color:var(--accent)}
+  .exam-head p{margin:0;color:var(--ink-soft);font-size:.92rem;max-width:60ch}
+  .exam-tot{display:flex;align-items:center;gap:12px;background:var(--navy);color:var(--navy-ink);border-radius:14px;padding:14px 16px;box-shadow:var(--shadow)}
+  .exam-tot .et-n{font-family:"Archivo",sans-serif;font-weight:800;font-size:1.8rem;line-height:1;font-variant-numeric:tabular-nums}
+  .exam-tot .et-l{font-size:.86rem;color:#c3cfe0}
+  .exam-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media (max-width:460px){.exam-grid{grid-template-columns:1fr}}
+  .exam-card{display:flex;flex-direction:column;gap:7px;background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:14px 15px;box-shadow:var(--shadow)}
+  .exam-card.off{opacity:.62;background:var(--surface-2)}
+  .exam-card .ec-uv{font-family:"Archivo",sans-serif;font-weight:800;font-size:.82rem;letter-spacing:.04em;color:var(--accent)}
+  .exam-card.off .ec-uv{color:var(--ink-soft)}
+  .exam-card .ec-title{font-family:var(--font-serif);font-weight:700;font-size:1.04rem;line-height:1.2;flex:1;min-width:0}
+  .exam-badge{align-self:flex-start;font-family:"Archivo",sans-serif;font-weight:700;font-size:.78rem;background:var(--flame-soft);color:var(--flame);border:1px solid var(--flame);border-radius:999px;padding:3px 11px;font-variant-numeric:tabular-nums}
+  .exam-badge.soon{background:var(--surface);color:var(--ink-soft);border-color:var(--line)}
+  .exam-start{width:100%;background:var(--flame);color:#fff;border:none;border-radius:13px;padding:16px;font-size:1.08rem;font-weight:700;font-family:"Archivo",sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px}
+  .exam-start:hover{filter:brightness(1.05)}
+  .exam-note{font-size:.84rem;color:var(--ink-soft);background:var(--surface-2);border-left:3px solid var(--amber);border-radius:0 10px 10px 0;padding:10px 13px}
+
   /* progress bar under header during quiz */
   .progress-rail{height:4px;background:rgba(255,255,255,.12);width:100%}
   .progress-fill{height:100%;background:var(--flame);width:0;transition:width .3s ease}
@@ -473,6 +494,10 @@
     <button class="drawer-item" data-view="dl">
       <span class="di-ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>
       <span class="di-txt"><b>QCU Dates &amp; Lois</b><small>Repères juridiques et chronologiques</small></span>
+    </button>
+    <button class="drawer-item" data-view="exam">
+      <span class="di-ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
+      <span class="di-txt"><b>Examen blanc</b><small>Un examen complet, dans les conditions réelles</small></span>
     </button>
     <div class="drawer-group">Réviser</div>
     <button class="drawer-item" data-view="revisions">
@@ -1888,6 +1913,141 @@ const BANK = [
     "Catégorie 3 : défaillance de l'installation",
     "Aucune catégorie"], a:0,
     e:"Catégorie 1 = danger pour la vie (feu, agression, DATI) ; catégorie 2 = danger pour les biens (intrusion, température) ; catégorie 3 = défaillance de l'installation (technique)." },
+
+  /* ================= QUESTIONS COMPLÉMENTAIRES (variété) ================= */
+  // Incendie (UV05)
+  { t:"incendie", q:"Que signifie le sigle RIA ?", o:[
+    "Robinet d'Incendie Armé","Réseau d'Intervention Autonome","Régulateur d'Incendie Automatique","Robinet Industriel Anti-feu"], a:0,
+    e:"Le RIA (Robinet d'Incendie Armé) : tuyau semi-rigide de 20 ou 30 m, placé à proximité des issues de secours ; il doit couvrir tous les points de l'ERP (vérification annuelle par organisme agréé)." },
+  { t:"incendie", q:"Les feux de graisse et d'huile de cuisson relèvent de quelle classe ?", o:[
+    "Classe F","Classe A","Classe B","Classe D"], a:0,
+    e:"Classe F = auxiliaires de cuisson (graisse, huile). Eau interdite : on utilise un extincteur de classe F ou un chiffon humide." },
+  // Code pénal (UV02)
+  { t:"penal", q:"La filouterie (se faire servir en sachant ne pas pouvoir payer) relève de l'article :", o:[
+    "Art. 313-5","Art. 311-3","Art. 322-1","Art. 223-1"], a:0,
+    e:"Filouterie (art. 313-5) : se faire servir aliments/boissons, occuper une chambre, prendre du carburant… sans pouvoir ni vouloir payer — 6 mois et 7 500 €." },
+  { t:"penal", q:"Exposer autrui à un risque immédiat de mort par violation délibérée d'une obligation de sécurité, c'est :", o:[
+    "La mise en danger d'autrui (art. 223-1)","Le délaissement (art. 223-3)","L'entrave aux secours (art. 223-5)","Le meurtre (art. 221-1)"], a:0,
+    e:"Mise en danger d'autrui (art. 223-1) : exposer directement autrui à un risque immédiat de mort ou de blessures graves par violation manifestement délibérée d'une obligation de prudence/sécurité — 1 an et 15 000 €." },
+  // Principes de la République (UV02)
+  { t:"republique", q:"Quel organe élabore et vote la loi ?", o:[
+    "Le Parlement (Assemblée nationale et Sénat)","Le Gouvernement","Le Conseil constitutionnel","Le Président de la République"], a:0,
+    e:"Le pouvoir législatif appartient au Parlement (Assemblée nationale + Sénat). L'exécutif (Président + Gouvernement) met en œuvre la loi ; le judiciaire veille à son respect." },
+  { t:"republique", q:"Quelle composante a été ajoutée à la trilogie de l'ordre public par le Conseil d'État ?", o:[
+    "La dignité humaine","La laïcité","La fraternité","La solidarité"], a:0,
+    e:"Trilogie classique de l'ordre public : tranquillité, sécurité, salubrité. Le Conseil d'État y a ajouté la dignité humaine." },
+  // Libertés publiques (UV02)
+  { t:"libertes", q:"L'homicide involontaire est prévu par quel article du Code pénal ?", o:[
+    "Art. 221-6","Art. 221-1","Art. 226-1","Art. 224-1"], a:0,
+    e:"Art. 221-6 : causer la mort d'autrui par maladresse, imprudence ou manquement à une obligation de sécurité — 3 ans et 45 000 € (5 ans / 75 000 € si faute délibérée)." },
+  { t:"libertes", q:"La CNIL a notamment le pouvoir de :", o:[
+    "Contrôler et sanctionner les usages de données personnelles",
+    "Juger les litiges civils",
+    "Délivrer les cartes professionnelles",
+    "Autoriser les palpations"], a:0,
+    e:"La CNIL protège les données personnelles : elle informe, régule, contrôle, conseille, alerte et peut sanctionner les usages de données personnelles." },
+  // Livre VI / CNAPS (UV02)
+  { t:"livre6", q:"Que remet l'employeur en plus du numéro CNAPS dématérialisé ?", o:[
+    "Une carte professionnelle d'entreprise (photo, identité, activités, employeur)",
+    "Un diplôme TFP APS",
+    "Un agrément préfectoral",
+    "Un permis de port d'arme"], a:0,
+    e:"Le numéro CNAPS dématérialisé est le titre administratif ; l'employeur remet en plus une carte d'entreprise (photo, identité, activités, employeur, n° CNAPS), à présenter en réquisition et à restituer en fin de contrat." },
+  { t:"livre6", q:"La surveillance sur la voie publique nécessite :", o:[
+    "Une autorisation préfectorale, à conserver pendant la vacation",
+    "Le simple accord du client",
+    "Une carte professionnelle suffit",
+    "Rien de particulier"], a:0,
+    e:"La surveillance s'exerce normalement dans les lieux gardés ; sur la voie publique, une autorisation préfectorale est nécessaire (à conserver pendant la vacation). L'exercer sans autorisation : 2 ans et 30 000 €." },
+  // Déontologie (UV02)
+  { t:"deonto", q:"Combien d'amende une entreprise encourt-elle pour marchandage ?", o:[
+    "150 000 €","30 000 €","45 000 €","7 500 €"], a:0,
+    e:"Personne morale : 150 000 € d'amende (avec possibilité de dissolution, interdiction d'exercer, fermeture d'établissements). La personne physique encourt jusqu'à 2 ans et 30 000 €." },
+  // Filières métiers (UV06)
+  { t:"filieres", q:"Que recouvre le métier de SSIAP 3 ?", o:[
+    "Chef de service : organise, réglemente, gère et conseille le chef d'établissement",
+    "Agent opérationnel au PC sécurité",
+    "Chef d'équipe qui dirige le poste lors des sinistres",
+    "Conducteur de chien d'intervention"], a:0,
+    e:"SSIAP 3 = chef de service : veille réglementaire, organisation du service, relations avec la commission de sécurité, encadrement et conseil. (SSIAP 1 = agent, SSIAP 2 = chef d'équipe.)" },
+  { t:"filieres", q:"Quelle est la mission principale de l'agent de sécurité mobile ?", o:[
+    "Rondes de surveillance et levée de doute",
+    "Analyser les images radioscopiques",
+    "Diriger le poste de sécurité incendie",
+    "Contrôler les pièces d'identité"], a:0,
+    e:"L'agent mobile effectue des rondes (malveillance, incendie, intrusion), la levée de doute et la recherche de l'origine d'une alarme, puis rend compte." },
+  // Télésurveillance (UV10)
+  { t:"telesurv", q:"Comment le public doit-il être informé d'un système de vidéoprotection ?", o:[
+    "De manière claire et permanente (panneaux, affichage)",
+    "Il n'a pas à être informé",
+    "Uniquement par courrier",
+    "Seulement les salariés"], a:0,
+    e:"Le public doit être informé de manière claire et permanente de l'existence du système de captation et connaître l'autorité ou la personne responsable." },
+  { t:"telesurv", q:"Selon la loi du 21 janvier 1995, qui peut être destinataire des images de la voie publique ?", o:[
+    "Des agents de police/gendarmerie individuellement désignés et habilités",
+    "N'importe quel employé",
+    "Tout client qui le demande",
+    "Les médias"], a:0,
+    e:"Art. 10 de la loi n° 95-73 : l'autorisation peut prévoir que des agents individuellement désignés et dûment habilités de la police et de la gendarmerie sont destinataires des images, selon des modalités précisées." },
+  // Palpation (UV09)
+  { t:"palpation", q:"Qui peut réaliser l'inspection visuelle des bagages ?", o:[
+    "L'APS titulaire de la carte professionnelle, si une consigne le prévoit",
+    "N'importe quel employé du site",
+    "Seulement un OPJ",
+    "Le propriétaire uniquement"], a:0,
+    e:"L'inspection visuelle est possible par l'APS titulaire de la carte professionnelle lorsqu'une consigne la prévoit ; le propriétaire ouvre et montre, l'APS ne met pas les mains dans le sac." },
+  { t:"palpation", q:"La palpation événementielle s'exerce sous le contrôle de :", o:[
+    "Un officier de police judiciaire (OPJ)",
+    "Le directeur du magasin",
+    "Le CNAPS",
+    "L'organisateur seul"], a:0,
+    e:"En événementiel (art. L.613-3), la palpation s'exerce sous le contrôle d'un OPJ, par un APS qualifié et agréé, avec consentement exprès et agent du même sexe. L'APS n'est pas OPJ." },
+  // Accueil (UV08)
+  { t:"accueil", q:"En cas d'alerte à la bombe par téléphone, que doit faire l'agent d'accueil ?", o:[
+    "Renseigner la fiche type et appliquer scrupuleusement les consignes",
+    "Raccrocher immédiatement",
+    "Évacuer seul le bâtiment",
+    "Négocier avec l'appelant"], a:0,
+    e:"En cas d'alerte à la bombe, l'agent renseigne la fiche type (questionnaire d'alerte) et applique scrupuleusement les consignes du site." },
+  { t:"accueil", q:"La nuit, toute entrée (même du directeur) doit être :", o:[
+    "Mentionnée sur la main courante",
+    "Interdite",
+    "Filmée sans trace écrite",
+    "Signalée à la police"], a:0,
+    e:"Toute entrée, même celle d'une personne munie d'un laissez-passer permanent ou du directeur général, doit être mentionnée sur la main courante ; de même pour toute sortie après l'heure de fermeture." },
+  // Communication (UV08)
+  { t:"communication", q:"Que signifie le terme radio « ATTENDEZ » ?", o:[
+    "Je suspends ma transmission quelques secondes",
+    "Fin de transmission",
+    "Répétez le message",
+    "Message urgent"], a:0,
+    e:"ATTENDEZ = je suspends ma transmission quelques secondes. REÇU-TERMINÉ = fin de transmission / accusé ; COLLATIONNEZ = répétez à l'identique ; PARLEZ = invitation à transmettre." },
+  { t:"communication", q:"Un bon compte rendu distingue :", o:[
+    "Ce qui a été vu, entendu, déclaré et fait",
+    "Les opinions et les rumeurs",
+    "Uniquement les conclusions",
+    "Les jugements de l'agent"], a:0,
+    e:"Le compte rendu reste factuel : il distingue ce qui a été vu, entendu, déclaré et fait ; pas de jugement ni d'interprétation." },
+  // Risque électrique (UV11)
+  { t:"electrique", q:"Un court-circuit est un contact entre :", o:[
+    "La phase et le neutre","Deux masses","La terre et le neutre","Deux disjoncteurs"], a:0,
+    e:"Court-circuit = contact entre la phase et le neutre. La surintensité (trop d'appareils) échauffe les câbles et peut causer un incendie ; protection par fusible, relais magnétiques/thermiques." },
+  { t:"electrique", q:"Contre quoi le fusible protège-t-il ?", o:[
+    "La surintensité (il fond au-delà du courant nominal)",
+    "La foudre",
+    "Les contacts directs",
+    "Les coupures de courant"], a:0,
+    e:"Le fusible est un fil qui fond au-delà du courant nominal : il protège contre la surintensité (surcharge/court-circuit) et l'échauffement des câbles." },
+  // Gestion des alarmes / SSI (UV11)
+  { t:"alarmes", q:"Que signifie le sigle SDI ?", o:[
+    "Système de Détection Incendie","Signal de Danger Immédiat","Service de Détection Intrusion","Système de Diffusion Interne"], a:0,
+    e:"SDI = Système de Détection Incendie (collecte et signale l'incendie via l'ECS). Avec le SMSI (mise en sécurité, via le CMSI), il forme le SSI." },
+  { t:"alarmes", q:"Que commande le CMSI dans un SSI ?", o:[
+    "Les DAS (dispositifs actionnés de sécurité)",
+    "Les détecteurs de fumée",
+    "Les caméras",
+    "Les extincteurs"], a:0,
+    e:"Le CMSI (Centralisateur de Mise en Sécurité Incendie) commande les DAS (portes coupe-feu, désenfumage, etc.) pour réaliser la mise en sécurité. L'ECS, lui, détecte et signale." },
 ];
 
 /* ===================== ÉTAT ===================== */
@@ -1942,7 +2102,7 @@ function countFor(keys){ return BANK.filter(q=>keys.has(q.t)).length; }
 function esc(s){ return s.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])); }
 
 /* ===================== NAVIGATION ===================== */
-const SECTION_LABELS = { train:"Entraînement", dl:"QCU Dates & Lois", revisions:"Révisions" };
+const SECTION_LABELS = { train:"Entraînement", exam:"Examen blanc", dl:"QCU Dates & Lois", revisions:"Révisions" };
 const sectionLbl = document.getElementById("sectionLbl");
 function setActiveNav(view){
   document.querySelectorAll(".drawer-item").forEach(t=>{
@@ -1953,6 +2113,7 @@ function setActiveNav(view){
 }
 function navTo(view){
   if(view==="train") renderSetup();
+  else if(view==="exam") renderExam();
   else if(view==="dl") renderDL();
   else if(view==="revisions") renderRevisions();
   window.scrollTo({top:0});
@@ -2022,7 +2183,7 @@ function renderSetup(){
   }).join("");
 
   const avail = countFor(selected);
-  const counts = [10,20,50,100,"max"];
+  const counts = [10,15];
   const pills = counts.map(c=>{
     const val = c==="max"?avail:c;
     const label = c==="max"?"Tout":c;
@@ -2128,7 +2289,8 @@ function renderSetup(){
 // Moteur générique : lance une série à partir d'un pool de questions
 function startSession(pool, opts){
   const n = Math.min(opts.count||pool.length, pool.length);
-  const chosen = shuffle(pool).slice(0, n).map(q=>{
+  const base = opts.ordered ? pool.slice(0, n) : shuffle(pool).slice(0, n);
+  const chosen = base.map(q=>{
     let o = q.o.map((text,i)=>({text, correct:i===q.a}));
     if(shuffleOpts) o = shuffle(o);
     return { ...q, opts:o };
@@ -2138,6 +2300,7 @@ function startSession(pool, opts){
     bestKey: opts.bestKey || "qcu_tfp_best",
     backTo: opts.backTo || renderSetup,
     restart: opts.restart || startQuiz,
+    examMode: !!opts.examMode,
   };
   progressRail.hidden = false;
   renderQuestion();
@@ -2881,6 +3044,89 @@ function renderRevisions(){
       renderRevisions();
     });
   });
+}
+
+/* ===================== MODE EXAMEN ===================== */
+// Structure d'un examen blanc TFP APS (nb de questions par UV, d'après le référentiel).
+// themes:null => module non encore disponible dans l'application.
+const EXAM = [
+  { uv:"UV 2",  title:"Cadre juridique", count:15, themes:["republique","penal","livre6","apprehension","libertes","deonto"] },
+  { uv:"UV 3",  title:"Gestion des conflits", count:10, themes:null },
+  { uv:"UV 4",  title:"Module stratégique", count:5, themes:["strategique"] },
+  { uv:"UV 5",  title:"Prévention incendie", count:5, themes:["incendie"] },
+  { uv:"UV 6",  title:"Appréhension (art. 73 CPP)", count:8, themes:["apprehension","modalites"] },
+  { uv:"UV 7",  title:"Risque terroriste", count:10, themes:["terrorisme","secourir"] },
+  { uv:"UV 8",  title:"Module professionnel", count:15, themes:["accueil","communication"] },
+  { uv:"UV 9",  title:"Palpation et inspection des bagages", count:8, themes:["palpation"] },
+  { uv:"UV 10 / 12 / 14", title:"Spécialités regroupées", count:15, themes:["telesurv","filieres"] },
+  { uv:"UV 11", title:"Gestion des risques", count:8, themes:["electrique","alarmes"] },
+];
+function examAvailable(block){
+  if(!block.themes) return 0;
+  return BANK.filter(q=>block.themes.includes(q.t)).length;
+}
+function examTotal(){
+  return EXAM.reduce((s,b)=> s + (b.themes ? Math.min(b.count, examAvailable(b)) : 0), 0);
+}
+function startExam(){
+  let list = [];
+  EXAM.forEach(b=>{
+    if(!b.themes) return;
+    const pool = BANK.filter(q=>b.themes.includes(q.t));
+    list = list.concat(shuffle(pool).slice(0, b.count));
+  });
+  startSession(list, { count:list.length, ordered:true, examMode:true,
+    bestKey:"qcu_tfp_exam_best", backTo:renderExam, restart:startExam });
+}
+function renderExam(){
+  progressRail.hidden = true;
+  setActiveNav("exam");
+  const best = loadBest("qcu_tfp_exam_best");
+  const total = examTotal();
+  const missing = EXAM.filter(b=>!b.themes).length;
+  const cards = EXAM.map(b=>{
+    if(!b.themes){
+      return `<div class="exam-card off">
+        <span class="ec-uv">${b.uv}</span>
+        <span class="ec-title">${esc(b.title)}</span>
+        <span class="exam-badge soon">Bientôt</span>
+      </div>`;
+    }
+    const n = Math.min(b.count, examAvailable(b));
+    return `<div class="exam-card">
+      <span class="ec-uv">${b.uv}</span>
+      <span class="ec-title">${esc(b.title)}</span>
+      <span class="exam-badge">${n} QCU</span>
+    </div>`;
+  }).join("");
+
+  app.innerHTML = `
+    <section class="exam">
+      <div class="exam-head">
+        <span class="eyebrow">Examen blanc</span>
+        <h1>Mode Examen</h1>
+        <p>Un examen complet dans les conditions du TFP APS : les questions sont tirées au sort dans chaque UV, selon le nombre de questions du référentiel. Correction détaillée à la fin.</p>
+      </div>
+
+      <div class="exam-tot">
+        <span class="et-n tnum">${total}</span>
+        <span class="et-l">questions au total<br>réparties sur les modules disponibles</span>
+      </div>
+
+      <div class="exam-grid">${cards}</div>
+
+      ${missing?`<div class="exam-note">${missing} module${missing>1?"s ne sont":" n'est"} pas encore disponible${missing>1?"s":""} dans l'application (ex. UV 3 — Gestion des conflits). ${missing>1?"Ils seront":"Il sera"} ajouté${missing>1?"s":""} dès réception des supports de cours ; ${missing>1?"ils ne comptent":"il ne compte"} pas dans l'examen pour l'instant.</div>`:""}
+
+      <button class="exam-start" id="examStart">
+        Commencer l'examen · <span class="tnum">${total}</span> questions
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </button>
+      ${best.last!=null?`<div class="best"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4L12 17l-6.3 4.4L8 14 2 9.4h7.6z"/></svg> Meilleur score d'examen : <b class="tnum">&nbsp;${best.best}%</b></div>`:""}
+
+      <p class="footer-note">Seuil de réussite indicatif : 70 %. L'ordre des UV est conservé ; dans chaque UV, le tirage change à chaque essai.</p>
+    </section>`;
+
+  document.getElementById("examStart").addEventListener("click", ()=>{ startExam(); window.scrollTo({top:0}); });
 }
 
 /* ===================== GO ===================== */
