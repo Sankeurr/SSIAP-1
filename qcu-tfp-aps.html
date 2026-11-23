@@ -508,6 +508,8 @@ const THEMES = {
   terrorisme: { uv:"UV07", name:"Prévention des risques terroristes", short:"Risques terroristes" },
   secourir:   { uv:"UV07", name:"Secourir (secourisme tactique)", short:"Secourir" },
   palpation:  { uv:"UV09", name:"Palpation & contrôle visuel des sacs", short:"Palpation & sacs" },
+  electrique: { uv:"UV11", name:"Le risque électrique", short:"Risque électrique" },
+  alarmes:    { uv:"UV11", name:"Gestion des alarmes & SSI", short:"Gestion des alarmes" },
 };
 
 const BANK = [
@@ -1759,6 +1761,133 @@ const BANK = [
     "Billet · badge · consigne · refus · sortie",
     "Vigipirate · périmètre · menace · attentat · secours"], a:0,
     e:"Les 5 mots-clés : consentement exprès · même sexe · agrément · OPJ · inspection ≠ fouille. Ce sont les marqueurs à retrouver dans les questions sur la palpation et le contrôle des sacs." },
+
+  /* ---------------- LE RISQUE ÉLECTRIQUE (UV11) ---------------- */
+  { t:"electrique", q:"L'agent de sécurité peut-il intervenir sur une installation électrique ?", o:[
+    "Non : il prévient, protège, alerte et rend compte ; toute opération est réservée au personnel habilité",
+    "Oui, s'il coupe d'abord le courant",
+    "Oui, pour les petites réparations",
+    "Oui, s'il porte des gants"], a:0,
+    e:"L'APS n'est pas électricien. Sa mission : prévenir (repérer, baliser, signaler), protéger, alerter, rendre compte. Toute opération sur une installation est réservée au personnel habilité (NF C 18-510)." },
+  { t:"electrique", q:"Quelle est la différence entre un danger et un risque ?", o:[
+    "Le danger est une propriété intrinsèque de la chose ; le risque est l'éventualité de rencontre avec ce danger",
+    "Ce sont deux synonymes",
+    "Le danger concerne les biens, le risque les personnes",
+    "Le risque est toujours mortel, pas le danger"], a:0,
+    e:"Danger = propriété intrinsèque par laquelle une chose peut causer un dommage (l'électricité). Risque = éventualité d'une rencontre entre l'homme et ce danger. Les deux ne sont pas synonymes." },
+  { t:"electrique", q:"Quelle est la différence entre électrisation et électrocution ?", o:[
+    "L'électrisation est le passage du courant dans le corps ; l'électrocution est l'électrisation qui entraîne la mort",
+    "C'est la même chose",
+    "L'électrocution est bénigne, l'électrisation grave",
+    "L'électrisation ne concerne que les installations"], a:0,
+    e:"Électrisation = ensemble des manifestations dues au passage du courant à travers le corps. Électrocution = évolution défavorable de l'électrisation entraînant le décès." },
+  { t:"electrique", q:"Que signifie la formule « les ampères tuent, les volts brûlent » ?", o:[
+    "L'intensité (A) provoque les troubles mortels (cœur) ; la tension (V) provoque surtout les brûlures",
+    "Les volts sont sans danger",
+    "Seuls les ampères provoquent des brûlures",
+    "La tension arrête le cœur"], a:0,
+    e:"C'est l'intensité qui est responsable des effets mortels (fibrillation, arrêt cardiaque) ; la tension est surtout à l'origine des brûlures. Repères AC : ~30 mA paralysie respiratoire, ~75 mA fibrillation, ~1 A arrêt du cœur." },
+  { t:"electrique", q:"Le contact direct et le contact indirect représentent respectivement :", o:[
+    "≈ 75 % (partie active sous tension) et ≈ 25 % (masse mise sous tension par défaut d'isolement)",
+    "50 % et 50 %",
+    "≈ 25 % et ≈ 75 %",
+    "100 % des contacts directs"], a:0,
+    e:"Contact direct ≈ 75 % : contact avec une partie active sous tension. Contact indirect ≈ 25 % : contact avec une masse mise sous tension par un défaut d'isolement." },
+  { t:"electrique", q:"Pour protéger des contacts indirects, la mise à la terre des masses doit être associée à :", o:[
+    "Un dispositif de coupure automatique (disjoncteur différentiel)",
+    "Rien, la terre suffit seule",
+    "Un simple fusible lent",
+    "Un paratonnerre"], a:0,
+    e:"En cas de défaut d'isolement, la terre seule ne suffit pas : elle doit être associée à un dispositif de coupure automatique (disjoncteur différentiel) qui ouvre le circuit instantanément." },
+  { t:"electrique", q:"Quel texte encadre les habilitations électriques ?", o:[
+    "La norme NF C 18-510","La norme NF S 61-931","La loi de 1905","Le décret de 2012"], a:0,
+    e:"NF C 18-510 : l'habilitation électrique est une exigence réglementaire pour qui opère sur ou au voisinage d'installations électriques ; elle nécessite une formation préalable." },
+  { t:"electrique", q:"Quel symbole d'habilitation correspond à un non-électricien (exécutant) ?", o:[
+    "B0 / H0","B1 / H1","BR","BC"], a:0,
+    e:"B0/H0 = non-électricien exécutant (travaille à proximité sans opération électrique). B1/B2/BR/BC = électricien BT ; H1/H2/HC = HT. L'APS relève du profil non-électricien (B0/H0), voire BS/BE Manœuvre s'il est formé et habilité." },
+  { t:"electrique", q:"Face à une victime électrisée, quel est le tout premier réflexe ?", o:[
+    "Couper ou faire couper le courant avant de toucher la victime",
+    "Tirer la victime par le bras immédiatement",
+    "Lui donner à boire",
+    "La relever et la faire marcher"], a:0,
+    e:"Protéger d'abord : ne jamais toucher la victime tant que le courant n'est pas coupé (sinon le sauveteur devient victime à son tour). Puis alerter (15/18/112), secourir (PLS si inconscient qui respire) et rendre compte." },
+  { t:"electrique", q:"Quel agent extincteur utiliser sur un feu d'origine électrique ?", o:[
+    "Le CO₂ (dioxyde de carbone), non conducteur ; l'eau est interdite (conductrice)",
+    "L'eau en jet bâton",
+    "La mousse",
+    "Le sable uniquement"], a:0,
+    e:"Sur un feu électrique : CO₂ (non conducteur). L'eau est interdite car conductrice. Toujours tenter de couper le courant avant d'éteindre, si cela peut être fait en sécurité." },
+  { t:"electrique", q:"Quelle est la distance de voisinage à respecter en Haute Tension B (HTB) ?", o:[
+    "Au moins 3 mètres","30 cm","2 mètres","Aucune distance"], a:0,
+    e:"Distances de voisinage du support : TBT aucun danger ; BTA/BTB ≥ 30 cm ; HTA ≥ 2 m ; HTB ≥ 3 m. Plus la tension est élevée, plus le risque d'amorçage (sans contact) augmente." },
+
+  /* ---------------- GESTION DES ALARMES & SSI (UV11) ---------------- */
+  { t:"alarmes", q:"Comment définit-on une alarme ?", o:[
+    "Un signal sonore et/ou visuel avertissant d'un danger ou d'une atteinte, destiné à provoquer une réaction rapide",
+    "Un simple bruit de fond",
+    "Une panne du système",
+    "Un ordre d'évacuation définitif"], a:0,
+    e:"Une alarme est un signal sonore et/ou visuel avertissant d'un danger, d'un fait inhabituel ou d'une atteinte à l'intégrité d'un système. C'est une information destinée à provoquer une réaction rapide et appropriée." },
+  { t:"alarmes", q:"Quels sont les trois états à distinguer sur un système d'alarme ?", o:[
+    "Veille (pas d'information) · dérangement (anomalie/panne) · alarme (événement)",
+    "Vert · orange · rouge",
+    "Jour · nuit · week-end",
+    "Marche · arrêt · pause"], a:0,
+    e:"3 états : veille (pas d'information), dérangement (anomalie ou panne), alarme (information d'un événement). Un système en dérangement n'est pas un système normalement opérationnel." },
+  { t:"alarmes", q:"Que doit faire l'APS en recevant une alarme (chronologie) ?", o:[
+    "Recevoir → Protéger → Vérifier (levée de doute) → Alerter → Intervenir → Tracer",
+    "Intervenir immédiatement seul",
+    "Réarmer le système sans vérifier",
+    "Attendre la fin de la vacation pour rendre compte"], a:0,
+    e:"Chronologie : 1. Recevoir (noter heure, zone, type) · 2. Protéger (évaluer le danger, ne pas s'exposer) · 3. Vérifier (levée de doute) · 4. Alerter · 5. Intervenir (si autorisé) · 6. Tracer (main courante + compte rendu)." },
+  { t:"alarmes", q:"La levée de doute justifie-t-elle une prise de risque isolée ?", o:[
+    "Non : elle respecte le plan, les moyens, les accès et les renforts prévus",
+    "Oui, il faut aller vérifier coûte que coûte",
+    "Oui, si l'agent est seul",
+    "Oui, pour gagner du temps"], a:0,
+    e:"La levée de doute (audio, vidéo ou humaine) ne justifie jamais une prise de risque isolée : respecter le plan, les moyens, les accès et les renforts prévus. Elle sert à qualifier l'alarme (réelle, intempestive, technique)." },
+  { t:"alarmes", q:"Que signifie le sigle SSI ?", o:[
+    "Système de Sécurité Incendie (SSI = SDI + SMSI)",
+    "Service de Sécurité Intérieure",
+    "Signal Sonore d'Intrusion",
+    "Système de Surveillance Individuel"], a:0,
+    e:"SSI = Système de Sécurité Incendie. Il se compose du SDI (Système de Détection Incendie, qui collecte et signale) et du SMSI (Système de Mise en Sécurité Incendie, qui commande les mises en sécurité)." },
+  { t:"alarmes", q:"Quelle catégorie de SSI est la plus complète ?", o:[
+    "La catégorie A (seule avec détection automatique généralisée et un CMSI)",
+    "La catégorie E",
+    "La catégorie D",
+    "La catégorie C"], a:0,
+    e:"Le SSI de catégorie A est le plus complet : c'est la seule catégorie comportant une détection automatique généralisée et un CMSI. Les catégories vont de A (la plus complète) à E." },
+  { t:"alarmes", q:"Dans un SSI, il ne faut pas confondre l'ECS et le CMSI. À quoi servent-ils ?", o:[
+    "L'ECS détecte/signale (SDI) ; le CMSI commande la mise en sécurité (SMSI)",
+    "Les deux commandent le désenfumage",
+    "L'ECS éteint le feu, le CMSI sonne l'alarme",
+    "Ce sont deux noms du même appareil"], a:0,
+    e:"ECS = Équipement de Contrôle et de Signalisation (détection/signalisation, côté SDI). CMSI = Centralisateur de Mise en Sécurité Incendie (commande les DAS, côté SMSI). Les DAS sont commandés par le CMSI." },
+  { t:"alarmes", q:"Que recouvre le sigle CMSI ?", o:[
+    "Centralisateur de Mise en Sécurité Incendie",
+    "Commande Manuelle de Sécurité Intérieure",
+    "Centre de Maintenance des Systèmes Incendie",
+    "Contrôleur Multiple de Signaux Incendie"], a:0,
+    e:"CMSI = Centralisateur de Mise en Sécurité Incendie : il commande les DAS (dispositifs actionnés de sécurité) pour réaliser la mise en sécurité (compartimentage, désenfumage, évacuation)." },
+  { t:"alarmes", q:"Quelle est la différence entre une alarme restreinte et une alarme générale ?", o:[
+    "Restreinte = destinée aux personnes habilitées pour l'exploitation ; générale = signal d'évacuation",
+    "Ce sont deux synonymes",
+    "La restreinte évacue tout le bâtiment",
+    "La générale ne concerne que le PC sécurité"], a:0,
+    e:"Alarme restreinte = information destinée aux personnes habilitées (exploitation) ; alarme générale = signal d'évacuation selon les consignes ; alarme générale sélective = diffusion organisée à des zones/personnes déterminées. La temporisation ne dispense jamais de la conduite prévue." },
+  { t:"alarmes", q:"Face à une alarme SSI, que ne doit jamais faire l'APS ?", o:[
+    "Réarmer, neutraliser ou remettre en service sans vérification ni autorisation",
+    "Lire le tableau de signalisation",
+    "Rendre compte au PC sécurité",
+    "Appliquer les consignes d'évacuation"], a:0,
+    e:"L'APS exploite les informations affichées sans se substituer au SSIAP ni aux secours : lire le tableau, gérer alarme restreinte/temporisation, lever le doute, transmettre, appliquer les consignes — mais ne jamais réarmer, neutraliser ou remettre en service sans vérification et autorisation." },
+  { t:"alarmes", q:"À quelle catégorie d'alarme appartient un hold-up / une agression (DATI) ?", o:[
+    "Catégorie 1 : danger pour la vie",
+    "Catégorie 2 : danger pour les biens",
+    "Catégorie 3 : défaillance de l'installation",
+    "Aucune catégorie"], a:0,
+    e:"Catégorie 1 = danger pour la vie (feu, agression, DATI) ; catégorie 2 = danger pour les biens (intrusion, température) ; catégorie 3 = défaillance de l'installation (technique)." },
 ];
 
 /* ===================== ÉTAT ===================== */
@@ -1774,6 +1903,7 @@ const UV_META = {
   UV08: { name:"Accueil, communication & contrôle d'accès" },
   UV09: { name:"Palpation & contrôle des sacs" },
   UV10: { name:"Télésurveillance & Vidéoprotection" },
+  UV11: { name:"Gestion des risques (électrique & alarmes)" },
 };
 // ordre d'affichage des UV (croissant)
 const UV_ORDER = [...new Set(Object.values(THEMES).map(t=>t.uv))].sort();
@@ -2301,6 +2431,8 @@ const LAWS = [
     { ref:"Art. L.634-4", t:"Sanctions disciplinaires", n:"Avertissement, blâme, interdiction temporaire (≤ 7 ans)" },
     { ref:"Art. L.634-11", t:"Commission de discipline", n:"Saisie pour l'interdiction temporaire d'exercer" },
     { ref:"Art. R.4227-39", t:"Exercices d'évacuation", n:"Code du travail — essais et exercices au moins tous les 6 mois" },
+    { ref:"NF C 18-510", t:"Habilitations électriques", n:"Opérations sur/au voisinage des installations réservées au personnel habilité" },
+    { ref:"NF S 61-931", t:"Systèmes de sécurité incendie", n:"Dispositions générales des SSI (SDI + SMSI, catégories A à E)" },
   ]},
   { g:"Vidéoprotection, données & travail", items:[
     { ref:"Art. R.273-7 CSI", t:"Parkings ouverts au public", n:"Obligation à partir de 200 places" },
@@ -2674,6 +2806,24 @@ const SHEETS = [
     "Matériel : caméra = capter, multiplexeur = organiser, enregistreur = conserver ; art. 427 CPP (liberté de la preuve).",
     "Droit d'accès aux images : demande au responsable (date/heure/lieu) ; recours CNIL / commission départementale." ],
     key:"Interdit de filmer : un employé à son poste (sauf cas justifié), les toilettes, les zones de pause, les locaux syndicaux." },
+  { uv:"UV11", title:"Le risque électrique", pts:[
+    "L'APS <b>n'est pas électricien</b> : prévenir, protéger, alerter, rendre compte ; opérations réservées aux habilités (<b>NF C 18-510</b>).",
+    "<b>Danger</b> = propriété intrinsèque ; <b>risque</b> = éventualité de rencontre. Électrisation = passage du courant ; électrocution = décès.",
+    "« Les <b>ampères tuent, les volts brûlent</b> » ; AC : ~30 mA paralysie respiratoire, ~75 mA fibrillation, ~1 A arrêt du cœur.",
+    "Contact <b>direct ≈ 75 %</b> (partie active) · <b>indirect ≈ 25 %</b> (masse) ; terre + <b>disjoncteur différentiel</b> indispensables.",
+    "Habilitations : <b>B0/H0</b> = non-électricien ; B1/B2/BR/BC = électricien BT ; H1/H2/HC = HT ; l'APS = B0/H0 (voire BS/BE).",
+    "Victime électrisée : <b>ne jamais toucher avant de couper le courant</b> → alerter (15/18/112) → secourir → rendre compte.",
+    "Feu électrique : <b>CO₂ oui, eau non</b> (conductrice) ; couper le courant avant d'éteindre. Distances HTA ≥ 2 m, HTB ≥ 3 m." ],
+    key:"L'APS prévient, protège, alerte et rend compte : aucune opération électrique hors habilitation." },
+  { uv:"UV11", title:"Gestion des alarmes & SSI", pts:[
+    "<b>Alarme</b> = signal sonore/visuel d'un danger → réaction rapide. 3 états : veille · dérangement · alarme.",
+    "Chronologie : <b>Recevoir → Protéger → Vérifier (levée de doute) → Alerter → Intervenir → Tracer</b>.",
+    "Levée de doute (audio / vidéo / humaine) : qualifier sans s'exposer ; jamais de prise de risque isolée.",
+    "<b>SSI = SDI + SMSI</b> ; <b>ECS</b> détecte/signale, <b>CMSI</b> commande la mise en sécurité (les DAS).",
+    "<b>Catégorie A</b> = la plus complète (seule avec détection automatique généralisée + CMSI) ; catégories A → E.",
+    "Alarme <b>restreinte</b> (personnes habilitées) ≠ alarme <b>générale</b> (évacuation) ; corrélation ZD → ZS.",
+    "L'APS exploite les infos sans se substituer au SSIAP ; <b>ne jamais réarmer/neutraliser sans vérification</b> (réf. NF S 61-931)." ],
+    key:"À ne pas confondre : alarme ≠ preuve · ECS ≠ CMSI · ZD ≠ ZS · levée de doute ≠ intervention dangereuse." },
 ];
 
 let openSheet = null; // titre de la fiche ouverte
