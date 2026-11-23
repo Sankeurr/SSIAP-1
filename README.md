@@ -22,4 +22,4 @@ Les thèmes sont regroupés par UV, dans des sections dépliables :
 - Résultat final : score, seuil de réussite, détail par thème et correction complète
 - Thème clair / sombre, adapté mobile
 
-Questions tirées des fiches de révision CFPS.
+Questions tirées des fiches de révision.
