@@ -563,6 +563,7 @@ const THEMES = {
   palpation:  { uv:"UV09", name:"Palpation & contrôle visuel des sacs", short:"Palpation & sacs" },
   electrique: { uv:"UV11", name:"Le risque électrique", short:"Risque électrique" },
   alarmes:    { uv:"UV11", name:"Gestion des alarmes & SSI", short:"Gestion des alarmes" },
+  industriel: { uv:"UV14", name:"Module industriel (risques pro & majeurs)", short:"Module industriel" },
 };
 
 const BANK = [
@@ -1652,6 +1653,53 @@ const BANK = [
     "Argumenter pour les raisonner"], a:0,
     e:"Prise d'otages : ne pas jouer au héros, faire ce qui est demandé, parler seulement si nécessaire, mémoriser visages et signes distinctifs, répondre oui/non aux autorités ; au déclenchement de l'assaut, se jeter au sol, mains sur la tête." },
 
+  /* -------- Risque terroriste : compléments 2 (menaces, plans, signalement) -------- */
+  { t:"terrorisme", q:"Face à une menace chimique ou toxique, quelle est la bonne conduite ?", o:[
+    "Ne pas toucher ni respirer volontairement, s'éloigner de la source et se mettre à l'abri selon les consignes",
+    "Ventiler la zone en ouvrant les fenêtres",
+    "Nettoyer la substance soi-même",
+    "Rassembler le public près de la source"], a:0,
+    e:"Menace chimique/toxique (cadre NRBC) : ne pas toucher ni respirer volontairement, s'éloigner de la source, se mettre à l'abri selon les consignes, éviter de propager la contamination, attendre les services spécialisés et signaler symptômes et zone." },
+  { t:"terrorisme", q:"À quoi correspond le plan PIRATOX ?", o:[
+    "La réponse à une menace ou un accident de nature toxique / chimique",
+    "La sécurisation des ports et navires",
+    "La réponse sanitaire des hôpitaux",
+    "La lutte contre la cybercriminalité"], a:0,
+    e:"PIRATOX = plan de réponse à une menace ou un accident de nature toxique/chimique : s'éloigner, se protéger du contact/inhalation, suivre les autorités. (PIRATE-MER = menaces en mer ; ORSAN = réponse du système de santé.)" },
+  { t:"terrorisme", q:"Que recouvre le dispositif ORSAN ?", o:[
+    "L'organisation de la réponse du système de santé en situations sanitaires exceptionnelles",
+    "Un plan de sûreté maritime",
+    "La coordination des forces de l'ordre",
+    "Un niveau du plan Vigipirate"], a:0,
+    e:"ORSAN = Organisation de la Réponse du Système de santé en situations sanitaires exceptionnelles (afflux de victimes, crise sanitaire). PIRATE-MER concerne le domaine maritime." },
+  { t:"terrorisme", q:"Que signifie le sigle SGDSN ?", o:[
+    "Secrétariat général de la défense et de la sécurité nationale",
+    "Service général de défense et de sûreté nucléaire",
+    "Syndicat général de la sécurité privée",
+    "Système de gestion des dispositifs de sécurité"], a:0,
+    e:"Le SGDSN (Secrétariat général de la défense et de la sécurité nationale) contribue à l'analyse de la menace et à la posture Vigipirate ; il pilote notamment la campagne « VIGIPIRATE – Faire face ensemble »." },
+  { t:"terrorisme", q:"Parmi ces menaces, laquelle fait partie des familles citées par le support ?", o:[
+    "Le véhicule-bélier","Le cambriolage simple","La fraude fiscale","Le tapage nocturne"], a:0,
+    e:"Familles de menaces : arme blanche ou à feu, véhicule-bélier, explosif/EEI, prise d'otages, détournement, attaque hybride ou cyber, drone, menace NRBC, fausse alerte et sur-attentat." },
+  { t:"terrorisme", q:"Que recouvre la formule « DIRE CE QUE VOUS SAVEZ » lors d'un signalement ?", o:[
+    "Où ? Quand ? Quoi ? Qui ? Comment ? Risques ? Action ?",
+    "Qui ? Que vois-je ? Que fais-je ?",
+    "Observer, protéger, alerter",
+    "S'échapper, alerter, se cacher"], a:0,
+    e:"« Dire ce que vous savez » : Où (lieu précis) · Quand (heure/durée) · Quoi (objet/comportement) · Qui (description factuelle) · Comment (direction, véhicule, arme) · Risques (public, fumée, blessés) · Action (périmètre, évacuation, alerte déjà donnée)." },
+  { t:"terrorisme", q:"Combien de domaines et de mesures le plan VIGIPIRATE comporte-t-il environ ?", o:[
+    "Environ 300 mesures réparties dans 13 domaines",
+    "10 mesures dans 3 domaines",
+    "100 mesures dans 5 domaines",
+    "3 niveaux et rien d'autre"], a:0,
+    e:"VIGIPIRATE comprend environ 300 mesures dans 13 domaines : un socle permanent + des mesures additionnelles activées selon la menace et les vulnérabilités." },
+  { t:"terrorisme", q:"Qu'est-ce qu'un « sur-attentat » ?", o:[
+    "Une seconde attaque visant les secours et les personnes regroupées après la première",
+    "Un attentat déjoué à l'avance",
+    "Une fausse alerte répétée",
+    "Un attentat commis à l'étranger"], a:0,
+    e:"Le sur-attentat est une attaque secondaire visant les secours et les personnes rassemblées après un premier événement. D'où l'importance de rester à distance, d'élargir le périmètre et de ne pas revenir sur place." },
+
   /* ---------------- SECOURIR — SECOURISME TACTIQUE (UV07.3) ---------------- */
   { t:"secourir", q:"Que vise le secourisme tactique ?", o:[
     "Faire face aux blessures par armes à feu, armes blanches et effets d'explosion",
@@ -2076,6 +2124,101 @@ const BANK = [
     "Les caméras",
     "Les extincteurs"], a:0,
     e:"Le CMSI (Centralisateur de Mise en Sécurité Incendie) commande les DAS (portes coupe-feu, désenfumage, etc.) pour réaliser la mise en sécurité. L'ECS, lui, détecte et signale." },
+
+  /* ===== UV14 — Module industriel ===== */
+  { t:"industriel", q:"Quelle est la différence entre un danger et un risque ?", o:[
+    "Le danger est la propriété nocive d'une chose ; le risque est l'exposition à ce danger",
+    "Ce sont deux synonymes",
+    "Le risque existe toujours, le danger seulement en usine",
+    "Le danger ne concerne que les produits chimiques"], a:0,
+    e:"Le danger est la propriété intrinsèque d'un produit ou d'une situation à causer un dommage ; le risque est la probabilité qu'un travailleur soit exposé à ce danger (risque = aléa × exposition/gravité)." },
+  { t:"industriel", q:"Qui a la responsabilité d'assurer la sécurité et la santé des travailleurs ?", o:[
+    "L'employeur (obligation générale de sécurité, art. L4121-1)",
+    "Uniquement le CSE",
+    "Chaque travailleur seul",
+    "L'inspection du travail"], a:0,
+    e:"L'employeur a une obligation générale de sécurité (art. L4121-1 du Code du travail) : il évalue les risques et prend les mesures de prévention. Le travailleur, lui (L4122-1), prend soin de sa sécurité et de celle des autres." },
+  { t:"industriel", q:"Qu'est-ce que le DUERP et quand est-il obligatoire ?", o:[
+    "Le Document Unique d'Évaluation des Risques Professionnels, obligatoire dès le 1er salarié",
+    "Un document facultatif de plus de 50 salariés",
+    "Un plan d'évacuation incendie",
+    "Un registre réservé aux sites Seveso"], a:0,
+    e:"Le DUERP recense et évalue tous les risques professionnels. Il est obligatoire dès l'embauche du 1er salarié et doit être mis à jour au moins une fois par an (et à chaque changement important)." },
+  { t:"industriel", q:"Quand un plan de prévention écrit est-il obligatoire pour une entreprise extérieure ?", o:[
+    "Dès 400 heures de travail sur 12 mois OU pour des travaux dangereux",
+    "Seulement au-delà de 1000 heures",
+    "Uniquement la nuit",
+    "Jamais, un accord oral suffit"], a:0,
+    e:"Le plan de prévention est obligatoire par écrit dès que l'opération atteint 400 heures sur 12 mois, ou quelle que soit la durée s'il s'agit de travaux dangereux (liste réglementaire)." },
+  { t:"industriel", q:"Qu'est-ce que le permis de feu ?", o:[
+    "Une autorisation écrite pour des travaux par point chaud, avec surveillance et ronde après travaux",
+    "Un permis de conduire des engins",
+    "Une autorisation de fumer sur site",
+    "Un document pour allumer la chaudière"], a:0,
+    e:"Le permis de feu encadre les travaux par point chaud (soudure, meulage…) : mesures de prévention incendie, moyens d'extinction à proximité et surveillance, avec une ronde de sécurité généralement maintenue environ 2 h après la fin des travaux." },
+  { t:"industriel", q:"Comment définit-on un risque industriel majeur ?", o:[
+    "Un événement de faible fréquence mais de très forte gravité (aléa + enjeux)",
+    "Un incident fréquent et bénin",
+    "Une panne informatique",
+    "Un simple vol en entreprise"], a:0,
+    e:"Le risque majeur associe un aléa (événement dangereux) à des enjeux humains, matériels ou environnementaux. Il se caractérise par une faible fréquence mais une gravité potentielle très élevée (G × P)." },
+  { t:"industriel", q:"Que signifie le sigle ICPE ?", o:[
+    "Installation Classée pour la Protection de l'Environnement",
+    "Inspection de Contrôle des Produits Explosifs",
+    "Industrie Chimique de Première Exigence",
+    "Installation de Confinement des Produits Électriques"], a:0,
+    e:"Une ICPE (Installation Classée pour la Protection de l'Environnement) est un site dont l'activité peut présenter des risques. Trois régimes selon la dangerosité : Déclaration (D), Enregistrement (E) et Autorisation (A)." },
+  { t:"industriel", q:"Quels sont les deux seuils de classement d'un site Seveso ?", o:[
+    "Seuil bas et seuil haut, selon les quantités de substances dangereuses",
+    "Seuil vert et seuil rouge",
+    "Seuil A et seuil B",
+    "Seuil national et seuil local"], a:0,
+    e:"La directive Seveso 3 (2012/18/UE) classe les établissements en « seuil bas » et « seuil haut » selon les quantités de substances dangereuses présentes ; le seuil haut impose les obligations les plus strictes (POI, PPI…)." },
+  { t:"industriel", q:"Qui déclenche et met en œuvre le POI (Plan d'Opération Interne) ?", o:[
+    "L'exploitant du site, pour un accident limité à l'enceinte de l'établissement",
+    "Le préfet",
+    "Le maire",
+    "Le Premier ministre"], a:0,
+    e:"Le POI est élaboré et déclenché par l'exploitant pour gérer un sinistre qui reste dans les limites du site. Si les effets dépassent l'enceinte, le préfet déclenche le PPI (Plan Particulier d'Intervention)." },
+  { t:"industriel", q:"Qui déclenche le PPI (Plan Particulier d'Intervention) ?", o:[
+    "Le préfet, quand l'accident dépasse les limites du site",
+    "L'exploitant seul",
+    "Le maire de la commune",
+    "Le chef de poste de sécurité"], a:0,
+    e:"Le PPI est déclenché par le préfet lorsque les conséquences d'un accident débordent de l'établissement et menacent la population. Il prolonge le POI de l'exploitant." },
+  { t:"industriel", q:"Quels sont les principaux effets d'un accident industriel majeur ?", o:[
+    "Thermiques, de surpression, toxiques et de pollution",
+    "Uniquement sonores",
+    "Seulement électriques",
+    "Uniquement informatiques"], a:0,
+    e:"Un accident industriel peut produire des effets thermiques (incendie, BLEVE), de surpression (explosion), toxiques (nuage, fuite) et de pollution (sol, eau, air)." },
+  { t:"industriel", q:"À quoi sert la Fiche de Données de Sécurité (FDS) et qui la fournit ?", o:[
+    "Elle décrit les dangers et précautions d'un produit ; fournie par le fournisseur",
+    "C'est la facture du produit, fournie par le client",
+    "Un plan d'évacuation fourni par le maire",
+    "Un certificat médical fourni par le travailleur"], a:0,
+    e:"La FDS renseigne la composition, les dangers, les mesures de premiers secours, de stockage et de protection d'un produit chimique. Elle est fournie gratuitement par le fournisseur/fabricant." },
+  { t:"industriel", q:"Combien de pictogrammes de danger compte le système SGH/CLP ?", o:[
+    "9 pictogrammes (losange rouge)","5 pictogrammes","12 pictogrammes","3 pictogrammes"], a:0,
+    e:"Le système SGH, appliqué en Europe par le règlement CLP, comporte 9 pictogrammes de danger : losanges à bordure rouge sur fond blanc (inflammable, toxique, corrosif, explosif, comburant, gaz sous pression, danger pour la santé, nocif, danger environnement)." },
+  { t:"industriel", q:"Que recouvre le sigle ATEX ?", o:[
+    "ATmosphères EXplosives (mélange air + gaz, vapeur, brouillard ou poussière)",
+    "Agent Technique d'Extinction",
+    "Attestation Technique d'Exploitation",
+    "Alarme Toxique EXterne"], a:0,
+    e:"Une zone ATEX (ATmosphère EXplosive) est un milieu où l'air peut former un mélange explosif avec un gaz, une vapeur, un brouillard ou une poussière. Le matériel utilisé doit être conforme au classement de la zone." },
+  { t:"industriel", q:"Sur un camion de transport de matières dangereuses (TMD), que signifie la plaque orange ?", o:[
+    "Le code danger (en haut) et le code matière/ONU à 4 chiffres (en bas)",
+    "La charge maximale du véhicule",
+    "L'immatriculation européenne",
+    "La vitesse autorisée"], a:0,
+    e:"La plaque orange du TMD porte en haut le code danger (nature du risque) et en bas le numéro ONU à 4 chiffres identifiant la matière (ex. 1203 essence, 1202 gasoil, 1017 chlore, 1789 acide chlorhydrique). Un camion-citerne TMD n'est pas une ICPE." },
+  { t:"industriel", q:"Dans la hiérarchie des mesures, que privilégie-t-on avant les EPI ?", o:[
+    "La protection collective avant la protection individuelle",
+    "Les EPI en priorité absolue",
+    "Rien, l'ordre est libre",
+    "La signalisation uniquement"], a:0,
+    e:"Les principes généraux de prévention imposent de supprimer/réduire le risque à la source et de privilégier la protection collective ; l'EPI (protection individuelle) n'intervient qu'en complément, adapté à la zone du corps exposée." },
 ];
 
 /* ===================== ÉTAT ===================== */
@@ -2092,6 +2235,7 @@ const UV_META = {
   UV09: { name:"Palpation & contrôle des sacs" },
   UV10: { name:"Télésurveillance & Vidéoprotection" },
   UV11: { name:"Gestion des risques (électrique & alarmes)" },
+  UV14: { name:"Module industriel (risques pro & majeurs)" },
 };
 // ordre d'affichage des UV (croissant)
 const UV_ORDER = [...new Set(Object.values(THEMES).map(t=>t.uv))].sort();
@@ -3023,6 +3167,29 @@ const SHEETS = [
     "Alarme <b>restreinte</b> (personnes habilitées) ≠ alarme <b>générale</b> (évacuation) ; corrélation ZD → ZS.",
     "L'APS exploite les infos sans se substituer au SSIAP ; <b>ne jamais réarmer/neutraliser sans vérification</b> (réf. NF S 61-931)." ],
     key:"À ne pas confondre : alarme ≠ preuve · ECS ≠ CMSI · ZD ≠ ZS · levée de doute ≠ intervention dangereuse." },
+  { uv:"UV14", title:"Risques professionnels & prévention", pts:[
+    "<b>Danger</b> = propriété nocive intrinsèque ; <b>risque</b> = exposition à ce danger (risque = aléa × gravité).",
+    "<b>Employeur</b> = obligation générale de sécurité (<b>L4121-1</b>) ; <b>travailleur</b> prend soin de sa sécurité et des autres (<b>L4122-1</b>).",
+    "<b>DUERP</b> (Document Unique) : recense/évalue tous les risques ; <b>obligatoire dès le 1er salarié</b>, mis à jour ≥ 1×/an.",
+    "<b>Plan de prévention</b> écrit dès <b>400 h/12 mois</b> ou pour <b>travaux dangereux</b> ; <b>protocole de sécurité</b> pour chargement/déchargement.",
+    "<b>Permis de feu</b> pour travaux par point chaud : moyens d'extinction + <b>ronde ~2 h</b> après travaux.",
+    "Hiérarchie : supprimer/réduire à la source → <b>protection collective</b> → <b>EPI</b> (individuelle, adaptée à la zone du corps)." ],
+    key:"L'employeur évalue et prévient (DUERP) ; le collectif passe avant l'individuel (EPI en dernier)." },
+  { uv:"UV14", title:"Risque industriel majeur", pts:[
+    "<b>Risque majeur</b> = aléa + enjeux : <b>faible fréquence, forte gravité</b> (G × P).",
+    "<b>ICPE</b> = Installation Classée pour la Protection de l'Environnement ; 3 régimes : <b>Déclaration · Enregistrement · Autorisation</b>.",
+    "<b>Seveso</b> (directive <b>Seveso 3 — 2012/18/UE</b>, liée au CLP) : <b>seuil bas / seuil haut</b> selon les quantités de substances.",
+    "Effets d'un accident : <b>thermiques · surpression · toxiques · pollution</b>.",
+    "Plans : <b>POI</b> (exploitant, site) → <b>PPI</b> (préfet, hors site) ; <b>ORSEC</b> (sécurité civile), <b>PCS</b> (maire), <b>PSS</b> (préfet).",
+    "Autorités : <b>Maire</b> = commune · <b>Préfet</b> = département · <b>Premier ministre</b> = national." ],
+    key:"POI = exploitant (dans le site) ; PPI = préfet (quand ça dépasse le site)." },
+  { uv:"UV14", title:"Produits dangereux, ATEX & TMD", pts:[
+    "<b>SGH / CLP</b> : <b>9 pictogrammes</b> de danger (losange rouge) ; phrases <b>H</b> (danger) et <b>P</b> (prudence).",
+    "<b>FDS</b> (Fiche de Données de Sécurité) : dangers, premiers secours, stockage ; <b>fournie par le fournisseur</b>.",
+    "<b>ATEX</b> = ATmosphère EXplosive (air + gaz / vapeur / brouillard / poussière) ; matériel <b>conforme à la zone</b>.",
+    "<b>TMD</b> : <b>plaque orange</b> = code danger (haut) + <b>code matière ONU 4 chiffres</b> (bas). Un camion-citerne TMD <b>n'est pas une ICPE</b>.",
+    "Codes matière : <b>1203</b> essence · <b>1202</b> gasoil · <b>1017</b> chlore · <b>1789</b> acide chlorhydrique." ],
+    key:"Plaque orange : code danger en haut, n° ONU (matière) en bas ; FDS = fournisseur ; CLP = 9 pictos." },
 ];
 
 let openSheet = null; // titre de la fiche ouverte
@@ -3094,7 +3261,7 @@ const EXAM = [
   { uv:"UV 7",  title:"Risque terroriste", count:10, themes:["terrorisme","secourir"] },
   { uv:"UV 8",  title:"Module professionnel", count:15, themes:["accueil","communication"] },
   { uv:"UV 9",  title:"Palpation et inspection des bagages", count:8, themes:["palpation"] },
-  { uv:"UV 10 / 12 / 14", title:"Spécialités regroupées", count:15, themes:["telesurv","filieres"] },
+  { uv:"UV 10 / 12 / 14", title:"Spécialités regroupées", count:15, themes:["telesurv","filieres","industriel"] },
   { uv:"UV 11", title:"Gestion des risques", count:8, themes:["electrique","alarmes"] },
 ];
 function examAvailable(block){
